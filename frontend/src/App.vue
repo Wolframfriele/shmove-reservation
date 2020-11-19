@@ -1,32 +1,59 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view />
-  </div>
+  <v-app>
+    <Nav />
+    <v-content>
+      <router-view class="animated fadeIn"></router-view>
+    </v-content>
+  </v-app>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+<script>
+import Nav from "./components/layouts/Nav";
+export default {
+  name: "App",
+  components: {
+    Nav,
+  },
+  data: () => ({
+    //
+  }),
+  created() {
+  
+  },
+  methods: {
+    scrollTopAnimation() {
+      let scrollValue = document.documentElement.scrollTop;
+      while (scrollValue > 0) {
+        document.documentElement.scrollTop--;
+      }
+    },
+  },
+};
+</script>
+
+<style>
+/* @import url("https://fonts.googleapis.com/css?family=Amita");
+@import url("https://fonts.googleapis.com/css?family=Arbutus+Slab"); */
+html,
+body {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+  font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;
+  background-color: #f5fffa;
 }
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+#app {
+  /* scroll-behavior: smooth; */
+  font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fffafa;
+  /* overflow-x: hidden; */
 }
 </style>
