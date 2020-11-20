@@ -64,17 +64,17 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'shmove_reservations.urls'
 
 # Vue project location
-# FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
-# # Vue assets directory (assetsDir)
-# STATICFILES_DIRS = [
-#     os.path.join(FRONTEND_DIR, 'dist/static'),
-# ]
+FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
+# Vue assets directory (assetsDir)
+STATICFILES_DIRS = [
+    os.path.join(FRONTEND_DIR, 'dist/static'),
+]
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # 'DIRS': [os.path.join(FRONTEND_DIR, 'dist'), ],
-        'DIRS': [],
+        'DIRS': [os.path.join(FRONTEND_DIR, 'dist'), ],
+        # 'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
