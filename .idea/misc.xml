@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-<<<<<<< HEAD
-<<<<<<< Updated upstream
+<<<<<<< 
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.9 (shmove-reservation-CAVMEiAD)" project-jdk-type="Python SDK" />
-=======
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.9 (shmove_reservations) (2)" project-jdk-type="Python SDK" />
->>>>>>> Stashed changes
-=======
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.9 (mysite-jnxDjkj2)" project-jdk-type="Python SDK" />
   <component name="PyCharmProfessionalAdvertiser">
     <option name="shown" value="true" />
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.9 (shmove_reservations) (2)" project-jdk-type="Python SDK" />
->>>>>>> 82e04abfd8857c02b1b0c9262fb8316d2c76148a
 </project>

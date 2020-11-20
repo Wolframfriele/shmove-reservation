@@ -14,16 +14,9 @@
   </component>
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
-<<<<<<< HEAD
-<<<<<<< Updated upstream
     <orderEntry type="inheritedJdk" />
-=======
-    <orderEntry type="jdk" jdkName="Python 3.9 (shmove_reservations) (2)" jdkType="Python SDK" />
->>>>>>> Stashed changes
-=======
     <orderEntry type="jdk" jdkName="Python 3.9 (mysite-jnxDjkj2)" jdkType="Python SDK" />
     <orderEntry type="jdk" jdkName="Python 3.9 (shmove_reservations) (2)" jdkType="Python SDK" />
->>>>>>> 82e04abfd8857c02b1b0c9262fb8316d2c76148a
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TemplatesService">
