@@ -11,22 +11,36 @@ const routes = [
     component: Home
   },
   {
+<<<<<<< HEAD
     path: "/afspraak-maken",
     name: "Afspraak Maken",
+=======
+    path: "/afspraak-bevestigen",
+    name: "AfspraakBevestigen",
+>>>>>>> Calender v01
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
+<<<<<<< HEAD
       import(/* webpackChunkName: "about" */ "../views/AfspraakMaken.vue"),
     props: true
   },
   {
     path: "/afspraak-bevestigen",
     name: "AfspraakBevestigen",
+=======
+      import(/* webpackChunkName: "about" */ "../views/AfspraakBevestigen.vue")
+  },
+  {
+    path: "/afspraak-maken",
+    name: "Afspraak Maken",
+>>>>>>> Calender v01
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
+<<<<<<< HEAD
       import(/* webpackChunkName: "about" */ "../views/AfspraakBevestigen.vue"),
     props: true
   },
@@ -39,6 +53,9 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AfspraakGeboekt.vue"),
     props: true
+=======
+      import(/* webpackChunkName: "about" */ "../views/AfspraakMaken.vue")
+>>>>>>> Calender v01
   }
 ];
 

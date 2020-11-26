@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
   <v-container>
     <h2>Type Afspraak:</h2>
     <v-checkbox input-value="true" label="Shiatsu Therapie" v-model="shiatsu" @click:event="changeBehandeling"></v-checkbox>
@@ -29,3 +30,7 @@ export default {
   }
 };
 </script>
+=======
+  
+</template>
+>>>>>>> Calender v01
