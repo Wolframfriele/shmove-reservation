@@ -25,9 +25,9 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
 
-    path('admin/', admin.site.urls), # load admin urls
-    path('api/', include(router.urls)), # api base route
-    url(r'^$', TemplateView.as_view(template_name='index.html')), # embeded static frontend files
+    path('admin/', admin.site.urls),  # load admin urls
+    path('api/', include(router.urls)),  # api base route
+    url(r'^$', TemplateView.as_view(template_name='index.html')),  # embeded static frontend files
     # frontend urls
     path('', views.home, name='home'),
 
