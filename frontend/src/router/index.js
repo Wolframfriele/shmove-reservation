@@ -12,9 +12,21 @@ const routes = [
   },
   {
 <<<<<<< HEAD
+<<<<<<< HEAD
     path: "/afspraak-maken",
     name: "Afspraak Maken",
 =======
+=======
+    path: "/afspraak-maken",
+    name: "Afspraak Maken",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/AfspraakMaken.vue")
+  },
+  {
+>>>>>>> All reservation steps and call appointments via api
     path: "/afspraak-bevestigen",
     name: "AfspraakBevestigen",
 >>>>>>> Calender v01
@@ -33,6 +45,7 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/AfspraakBevestigen.vue")
   },
   {
+<<<<<<< HEAD
     path: "/afspraak-maken",
     name: "Afspraak Maken",
 >>>>>>> Calender v01
@@ -45,17 +58,23 @@ const routes = [
     props: true
   },
   {
+=======
+>>>>>>> All reservation steps and call appointments via api
     path: "/afspraak-geboekt",
     name: "AfspraakGeboekt",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
+<<<<<<< HEAD
       import(/* webpackChunkName: "about" */ "../views/AfspraakGeboekt.vue"),
     props: true
 =======
       import(/* webpackChunkName: "about" */ "../views/AfspraakMaken.vue")
 >>>>>>> Calender v01
+=======
+      import(/* webpackChunkName: "about" */ "../views/AfspraakGeboekt.vue")
+>>>>>>> All reservation steps and call appointments via api
   }
 ];
 

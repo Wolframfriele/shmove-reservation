@@ -2,6 +2,7 @@
   <v-main>
     <h1 class="display-1">Afspraak Bevestigen:</h1>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <div class="text-center">
       <v-icon color="primary">mdi-circle</v-icon>
       <v-icon color="primary">mdi-circle</v-icon>
@@ -38,17 +39,30 @@ h1 {
 =======
   </v-main>
   
+=======
+    <FormBevestig class="form"/>
+  </v-main>  
+>>>>>>> All reservation steps and call appointments via api
 </template>
 
 <script>
+import FormBevestig from '../components/FormBevestig.vue'
 export default {
-  
+  components: {
+    FormBevestig
+  }
 }
 </script>
 
 <style scoped>
   h1 {
     text-align: center;
+    margin: 1em 1em 3em 1em;
+  }
+
+  .form {
+    width: 500px;
+    margin: auto;
   }
 
 </style>
