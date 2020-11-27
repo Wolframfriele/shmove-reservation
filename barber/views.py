@@ -1,8 +1,7 @@
-<<<<<<< HEAD
+
 from django.shortcuts import render
 
 # Create your views here.
-=======
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
@@ -23,11 +22,11 @@ from rest_framework.status import (
     HTTP_200_OK
 )
 
-# from works.models import 
-from barber.serializers import TestSerializer
+from barber.models import Appointments
+from barber.serializers import TestSerializer, NewAppointmentSerializer
 from django.core.files import File
 from django.conf import settings
-
+from datetime import datetime
 # Create your views here.
 
 class TestView(viewsets.ModelViewSet):
@@ -43,4 +42,46 @@ class TestView(viewsets.ModelViewSet):
         serializer = User.objects.filter(id=user_id)
         return Response(serializers.serialize('json', serializer))
 
->>>>>>> d7d414c47f564ff27a2e77c484b8f3248beea710
+
+class NewAppointments(viewsets.ModelViewSet):
+    queryset = Appointments.objects.all()
+    serializer_class = NewAppointmentSerializer
+    permission_classes = [AllowAny]
+
+    @csrf_exempt
+    @action(methods=['post'], detail=False)
+    def new_appointment(self, request):
+        customer_id = 75643
+        name = "name"
+        email = "email"
+        phone_number = "phone_number"
+        date_booked = datetime.now()
+        booked_time_start = datetime.now().time()
+        booked_time_end = datetime.now().time()
+        treatment_array = "<question1>, <answer1>, <question2>, <answer2>, <question3>, <answer3>, etc..."
+        employee_id = 375646
+        serializer = Appointments.objects.create(customer_id=customer_id, name=name, email=email,
+                                                 phone_number=phone_number, date_booked=date_booked,
+                                                 booked_time_start=booked_time_start, booked_time_end=booked_time_end,
+                                                 treatment_array=treatment_array, employee_id=employee_id)
+        return Response('Appointment has been submitted. :)')
+
+
+def new_appointment():
+    user = User.objects.get(id=1)
+    customer_id = user
+    name = "name"
+    email = "email"
+    phone_number = "phone_number"
+    date_booked = datetime.now()
+    booked_time_start = datetime.now().time()
+    booked_time_end = datetime.now().time()
+    treatment_array = "<question1>, <answer1>, <question2>, <answer2>, <question3>, <answer3>, etc..."
+    employee_id = "Yanick"
+    serializer = Appointments.objects.create(customer_id=customer_id, name=name, email=email,
+                                             phone_number=phone_number, date_booked=date_booked,
+                                             booked_time_start=booked_time_start, booked_time_end=booked_time_end,
+                                             treatment_array=treatment_array, employee_id=employee_id)
+
+
+new_appointment()
