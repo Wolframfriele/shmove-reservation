@@ -11,6 +11,15 @@ const routes = [
     component: Home
   },
   {
+    path: "/afspraak-maken",
+    name: "Afspraak Maken",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/AfspraakMaken.vue")
+  },
+  {
     path: "/afspraak-bevestigen",
     name: "AfspraakBevestigen",
     // route level code-splitting
@@ -20,13 +29,13 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/AfspraakBevestigen.vue")
   },
   {
-    path: "/afspraak-maken",
-    name: "Afspraak Maken",
+    path: "/afspraak-geboekt",
+    name: "AfspraakGeboekt",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AfspraakMaken.vue")
+      import(/* webpackChunkName: "about" */ "../views/AfspraakGeboekt.vue")
   }
 ];
 

@@ -38,6 +38,7 @@ html,
 body {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  overflow-y: hidden;
   width: 100%;
   margin: 0px;
   padding: 0px;
