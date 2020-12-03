@@ -4,6 +4,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
+from barber.models import Appointments, Barbers, Employees, Credentials
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.core import serializers
@@ -22,7 +23,7 @@ from rest_framework.status import (
     HTTP_200_OK
 )
 
-from barber.models import Appointments
+
 from barber.serializers import TestSerializer, NewAppointmentSerializer
 from django.core.files import File
 from django.conf import settings
@@ -67,21 +68,35 @@ class NewAppointments(viewsets.ModelViewSet):
         return Response('Appointment has been submitted. :)')
 
 
-def new_appointment():
-    user = User.objects.get(id=1)
-    customer_id = user
-    name = "name"
-    email = "email"
-    phone_number = "phone_number"
-    date_booked = datetime.now()
-    booked_time_start = datetime.now().time()
-    booked_time_end = datetime.now().time()
-    treatment_array = "<question1>, <answer1>, <question2>, <answer2>, <question3>, <answer3>, etc..."
-    employee_id = "Yanick"
-    serializer = Appointments.objects.create(customer_id=customer_id, name=name, email=email,
-                                             phone_number=phone_number, date_booked=date_booked,
-                                             booked_time_start=booked_time_start, booked_time_end=booked_time_end,
-                                             treatment_array=treatment_array, employee_id=employee_id)
+# def new_barber():
+#     name = "Shmoving Test"
+#     serializer = Barbers.objects.create(name=name)
 
 
-new_appointment()
+# def new_employee():
+#     user_id =
+#     barber_id =
+#     avatar_path = "image.png"
+#     last_edit = datetime.now().time()
+#     serializer = Barbers.objects.create(user_id=user_id, barber_id=barber_id, avatar_path=avatar_path,
+#                                         last_edit=last_edit)
+
+
+# def new_appointment():
+#     user = User.objects.get(id=1)
+#     customer_id = user
+#     name = "name"
+#     email = "email"
+#     phone_number = "phone_number"
+#     date_booked = datetime.now()
+#     booked_time_start = datetime.now().time()
+#     booked_time_end = datetime.now().time()
+#     treatment_array = "<question1>, <answer1>, <question2>, <answer2>, <question3>, <answer3>, etc..."
+#     employee_id = "Yanick"
+#     serializer = Appointments.objects.create(customer_id=customer_id, name=name, email=email,
+#                                              phone_number=phone_number, date_booked=date_booked,
+#                                              booked_time_start=booked_time_start, booked_time_end=booked_time_end,
+#                                              treatment_array=treatment_array, employee_id=employee_id)
+#
+#
+# new_appointment()
