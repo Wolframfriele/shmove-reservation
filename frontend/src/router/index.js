@@ -17,7 +17,8 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AfspraakMaken.vue")
+      import(/* webpackChunkName: "about" */ "../views/AfspraakMaken.vue"),
+    props: true
   },
   {
     path: "/afspraak-bevestigen",
@@ -26,7 +27,8 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AfspraakBevestigen.vue")
+      import(/* webpackChunkName: "about" */ "../views/AfspraakBevestigen.vue"),
+    props: true
   },
   {
     path: "/afspraak-geboekt",

@@ -2,35 +2,16 @@
   <v-row class="fill-height">
     <v-col>
       <v-sheet height="64">
-        <v-toolbar
-          flat
-        >
-          <v-btn
-            outlined
-            class="mr-4"
-            color="grey darken-2"
-            @click="setToday"
-          >
+        <v-toolbar flat>
+          <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
             Today
           </v-btn>
-          <v-btn
-            fab
-            text
-            small
-            color="grey darken-2"
-            @click="prev"
-          >
+          <v-btn fab text small color="grey darken-2" @click="prev">
             <v-icon small>
               mdi-chevron-left
             </v-icon>
           </v-btn>
-          <v-btn
-            fab
-            text
-            small
-            color="grey darken-2"
-            @click="next"
-          >
+          <v-btn fab text small color="grey darken-2" @click="next">
             <v-icon small>
               mdi-chevron-right
             </v-icon>
@@ -38,8 +19,7 @@
           <v-toolbar-title v-if="$refs.calendar">
             {{ $refs.calendar.title }}
           </v-toolbar-title>
-          <v-spacer>
-          </v-spacer>
+          <v-spacer> </v-spacer>
           <v-toolbar-title>
             Kies een afspraak:
           </v-toolbar-title>
@@ -57,69 +37,68 @@
           :first-interval="firstinterval"
           :interval-count="intervalcount"
           :interval-format="intervalFormat"
-          :locale='locale'
+          :locale="locale"
           @click:event="bevestigAfspraak"
         ></v-calendar>
       </v-sheet>
     </v-col>
   </v-row>
 </template>
-  
+
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data: () => ({
-    focus: '',
-    type: 'week',
+    focus: "",
+    type: "week",
     weekdays: [1, 2, 3, 4, 5, 6, 0],
-    firstinterval: '9',
-    intervalcount: '9',
-    locale: 'nl',
-    selectedEvent: {},
-    eventColor: 'primary',
-    events: [],
+    firstinterval: "9",
+    intervalcount: "9",
+    locale: "nl",
+    eventColor: "primary",
+    events: []
   }),
   async created() {
     try {
-      const res = await axios.get(`https://run.mocky.io/v3/b456ae47-4cfe-438b-8098-cda5ebb8bbf3`)
+      const res = await axios.get(
+        `https://run.mocky.io/v3/b456ae47-4cfe-438b-8098-cda5ebb8bbf3`
+      );
 
       this.events = res.data.events;
-    } catch(e) {
-      console.error(e)
+    } catch (e) {
+      console.error(e);
     }
   },
-  mounted () {
-    this.$refs.calendar.checkChange()
+  mounted() {
+    this.$refs.calendar.checkChange();
   },
   methods: {
-    setToday () {
-      this.focus = ''
+    setToday() {
+      this.focus = "";
     },
-    prev () {
-      this.$refs.calendar.prev()
+    prev() {
+      this.$refs.calendar.prev();
     },
-    next () {
-      this.$refs.calendar.next()
+    next() {
+      this.$refs.calendar.next();
     },
     // updateRange ({ start, end }) {
-      
+
     // },
     intervalFormat(interval) {
-      return interval.time
+      return interval.time;
     },
-    bevestigAfspraak ({ event }) {
-      this.selectedEvent = event
-      this.$emit('selectie', this.selectedEvent)
-      this.$router.push('afspraak-bevestigen')
-    },
-  },
-}
+    bevestigAfspraak({ event }) {
+      // console.log(event.start)
+      this.$router.push({name: "AfspraakBevestigen", params: {date: event.start}});
+    }
+  }
+};
 </script>
 
 <style scoped>
-  .v-calendar-daily__scroll-area {
-    overflow: hidden;
-  }
-
+.v-calendar-daily__scroll-area {
+  overflow: hidden;
+}
 </style>

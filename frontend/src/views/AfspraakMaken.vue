@@ -1,40 +1,36 @@
 <template>
-    <v-main>
-      <h1 class="display-1">Afspraak Maken:</h1>
-      <TypeAfspraak class="type" />
-      <TijdKiezen />
-    </v-main>
+  <v-main>
+    <h1 class="display-1">Afspraak Maken:</h1>
+    <TypeAfspraak class="type" />
+    <TijdKiezen />
+  </v-main>
 </template>
 
 <script>
-import TypeAfspraak from '../components/TypeAfspraak.vue'
-import TijdKiezen from '../components/TijdKiezen.vue'
+import TypeAfspraak from "../components/TypeAfspraak.vue";
+import TijdKiezen from "../components/TijdKiezen.vue";
 
 export default {
   components: {
     TypeAfspraak,
     TijdKiezen
   },
-  methods: {
-    
-  },
+  methods: {},
   data() {
-    return {
-      
-    }
-  },
-}
+    return {};
+  }
+};
 </script>
 
 <style scoped>
-  h1 {
-    text-align: center;
-    margin: 1em 1em 1em 1em;
-  }
+h1 {
+  text-align: center;
+  margin: 1em 1em 1em 1em;
+}
 
-  .type {
-    width: 300px;
-    margin: auto;
-    overflow: hidden;
-  }
+.type {
+  width: 300px;
+  margin: auto;
+  overflow: hidden;
+}
 </style>
