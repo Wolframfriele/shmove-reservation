@@ -65,11 +65,7 @@ ROOT_URLCONF = 'shmove_reservations.urls'
 
 # Vue project location
 # FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
-<<<<<<< HEAD
-# # Vue assets directory (assetsDir)
-=======
 # Vue assets directory (assetsDir)
->>>>>>> 6d2b6ad... frontend merged
 # STATICFILES_DIRS = [
 #     os.path.join(FRONTEND_DIR, 'dist/static'),
 # ]
