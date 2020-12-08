@@ -13,3 +13,19 @@ in je terminal, je moet in shmove-reservation staan en doe:
 # start de server
     python manage.py runserver
 
+# Frontend
+Installeer Vue global
+. Voor npm gebruiker
+    - npm install -g @vue/cli
+. voor yarn gebruikers
+    - yarn global add @vue/cli
+
+. pull de code van de dev branch
+- Navigeer via de terminal naar je shmove_reservations map
+- pipenv shell
+- cd frontend
+- npm i
+
+. Start vue server
+- npm run serve of yarn serve
+
