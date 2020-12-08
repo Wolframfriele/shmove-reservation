@@ -34,12 +34,12 @@ class Employees(models.Model):
 
 
 class Appointments(models.Model):
-    customer = models.ForeignKey(User, on_delete=models.CASCADE)
-    date_booked_start = models.TimeField(default=datetime.now().time())
-    date_booked_end = models.TimeField(default=datetime.now().time())
+    customer_id = models.IntegerField(default=0)
+    date_booked_start = models.DateTimeField(default=datetime.now())
+    date_booked_end = models.DateTimeField(default=datetime.now())
     date_requested = models.DateTimeField(auto_now_add=True)
     treatment = models.CharField(max_length=1500)
-    employee = models.ForeignKey(Employees, on_delete=models.CASCADE)
+    employee_id = models.IntegerField(default=0)
     done = models.BooleanField(default=False)
 
 
@@ -52,7 +52,7 @@ class Credentials(models.Model):
 
 class Openinghours(models.Model):
     barber = models.ForeignKey(Barbers, on_delete=models.CASCADE)
-    day = models.CharField(max_length=10)
+    day = models.CharField(max_length=10, default='<day>')
     is_open = models.BooleanField(default=False)
     time_open = models.TimeField(default=datetime.now().time())
     time_close = models.TimeField(default=datetime.now().time())
@@ -77,7 +77,7 @@ class Answers(models.Model):
 
 class Worktimes(models.Model):
     employee = models.ForeignKey(Employees, on_delete=models.CASCADE)
-    day = models.CharField(max_length=10)
+    day = models.CharField(max_length=10, default='<day>')
     is_open = models.BooleanField(default=False)
     time_open = models.TimeField(default=datetime.now().time())
     time_close = models.TimeField(default=datetime.now().time())
