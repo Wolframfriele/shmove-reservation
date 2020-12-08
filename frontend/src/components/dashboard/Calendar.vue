@@ -168,6 +168,7 @@
 
 <script>
 import axios from 'axios';
+
 export default {
   data: () => ({
     calendartype: true,
@@ -195,9 +196,11 @@ export default {
     starttime: '',
     endtime: '',
   }),
+
   created() {
     this.getData();
   },
+
   mounted() {
     this.$refs.calendar.checkChange();
   },
@@ -237,6 +240,7 @@ export default {
         let rMin = '' + rounded % 60
         this.starttime = rHr.padStart(2, '0') + ':' + rMin.padStart(2, '0')
         this.endtime = this.starttime;
+
         //Endtime minutes
         let [endHours, endMinutes] = this.endtime.split(':');
         endHours = parseInt(endHours);
@@ -312,12 +316,14 @@ export default {
           this.selectedOpen = true
         }, 10)
       }
+
       if (this.selectedOpen) {
         this.selectedOpen = false
         setTimeout(open, 10)
       } else {
         open()
       }
+
       nativeEvent.stopPropagation()
     },
   },
