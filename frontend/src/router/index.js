@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
+import Dashboard from "../views/dashboard/Home.vue";
 
 Vue.use(VueRouter);
 
@@ -74,8 +75,18 @@ const routes = [
 >>>>>>> Calender v01
 =======
       import(/* webpackChunkName: "about" */ "../views/AfspraakGeboekt.vue")
+<<<<<<< HEAD
 >>>>>>> All reservation steps and call appointments via api
   }
+=======
+  },
+  // dashboard/therapeut routes
+    {
+    path: "/dashboard",
+    name: "Dashboard",
+    component: Dashboard
+  },
+>>>>>>> yeah Liam zit op github
 ];
 
 const router = new VueRouter({

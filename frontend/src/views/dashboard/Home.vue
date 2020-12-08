@@ -4,6 +4,7 @@
 
 <script>
 // import axios from 'axios';
+<<<<<<< HEAD
 import Calendar from "../../components/dashboard/Calendar";
 export default {
   data: () => ({
@@ -16,6 +17,25 @@ export default {
   mounted() {
   },
   methods: {
+=======
+import Calendar from "../../components/layouts/dashboard/Calendar";
+export default {
+  data: () => ({
+
+  }),
+
+  components:{
+    Calendar:Calendar
+  },
+
+  created() {
+  },
+
+  mounted() {
+  },
+  methods: {
+
+>>>>>>> yeah Liam zit op github
   },
 }
 </script>
