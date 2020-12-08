@@ -55,7 +55,7 @@ class GetAppointments(viewsets.ModelViewSet):
 
     @csrf_exempt
     @action(methods=['post'], detail=False)
-    def get_appointments(self, request):
+    def get_appointments_customer(self, request):
         dates = []
         start_day = datetime.strptime(getpost(request, 'start_day'), '%Y-%m-%d')
         end_day = datetime.strptime(getpost(request, 'end_day'), '%Y-%m-%d')
@@ -64,6 +64,33 @@ class GetAppointments(viewsets.ModelViewSet):
                                                    date_booked_start__lte=end_day).values()
         for appointment in appointments:
             dates.append({'date_end': appointment['date_booked_end'], 'date_start': appointment['date_booked_start']})
+        return Response(dates)
+
+    @csrf_exempt
+    @action(methods=['post'], detail=False)
+    def get_appointments_barber(self, request):
+        dates = []
+        start_day = datetime.strptime(getpost(request, 'start_day'), '%Y-%m-%d')
+        end_day = datetime.strptime(getpost(request, 'end_day'), '%Y-%m-%d')
+        employee_id = getpost(request, 'employee_id')
+        appointments = Appointments.objects.filter(employee_id=employee_id, date_booked_start__gte=start_day,
+                                                   date_booked_start__lte=end_day).values()
+        for appointment in appointments:
+            if appointment['customer_id'] == 0:
+                cust_data = Credentials.objects.get(pk=appointment['id'])
+            else:
+                cust_data = User.objects.get(pk=appointment['customer_id'])
+
+            dates.append({'date_end': appointment['date_booked_end'],
+                          'date_start': appointment['date_booked_start'],
+                          'done': appointment['done'],
+                          'treatment': appointment['treatment'],
+                          'customer_first_name': cust_data.first_name,
+                          'customer_last_name': cust_data.last_name,
+                          'customer_email': cust_data.email,
+                          # phone_number
+                          'employee_id': appointment['employee_id']
+                          })
         return Response(dates)
 # serializers.serialize('json', appointments)
 

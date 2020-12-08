@@ -45,7 +45,8 @@ class Appointments(models.Model):
 
 class Credentials(models.Model):
     appointment = models.ForeignKey(Appointments, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200)
+    first_name = models.CharField(max_length=200)
+    last_name = models.CharField(max_length=200)
     email = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=10)
 
