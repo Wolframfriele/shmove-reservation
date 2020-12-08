@@ -66,7 +66,6 @@ export default {
       const res = await axios.get(
         `https://run.mocky.io/v3/b456ae47-4cfe-438b-8098-cda5ebb8bbf3`
       );
-
       this.events = res.data.events;
     } catch (e) {
       console.error(e);

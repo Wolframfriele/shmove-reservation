@@ -29,6 +29,7 @@ h1 {
 }
 
 .type {
+  width: 300px;
   margin: auto;
   overflow: hidden;
 }
