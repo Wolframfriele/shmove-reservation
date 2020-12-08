@@ -4,7 +4,7 @@
 
 <script>
 // import axios from 'axios';
-import Calendar from "../../components/layouts/dashboard/Calendar";
+import Calendar from "../../components/dashboard/Calendar";
 export default {
   data: () => ({
 
