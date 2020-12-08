@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import { bus } from '../main'
 import axios from "axios";
 
 export default {
@@ -57,6 +58,7 @@ export default {
     intervalcount: "9",
     locale: "nl",
     eventColor: "primary",
+    treatment: [],
     events: []
   }),
   async created() {
@@ -69,6 +71,9 @@ export default {
     } catch (e) {
       console.error(e);
     }
+    bus.$on('changeTreatment', (data) => {
+      this.treatment = data;
+    })
   },
   mounted() {
     this.$refs.calendar.checkChange();
@@ -91,7 +96,7 @@ export default {
     },
     bevestigAfspraak({ event }) {
       // console.log(event.start)
-      this.$router.push({name: "AfspraakBevestigen", params: {date: event.start}});
+      this.$router.push({name: "AfspraakBevestigen", params: {start: event.start, end: event.end}});
     }
   }
 };

@@ -55,6 +55,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
 import {
   extend,
@@ -107,6 +108,22 @@ export default {
     },
     submit() {
       this.$refs.observer.validate()
+      axios.post(' http://127.0.0.1:8000/api/appointments/new_appointment/', 
+        {
+        customer_id: 0,
+        name: "John",
+        email: "",
+        phone_number: "0612345678",
+        start: this.$route.params.start,
+        end: this.$route.params.end,
+        treatment:[
+          {"question1":"answer thingie"},
+          {"question2":"answer thingie"},
+          {"question3":"answer thingie"}
+        ],
+        employee_id:21
+        } 
+      )
       this.$router.push("afspraak-geboekt")
     },
     back() {
@@ -138,7 +155,7 @@ export default {
         'november',
         'december'
       ];
-      const reserverings_tijd = new Date(this.$route.params.date);
+      const reserverings_tijd = new Date(this.$route.params.start);
 
       console.log(reserverings_tijd)
       const dayIndex = reserverings_tijd.getDay();
