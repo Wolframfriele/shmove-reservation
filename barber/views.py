@@ -56,12 +56,16 @@ class GetAppointments(viewsets.ModelViewSet):
     @csrf_exempt
     @action(methods=['post'], detail=False)
     def get_appointments(self, request):
+        dates = []
         start_day = datetime.strptime(getpost(request, 'start_day'), '%Y-%m-%d')
         end_day = datetime.strptime(getpost(request, 'end_day'), '%Y-%m-%d')
         employee_id = getpost(request, 'employee_id')
-        appointments = Appointments.objects.values("date_booked_start", "date_booked_end", employee_id=employee_id,
-                                                   date_booked_start__gte=start_day, date_booked_start__lte=end_day, flat=True)
-        return Response(list(appointments))
+        appointments = Appointments.objects.filter(employee_id=employee_id, date_booked_start__gte=start_day,
+                                                   date_booked_start__lte=end_day).values()
+        for appointment in appointments:
+            dates.append({'date_end': appointment['date_booked_end'], 'date_start': appointment['date_booked_start']})
+        return Response(dates)
+# serializers.serialize('json', appointments)
 
 
 class NewAppointments(viewsets.ModelViewSet):
