@@ -8,7 +8,7 @@ from django.db import models
 from django.utils import timezone
 
 # class Users(models.Model):
-#     user_id = models.AutoField(primary_key=True)
+#     user = models.AutoField(primary_key=True)
 #     username = models.CharField(max_length=100)
 #     first_name = models.CharField(max_length=100)
 #     last_name = models.CharField(max_length=100)
@@ -21,33 +21,65 @@ from django.utils import timezone
 #     presets = models.CharField(max_length=100)
 
 
-class Appointments(models.Model):
-    customer_id = models.ForeignKey(User, on_delete=models.CASCADE)
+class Barbers(models.Model):
     name = models.CharField(max_length=200)
-    email = models.CharField(max_length=200)
-    phone_number = models.CharField(max_length=10)
-    date_booked = models.DateTimeField(default=datetime.now())
-    booked_time_start = models.TimeField(default=datetime.now().time())
-    booked_time_end = models.TimeField(default=datetime.now().time())
+
+
+class Employees(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    barber = models.ForeignKey(Barbers, on_delete=models.CASCADE)
+    avatar_path = models.CharField(max_length=400)
+    made_on = models.DateTimeField(auto_now_add=True)
+    last_edit = models.DateTimeField(auto_now_add=True)  # moet updated bij elke verandering in die row.
+
+
+class Appointments(models.Model):
+    customer_id = models.IntegerField(default=0)
+    date_booked_start = models.DateTimeField(default=datetime.now())
+    date_booked_end = models.DateTimeField(default=datetime.now())
     date_requested = models.DateTimeField(auto_now_add=True)
-    treatment_array = models.CharField(max_length=1500)
-    employee_id = models.CharField(max_length=200)
+    treatment = models.CharField(max_length=1500)
+    employee_id = models.IntegerField(default=0)
     done = models.BooleanField(default=False)
 
 
-class TreatmentQuestions(models.Model):
-    question_id = models.AutoField(primary_key=True)
-    question = models.CharField(max_length=1000)
-    answers = models.CharField(max_length=10000)
+class Credentials(models.Model):
+    appointment = models.ForeignKey(Appointments, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200)
+    email = models.CharField(max_length=200)
+    phone_number = models.CharField(max_length=10)
+
+
+class Openinghours(models.Model):
+    barber = models.ForeignKey(Barbers, on_delete=models.CASCADE)
+    day = models.CharField(max_length=10, default='<day>')
+    is_open = models.BooleanField(default=False)
+    time_open = models.TimeField(default=datetime.now().time())
+    time_close = models.TimeField(default=datetime.now().time())
+    last_edit = models.DateTimeField(auto_now_add=True)
+
+
+class Questions(models.Model):
+    barber = models.ForeignKey(Barbers, on_delete=models.CASCADE)
+    question = models.CharField(max_length=500)
     made_on = models.DateTimeField(auto_now_add=True)
+    last_edit = models.DateTimeField(auto_now_add=True)  # moet updated bij elke verandering in die row.
 
 
-class QuestionConnections(models.Model):
-    question_id = models.ForeignKey(TreatmentQuestions, on_delete=models.CASCADE)  # not sure
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)  # not sure
-
-
-class Presets(models.Model):
-    preset_id = models.AutoField(primary_key=True)
-    preset = models.CharField(max_length=1500)  # same as 'treatment_array' in Appointments
+class Answers(models.Model):
+    question = models.ForeignKey(Questions, on_delete=models.CASCADE)
+    answer = models.CharField(max_length=500)
+    duration = models.TimeField(default=datetime.now().time())
+    cost = models.DecimalField(max_digits=10, decimal_places=2)
     made_on = models.DateTimeField(auto_now_add=True)
+    last_edit = models.DateTimeField(auto_now_add=True)  # moet updated bij elke verandering in die row.
+
+
+class Worktimes(models.Model):
+    employee = models.ForeignKey(Employees, on_delete=models.CASCADE)
+    day = models.CharField(max_length=10, default='<day>')
+    is_open = models.BooleanField(default=False)
+    time_open = models.TimeField(default=datetime.now().time())
+    time_close = models.TimeField(default=datetime.now().time())
+    last_edit = models.DateTimeField(auto_now_add=True)
+
