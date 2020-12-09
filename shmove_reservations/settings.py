@@ -27,7 +27,10 @@ SECRET_KEY = 'mz2cb&ktr0bm_-!(%^zy#+&am*kk!y%!qcqc(*&k18a=nk@gbs'
 DEBUG = True
 
 ALLOWED_HOSTS = [
+<<<<<<< HEAD
     
+=======
+>>>>>>> dashboard pulled
 ]
 
 
@@ -49,6 +52,7 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
+    'barber'
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -60,6 +64,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -67,7 +72,7 @@ ROOT_URLCONF = 'shmove_reservations.urls'
 
 # Vue project location
 # FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
-# # Vue assets directory (assetsDir)
+# Vue assets directory (assetsDir)
 # STATICFILES_DIRS = [
 #     os.path.join(FRONTEND_DIR, 'dist/static'),
 # ]
@@ -177,9 +182,9 @@ CORS_ORIGIN_WHITELIST = (
     # '192.168.56.1:8080/',
 )
 # email settings
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+# EMAIL_HOST = "smtp.gmail.com"
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")

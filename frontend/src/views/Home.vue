@@ -12,7 +12,26 @@
 
 export default {
   name: "Home",
-  components: {}
+  components: {
+    
+  },
+
+  created(){
+    this.getUser();
+  },
+
+  methods:{
+    getUser(){
+      let self = this;
+      self.$store.dispatch("getUser", {
+        url: "test/get_user",
+        params: { user_id: 1 },
+        callback: function(data) {
+          console.log(JSON.parse(data));
+        },
+      });
+    }
+  }
 };
 </script>
 

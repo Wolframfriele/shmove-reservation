@@ -63,17 +63,20 @@ export default {
   }),
   async created() {
     try {
-      const res = await axios.get('https://run.mocky.io/v3/b0538f87-56ff-4b09-b1ed-537e815507c2')
-      res.data.open.forEach(element => {
-        this.events.push({
-          name: "Vrije Afspraak",
-          start: element.start,
-          end: element.end,
-          timed: true
-        })
-      });
-    } catch (e) {
-      console.error(e);
+      // const res = await axios.get(`https://run.mocky.io/v3/b456ae47-4cfe-438b-8098-cda5ebb8bbf3`)
+      const res = await axios.post(`http://127.0.0.1:8000/api/appointments/get_appointments_barber/`, 
+      {body: {
+        start_day: "2020-11-23",
+        end_day: "2020-11-29",
+        employee_id: 3,
+        }
+      }
+      )
+
+      // this.events = res.data.events;
+      console.log(res.data);
+    } catch(e) {
+      console.error(e)
     }
     bus.$on('changeTreatment', (data) => {
       this.treatment = data;
