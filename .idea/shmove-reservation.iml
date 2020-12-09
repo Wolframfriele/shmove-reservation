@@ -14,16 +14,9 @@
   </component>
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
-<<<<<<< HEAD
     <orderEntry type="jdk" jdkName="Python 3.9 (mysite-jnxDjkj2)" jdkType="Python SDK" />
     <orderEntry type="jdk" jdkName="Python 3.9 (shmove_reservations) (2)" jdkType="Python SDK" />
-=======
-<<<<<<< Updated upstream
     <orderEntry type="inheritedJdk" />
-=======
-    <orderEntry type="jdk" jdkName="Python 3.9 (shmove_reservations) (2)" jdkType="Python SDK" />
->>>>>>> Stashed changes
->>>>>>> Calender v01
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TemplatesService">
