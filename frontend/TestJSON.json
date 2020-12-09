@@ -1,0 +1,18 @@
+{
+  "events":[
+    {
+    "name": "vrij",
+    "start": "2020-11-27T15:30",
+    "end": "2020-11-27T16:30",
+    "color": "'primary'",
+    "timed": "true"
+  },
+  {
+    "name": "vrij",
+    "start": "2020-11-28T15:30",
+    "end": "2020-11-28T16:30",
+    "color": "'primary'",
+    "timed": "true"
+  }
+]
+}

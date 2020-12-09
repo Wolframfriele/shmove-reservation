@@ -1,9 +1,9 @@
 <template>
-  <v-app>
+  <v-app :dark='true'>
     <Nav />
-    <v-content>
+    <v-main>
       <router-view class="animated fadeIn"></router-view>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
@@ -12,7 +12,7 @@ import Nav from "./components/layouts/Nav";
 export default {
   name: "App",
   components: {
-    Nav,
+    Nav
   },
   data: () => ({
     //
@@ -38,12 +38,11 @@ html,
 body {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  overflow-y: hidden;
   width: 100%;
   margin: 0px;
   padding: 0px;
-  font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;
-  background-color: #f5fffa;
-}
+  font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;}
 #app {
   /* scroll-behavior: smooth; */
   font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;
@@ -53,7 +52,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #fffafa;
   /* overflow-x: hidden; */
 }
 </style>
