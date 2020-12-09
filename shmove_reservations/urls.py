@@ -19,16 +19,17 @@ from django.conf import settings
 from django.urls import include, path
 from django.conf.urls.static import static
 from .router import router
+from shmove_reservations import views
 from django.conf.urls import url
 from django.views.generic import TemplateView
 
 urlpatterns = [
 
-    path('admin/', admin.site.urls), # load admin urls
-    path('api/', include(router.urls)), # api base route
-    # url(r'^$', TemplateView.as_view(template_name='index.html')), # embeded static frontend files
+    path('admin/', admin.site.urls),  # load admin urls
+    path('api/', include(router.urls)),  # api base route
+    url(r'^$', TemplateView.as_view(template_name='index.html')),  # embeded static frontend files
     # frontend urls
-    # path('', views.home, name='home'),
+    path('', views.home, name='home'),
 
 ] + static(
     settings.STATIC_URL, document_root=settings.STATIC_ROOT,
