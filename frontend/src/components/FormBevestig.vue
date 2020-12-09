@@ -2,11 +2,20 @@
   <v-main>
     <validation-observer ref="observer" v-slot="{ invalid }">
       <form @submit.prevent="submit">
-        <validation-provider v-slot="{ errors }" name="Naam">
+        <validation-provider v-slot="{ errors }" name="Voornaam">
           <v-text-field
-            v-model="name"
+            v-model="firstname"
             :error-messages="errors"
-            label="Naam"
+            label="Voornaam"
+            outlined
+            required
+          ></v-text-field>
+        </validation-provider>
+        <validation-provider v-slot="{ errors }" name="Achternaam">
+          <v-text-field
+            v-model="lastname"
+            :error-messages="errors"
+            label="Achternaam"
             outlined
             required
           ></v-text-field>
@@ -24,8 +33,26 @@
             required
           ></v-text-field>
         </validation-provider>
+        <validation-provider
+        v-slot="{ errors }"
+        name="phoneNumber"
+        :rules="{
+          required: true,
+        }"
+      >
+        <v-text-field
+          v-model="phonenumber"
+          :error-messages="errors"
+          label="Telefoon Nummer"
+          outlined
+          required
+        ></v-text-field>
+      </validation-provider>
         <p>
-          U wordt <strong>{{ convertDate }}</strong> geknipt door <strong>Shane</strong>.
+          Uw afspraak staat gepland voor <strong>{{ convertDate }}</strong>. De afspraak duurt ongeveer 2 uur.
+        </p>
+        <p class="caption">
+          Annuleren is kosteloos tot 48 uur van tevoren, daarna wordt de gereserveerde tijd in principe in rekening gebracht. 
         </p>
         <validation-provider
           v-slot="{ errors }"
@@ -33,7 +60,7 @@
           name="checkbox"
         >
           <v-checkbox
-            v-model="checkbox"
+            v-model="accepted"
             :error-messages="errors"
             value="1"
             label="Ja, ik ga akkoord met de algemene voorwaarden."
@@ -64,7 +91,7 @@ import {
   setInteractionMode
 } from "vee-validate";
 
-setInteractionMode("eager");
+setInteractionMode("lazy");
 
 extend("digits", {
   ...digits,
@@ -73,22 +100,22 @@ extend("digits", {
 
 extend("required", {
   ...required,
-  message: "{_field_} can not be empty"
+  message: "{_field_} kan niet leeg zijn"
 });
 
 extend("max", {
   ...max,
-  message: "{_field_} may not be greater than {length} characters"
+  message: "{_field_} mag niet langer dan {length} zijn"
 });
 
 extend("regex", {
   ...regex,
-  message: "{_field_} {_value_} does not match {regex}"
+  message: "{_field_} {_value_} matched niet met {regex}"
 });
 
 extend("email", {
   ...email,
-  message: "Email must be valid"
+  message: "Email moet een valide adres zijn"
 });
 
 export default {
@@ -98,30 +125,24 @@ export default {
   },
   props: ["date"],
   data: () => ({
-    name: "",
+    firstname: "",
+    lastname: "",
     email: "",
-    checkbox: null,
+    phonenumber: '',
+    accepted: null,
   }),
   methods: {
-    findDate () {
-      
-    },
     submit() {
       this.$refs.observer.validate()
       axios.post(' http://127.0.0.1:8000/api/appointments/new_appointment/', 
         {
-        customer_id: 0,
-        name: "John",
-        email: "",
-        phone_number: "0612345678",
+        firstname: this.firstname,
+        lastname: this.lastname,
+        email: this.email,
+        phone_number: this.phonenumber,
         start: this.$route.params.start,
         end: this.$route.params.end,
-        treatment:[
-          {"question1":"answer thingie"},
-          {"question2":"answer thingie"},
-          {"question3":"answer thingie"}
-        ],
-        employee_id:21
+        treatment: this.$route.params.treatment,
         } 
       )
       this.$router.push("afspraak-geboekt")

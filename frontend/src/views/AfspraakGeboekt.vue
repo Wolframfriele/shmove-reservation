@@ -1,17 +1,19 @@
 <template>
   <v-main>
     <h1 class="display-1">Afspraak is geboekt!</h1>
+    <div class="text-center">
+      <v-icon color="primary">mdi-circle</v-icon>
+      <v-icon color="primary">mdi-circle</v-icon>
+      <v-icon color="primary">mdi-circle</v-icon>
+    </div>
     <BevestigDetails class="form" />
-    <AccountMaken class="form" />
   </v-main>
 </template>
 
 <script>
-import AccountMaken from "../components/AccountMaken.vue";
 import BevestigDetails from "../components/BevestigDetails.vue";
 export default {
   components: {
-    AccountMaken,
     BevestigDetails
   }
 };
@@ -26,5 +28,9 @@ h1 {
 .form {
   width: 500px;
   margin: 2em auto;
+}
+
+.text-center {
+  margin: 1em 1em 1em 1em;
 }
 </style>

@@ -25,7 +25,7 @@
           </v-toolbar-title>
         </v-toolbar>
       </v-sheet>
-      <v-sheet height="550">
+      <v-sheet>
         <v-calendar
           ref="calendar"
           v-model="focus"
@@ -55,7 +55,7 @@ export default {
     type: "week",
     weekdays: [1, 2, 3, 4, 5, 6, 0],
     firstinterval: "9",
-    intervalcount: "9",
+    intervalcount: "11",
     locale: "nl",
     eventColor: "primary",
     treatment: [],
@@ -63,10 +63,15 @@ export default {
   }),
   async created() {
     try {
-      const res = await axios.get(
-        `https://run.mocky.io/v3/b456ae47-4cfe-438b-8098-cda5ebb8bbf3`
-      );
-      this.events = res.data.events;
+      const res = await axios.get('https://run.mocky.io/v3/b0538f87-56ff-4b09-b1ed-537e815507c2')
+      res.data.open.forEach(element => {
+        this.events.push({
+          name: "Vrije Afspraak",
+          start: element.start,
+          end: element.end,
+          timed: true
+        })
+      });
     } catch (e) {
       console.error(e);
     }
@@ -94,8 +99,7 @@ export default {
       return interval.time;
     },
     bevestigAfspraak({ event }) {
-      // console.log(event.start)
-      this.$router.push({name: "AfspraakBevestigen", params: {start: event.start, end: event.end}});
+      this.$router.push({name: "AfspraakBevestigen", params: {start: event.start, end: event.end, treatment: this.treatment}});
     }
   }
 };

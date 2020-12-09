@@ -1,14 +1,11 @@
 <template>
   <v-main>
     <p>
-      U wordt <strong>Zaterdag 29 November</strong> om
-      <strong>13:30</strong> geknipt door <strong>Shane</strong>.
+      Er is een plek in de agenda voor je gereserveerd! Je hebt ook een bevestigings mail ontvangen. Hier staat meer informatie over anuleren in.
     </p>
-    <v-btn color="secondary" elevation="2" x-large>Voeg toe aan agenda</v-btn>
+    <v-btn color="secondary" elevation="2" large>Voeg toe aan agenda</v-btn>
     <p>
-      Wil je uitgebreide funstionaliteit, maak dan een account aan. hier kan je
-      bijvoorbeeld meedere afspraken vooruit plannen en een kappers-abbonement
-      afsluiten.
+      Vanwege covid-19 zijn er nog een aantal dingen om rekening mee te houden.
     </p>
   </v-main>
 </template>

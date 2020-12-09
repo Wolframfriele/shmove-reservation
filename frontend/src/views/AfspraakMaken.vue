@@ -1,8 +1,13 @@
 <template>
   <v-main>
-    <h1 class="display-1">Afspraak Maken:</h1>
+    <h1 class="display-1">Afspraak Maken:</h1>\
+    <div class="text-center">
+      <v-icon color="primary">mdi-circle</v-icon>
+      <v-icon color="grey">mdi-circle-slice-8</v-icon>
+      <v-icon color="grey">mdi-circle-slice-8</v-icon>
+    </div>
     <TypeAfspraak class="type" />
-    <TijdKiezen />
+    <TijdKiezen class="calendar" />
   </v-main>
 </template>
 
@@ -32,5 +37,12 @@ h1 {
   width: 300px;
   margin: auto;
   overflow: hidden;
+}
+.calendar {
+  margin: 0;
+}
+
+.text-center {
+  margin: 1em 1em 1em 1em;
 }
 </style>
