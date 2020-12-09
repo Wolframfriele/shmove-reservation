@@ -9,7 +9,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    HOSt:
+    HOST:
       window.location.port != ""
         ? " http://127.0.0.1:8000"
         : "http://yanick007.pythonanywhere.com",
