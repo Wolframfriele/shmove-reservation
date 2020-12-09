@@ -9,15 +9,15 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    // HOSt: window.location.port != "" ? " http://127.0.0.1:8000" : "http://yanick007.pythonanywhere.com",
-      HOST: "http://127.0.0.1:8000",
+    HOSt:
+      window.location.port != ""
+        ? " http://127.0.0.1:8000"
+        : "http://yanick007.pythonanywhere.com",
     AUTHENTICATED: undefined,
-    usertoken: undefined,
+    usertoken: undefined
   },
 
-  getters: {
-   
-  },
+  getters: {},
 
   mutations: {
     splitToArray(state, str) {
@@ -40,17 +40,17 @@ export default new Vuex.Store({
                   */
       axios
         .get(`${payload.host}/api/${payload.url}/`, {
-          params: payload.params,
+          params: payload.params
           // headers: {
           //     "X-CSRFToken": payload.csrftoken,
           //     Authorization: `token ${payload.auth}`,
           // },
         })
-        .then((response) => {
+        .then(response => {
           let res = response.data;
           payload.callback(res);
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
     },
@@ -63,42 +63,23 @@ export default new Vuex.Store({
        */
       axios
         .post(`${payload.host}/api/${payload.url}/`, {
-          body: payload.params,
+          body: payload.params
           // headers: {
           //     "X-CSRFToken": payload.csrftoken,
           //     Authorization: `token ${payload.auth}`,
           // },
         })
-        .then((response) => {
+        .then(response => {
           let res = response.data;
           payload.callback(res);
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
-    },
+    }
   },
 
-  actions: {
+  actions: {},
 
-    getUser({
-      commit,
-      rootState,
-    }, payload) {
-      /**
-       *get programming languages name
-       */
-      commit("getAxiosCall", {
-        url: payload.url,
-        params: payload.params,
-        callback: payload.callback,
-        host: rootState.HOST,
-      });
-    },
-    
-  },
-
-  modules: {
-   
-  },
+  modules: {}
 });

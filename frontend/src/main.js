@@ -5,7 +5,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import "./registerServiceWorker";
-import vuetify from './plugins/vuetify';
+import vuetify from "./plugins/vuetify";
 import VAnimateCss from "v-animate-css";
 import Vuex from "vuex";
 import Axios from "axios";
@@ -27,6 +27,8 @@ Axios.defaults.withCredentials = true;
 Vue.prototype.$axios = Axios;
 
 Vue.config.productionTip = false;
+
+export const bus = new Vue();
 
 new Vue({
   created() {
