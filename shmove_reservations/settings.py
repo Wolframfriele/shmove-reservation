@@ -27,10 +27,7 @@ SECRET_KEY = 'mz2cb&ktr0bm_-!(%^zy#+&am*kk!y%!qcqc(*&k18a=nk@gbs'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-<<<<<<< HEAD
     
-=======
->>>>>>> dashboard pulled
 ]
 
 
