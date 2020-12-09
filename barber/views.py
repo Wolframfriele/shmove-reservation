@@ -84,4 +84,4 @@ def new_appointment():
                                              treatment_array=treatment_array, employee_id=employee_id)
 
 
-new_appointment()
+# new_appointment()
