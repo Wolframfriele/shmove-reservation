@@ -65,7 +65,11 @@ ROOT_URLCONF = 'shmove_reservations.urls'
 
 # Vue project location
 # FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
+<<<<<<< HEAD
 # # Vue assets directory (assetsDir)
+=======
+# Vue assets directory (assetsDir)
+>>>>>>> 6d2b6ad... frontend merged
 # STATICFILES_DIRS = [
 #     os.path.join(FRONTEND_DIR, 'dist/static'),
 # ]
@@ -175,9 +179,9 @@ CORS_ORIGIN_WHITELIST = (
     # '192.168.56.1:8080/',
 )
 # email settings
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+# EMAIL_HOST = "smtp.gmail.com"
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
