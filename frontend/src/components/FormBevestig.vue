@@ -124,6 +124,7 @@ export default {
     ValidationObserver
   },
   props: ["date"],
+
   data: () => ({
     firstname: "",
     lastname: "",
@@ -131,6 +132,11 @@ export default {
     phonenumber: '',
     accepted: null,
   }),
+
+  created(){
+    console.log(this.$route.params);
+  },
+
   methods: {
     submit() {
       let self = this;
@@ -144,16 +150,19 @@ export default {
             phone_number: this.phonenumber,
             start: this.$route.params.start,
             end: this.$route.params.end,
-            treatment: this.$route.params.treatment,
+            // treatment: this.$route.params.treatment,
+            treatment: ['knippen', 'verven', 'masseren'],
+            employee_id: 0,
           }
         } 
       ).then(response => {
         console.log(response.data);
+        if(response.data.created){
+          this.$router.push("afspraak-geboekt")
+        }
       }).catch(e => {
         console.log(e);
       });
-
-      // this.$router.push("afspraak-geboekt")
     },
 
     back() {

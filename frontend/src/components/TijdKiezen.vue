@@ -31,7 +31,7 @@
           v-model="focus"
           color="primary"
           :events="events"
-          :event-color="eventColor"
+          :event-color="getEventColor"
           :type="type"
           :weekdays="weekdays"
           :first-interval="firstinterval"
@@ -57,21 +57,26 @@ export default {
     firstinterval: "9",
     intervalcount: "11",
     locale: "nl",
-    eventColor: "primary",
+    eventColor:  ['primary', 'red'],
     treatment: [],
     events: []
   }),
   async created() {
     try {
-      const res = await axios.get('https://run.mocky.io/v3/b0538f87-56ff-4b09-b1ed-537e815507c2')
-      res.data.open.forEach(element => {
-        this.events.push({
-          name: "Vrije Afspraak",
-          start: element.start,
-          end: element.end,
-          timed: true
-        })
-      });
+      // let self = this;
+      // const res = await axios.get('https://run.mocky.io/v3/b0538f87-56ff-4b09-b1ed-537e815507c2')
+      // console.log(res.data.open);
+      // res.data.open.forEach(element => {
+      //   this.events.push({
+      //     name: "Vrije Afspraak",
+      //     start: element.start,
+      //     end: element.end,
+      //     timed: true
+      //   })
+      // });
+
+      await this.getFreePlaces();
+
     } catch (e) {
       console.error(e);
     }
@@ -92,6 +97,13 @@ export default {
     next() {
       this.$refs.calendar.next();
     },
+    parseDate(date){
+      // parse date time to dd-mm-yyy h:m:s
+      return new Date(date).toLocaleString();
+    },
+    getEventColor (event) {
+        return event.color
+    },
     // updateRange ({ start, end }) {
 
     // },
@@ -99,7 +111,26 @@ export default {
       return interval.time;
     },
     bevestigAfspraak({ event }) {
-      this.$router.push({name: "AfspraakBevestigen", params: {start: event.start, end: event.end, treatment: this.treatment}});
+      this.$router.push({name: "AfspraakBevestigen", params: {start: this.parseDate(event.start), end: this.parseDate(event.end), treatment: this.treatment}});
+    },
+    getFreePlaces(){
+      let self = this;
+      axios.get(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
+      {}
+      ).then(res => {
+        console.log(res.data);
+        res.data.forEach(times => {
+          self.events.push({
+            name: times.taked ? "Bezet" : "Vrije Afspraak",
+            start: times.start,
+            end: times.end,
+            color: times.taked ? self.eventColor[1] : self.eventColor[0],
+            timed: true
+          })
+        });
+      }).catch(e => {
+        console.log(e)
+      })
     }
   }
 };
