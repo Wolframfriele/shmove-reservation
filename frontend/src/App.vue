@@ -1,5 +1,5 @@
 <template>
-  <v-app :dark='true'>
+  <v-app :dark="true">
     <Nav />
     <v-main>
       <router-view class="animated fadeIn"></router-view>
@@ -17,17 +17,15 @@ export default {
   data: () => ({
     //
   }),
-  created() {
-  
-  },
+  created() {},
   methods: {
     scrollTopAnimation() {
       let scrollValue = document.documentElement.scrollTop;
       while (scrollValue > 0) {
         document.documentElement.scrollTop--;
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -42,7 +40,8 @@ body {
   width: 100%;
   margin: 0px;
   padding: 0px;
-  font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;}
+  font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;
+}
 #app {
   /* scroll-behavior: smooth; */
   font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;

@@ -7,20 +7,15 @@
 import Calendar from "../../components/dashboard/Calendar";
 export default {
   data: () => ({
-
   }),
-
   components:{
     Calendar:Calendar
   },
-
   created() {
   },
-
   mounted() {
   },
   methods: {
-
   },
 }
 </script>

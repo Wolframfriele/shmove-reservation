@@ -15,10 +15,14 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="jdk" jdkName="Python 3.9 (shmove_reservations) (2)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
+    <option name="TEMPLATE_FOLDERS">
+      <list>
+        <option value="$MODULE_DIR$/frontend/node_modules/workbox-build/src/templates" />
+      </list>
+    </option>
   </component>
 </module>
