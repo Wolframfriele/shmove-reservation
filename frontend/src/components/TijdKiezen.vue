@@ -120,13 +120,15 @@ export default {
       ).then(res => {
         console.log(res.data);
         res.data.forEach(times => {
-          self.events.push({
+          if (times.taked != true) {
+            self.events.push({
             name: times.taked ? "Bezet" : "Vrije Afspraak",
             start: times.start,
             end: times.end,
             color: times.taked ? self.eventColor[1] : self.eventColor[0],
-            timed: true
+            timed: !times.taked
           })
+          }
         });
       }).catch(e => {
         console.log(e)

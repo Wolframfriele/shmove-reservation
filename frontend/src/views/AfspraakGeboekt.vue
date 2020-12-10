@@ -1,12 +1,12 @@
 <template>
   <v-main>
     <h1 class="display-1">Afspraak is geboekt!</h1>
-    <div class="text-center">
-      <v-icon color="primary">mdi-circle</v-icon>
-      <v-icon color="primary">mdi-circle</v-icon>
-      <v-icon color="primary">mdi-circle</v-icon>
-    </div>
     <BevestigDetails class="form" />
+    <!-- <div class="text-center">
+      <v-icon color="primary">mdi-circle</v-icon>
+      <v-icon color="primary">mdi-circle</v-icon>
+      <v-icon color="primary">mdi-circle</v-icon>
+    </div> -->
   </v-main>
 </template>
 

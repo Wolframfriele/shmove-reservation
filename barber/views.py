@@ -58,7 +58,7 @@ class AppointmentsView(viewsets.ModelViewSet):
     @csrf_exempt
     @action(methods=['post'], detail=False)
     def new_appointment(self, request):
-        customer_id = request.data['body']['customer_id']
+        customer_id = getpost(request, 'customer_id')
         name = getpost(request, 'firstname')
         email = getpost(request, 'email')
         phone_number = getpost(request, 'phone_number')
@@ -73,7 +73,7 @@ class AppointmentsView(viewsets.ModelViewSet):
                                                  date_booked_start=start, date_booked_end=end,
                                                  treatment=treatment, employee_id=employee_id)
         if customer_id == 0:
-            make_credentials = Credentials.objects.create(appointment_id=make_appointment.pk, name=name, email=email, phone_number=phone_number)
+            make_credentials = Credentials.objects.create(appointment_id=make_appointment.pk, first_name=name, email=email, phone_number=phone_number)
         else:
             # snap de else statement hier niet
             name = User.objects.get(pk=customer_id).first_name

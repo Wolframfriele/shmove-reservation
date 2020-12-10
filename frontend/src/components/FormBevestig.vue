@@ -137,14 +137,16 @@ export default {
       let self = this
       axios.post(`${self.$store.state.HOST}/api/appointments/new_appointment/`,
         {
-        customer_id: 0,
-        first: this.firstname,
-        email: this.email,
-        phone_number: this.phonenumber,
-        start: this.$route.params.start,
-        end: this.$route.params.end,
-        treatment: this.$route.params.treatment,
-        employee_id: 0
+          body: {
+            customer_id: 0,
+            firstname: this.firstname,
+            email: this.email,
+            phone_number: this.phonenumber,
+            start: this.$route.params.start,
+            end: this.$route.params.end,
+            treatment: this.$route.params.treatment,
+            employee_id: 0
+          }
         },
       )
       this.$router.push("afspraak-geboekt")
