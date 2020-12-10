@@ -82,7 +82,6 @@
                         @click:date="viewDay"
                         @click:time="createEvent"
                         @change="updateRange"
-                        :allowed-minutes="steps"
                     ></v-calendar>
                     <v-menu v-model="selectedOpen" :activator="selectedElement" offset-x>
                         <v-card color="grey lighten-4" min-width="350px" flat>
