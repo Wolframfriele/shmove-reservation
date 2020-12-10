@@ -113,7 +113,7 @@
                     <label>Stylist:</label>
                     <v-select id="pickstylist" placeholder="Geen voorkeur" :items="stylists" outlined dense :menu-props="{ top: false, offsetY: true }"> </v-select>
                     <label>Klant:</label>
-                    <v-form v-model="valid">
+                    <v-form>
                         <v-container>
                             <v-row>
                                 <v-col cols="12" md="6">
@@ -159,7 +159,7 @@ export default {
     select: [{text: 'Knippen & Stylen', value: '30'}],
     allTreatments: [],
     eventColor:  ['primary', 'red'],
-    // stylists: ['Geen voorkeur', 'Gert', 'Truus', 'Piet', 'Julia'],
+    stylists: ['Geen voorkeur', 'Gert', 'Truus', 'Piet', 'Julia'],
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
@@ -248,7 +248,6 @@ export default {
             text: item.title,
             value: item.duration
           })
-          console.log(self.allTreatments.length)
         })
       })
     },
@@ -273,7 +272,6 @@ export default {
       await axios.get(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
       {}
       ).then(res => {
-        console.log(res.data);
         res.data.forEach(times => {
           self.events.push({
             name: times.taked ? "Bezet" : "Vrije Afspraak",
@@ -296,20 +294,16 @@ export default {
     showEvent({nativeEvent, event}) {
       this.selectedEvent = event
       this.selectedElement = nativeEvent.target
-      console.log(this.selectedEvent)
       if (this.selectedEvent.color == 'red') {
         if (this.showEventModal == false) {
           setTimeout(() => {
             this.showEventModal = true
-            console.log('yoyo12');
           }, 10)
         } else {
           this.showEventModal = false;
-          console.log('yoyo13')
         }
       } else {
         this.createEventModal = true
-        console.log('yoyo14')
       }
     }
   },
