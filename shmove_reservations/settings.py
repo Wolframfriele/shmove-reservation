@@ -26,7 +26,7 @@ SECRET_KEY = 'mz2cb&ktr0bm_-!(%^zy#+&am*kk!y%!qcqc(*&k18a=nk@gbs'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['django.yanickhost.ga']
 
 
 # Application definition
