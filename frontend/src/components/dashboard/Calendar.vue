@@ -21,7 +21,7 @@
                             {{ $refs.calendar.title }}
                         </v-toolbar-title>
                         <v-spacer></v-spacer>
-                        <v-menu bottom right v-if="calendartype == false">
+                        <v-menu bottom right>
                             <template v-slot:activator="{ on, attrs }">
                                 <v-btn outlined color="grey darken-2" v-bind="attrs" v-on="on">
                                     <span>{{ typeToLabel[type] }}</span>
@@ -46,45 +46,26 @@
                 </v-sheet>
                 <v-sheet height="600">
                     <v-calendar
-                        v-if="calendartype"
                         ref="calendar"
                         v-model="focus"
                         color="primary"
                         :first-interval="firstinterval"
                         :interval-count="intervalcount"
                         :events="events"
-                        :event-color="getEventColor"
-                        type="category"
-                        category-show-all
-                        :categories="stylists"
-                        :event-overlap-mode="mode"
-                        @click:event="showEvent"
-                        @click:more="viewDay"
-                        @click:date="viewDay"
-                        @click:time-category="createEvent"
-                        @change="updateRange"
-                    ></v-calendar>
-                    <v-calendar
-                        v-if="calendartype == false"
-                        ref="calendar"
-                        v-model="focus"
-                        color="primary"
-                        :first-interval="firstinterval"
-                        :interval-count="intervalcount"
-                        :events="events"
+                        locale="nl"
                         :event-color="getEventColor"
                         :type="type"
-                        category-show-all
-                        :categories="stylists"
                         :event-overlap-mode="mode"
                         @click:event="showEvent"
                         @click:more="viewDay"
                         @click:date="viewDay"
-                        @click:time="createEvent"
-                        @change="updateRange"
-                        :allowed-minutes="steps"
+                        @change="getAllEvents()"
                     ></v-calendar>
-                    <v-menu v-model="selectedOpen" :activator="selectedElement" offset-x>
+<!--                                          @click:time="createEvent"-->
+                </v-sheet>
+            </v-col>
+        </v-row>
+      <v-dialog v-model="showEventModal" width="500" height="250" hide-overlay offset-x>
                         <v-card color="grey lighten-4" min-width="350px" flat>
                             <v-toolbar :color="selectedEvent.color" dark>
                                 <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
@@ -106,11 +87,7 @@
                                 </v-btn>
                             </v-card-actions>
                         </v-card>
-                    </v-menu>
-                </v-sheet>
-                <v-switch v-model="calendartype" :label="`Kapperspecifiek`"></v-switch>
-            </v-col>
-        </v-row>
+        </v-dialog>
         <v-dialog v-model="createEventModal" width="500" height="250" hide-overlay offset-x>
             <v-card>
                 <v-toolbar dark color="indigo">
@@ -140,19 +117,19 @@
                         <v-container>
                             <v-row>
                                 <v-col cols="12" md="6">
-                                    <v-text-field v-model="firstname" :rules="nameRules" :counter="15" label="First name" required dense></v-text-field>
+                                    <v-text-field :counter="15" label="Voornaam" required dense></v-text-field>
                                 </v-col>
 
                                 <v-col cols="12" md="6">
-                                    <v-text-field v-model="lastname" :rules="nameRules" :counter="15" label="Last name" dense></v-text-field>
+                                    <v-text-field :counter="15" label="Achternaam" dense></v-text-field>
                                 </v-col>
 
                                 <v-col cols="12" md="6">
-                                    <v-text-field v-model="email" :rules="emailRules" label="E-mail" dense></v-text-field>
+                                    <v-text-field label="E-mail" dense></v-text-field>
                                 </v-col>
 
                                 <v-col cols="12" md="6">
-                                    <v-text-field v-model="phone" :rules="phoneRules" label="Phone number" dense></v-text-field>
+                                    <v-text-field label="Telefoonnummer" dense></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -163,14 +140,10 @@
         </v-dialog>
     </div>
 </template>
-
-
-
 <script>
 import axios from 'axios';
 export default {
   data: () => ({
-    calendartype: true,
     focus: '',
     type: 'week',
     typeToLabel: {
@@ -185,12 +158,13 @@ export default {
     events: [],
     select: [{text: 'Knippen & Stylen', value: '30'}],
     allTreatments: [],
-    colors: ['#c9752a'],
-    stylists: ['Geen voorkeur', 'Gert', 'Truus', 'Piet', 'Julia'],
+    eventColor:  ['primary', 'red'],
+    // stylists: ['Geen voorkeur', 'Gert', 'Truus', 'Piet', 'Julia'],
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
     createEventModal: false,
+    showEventModal: false,
     tms: '',
     starttime: '',
     endtime: '',
@@ -285,17 +259,32 @@ export default {
         response.data.forEach(item => {
           events.push({
             name: item.name,
-            start: item.date_booked_start,
-            end: item.date_booked_end,
-            stylist: item.employee,
             treatments: item.treatments,
             email: item.email,
             phone: item.phone_number,
-            category: item.employee,
             color: this.colors[this.rnd(0, this.colors.length - 1)]
           })
         })
         this.events = events
+      })
+    },
+    async getAllEvents(){
+      let self = this;
+      await axios.get(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
+      {}
+      ).then(res => {
+        console.log(res.data);
+        res.data.forEach(times => {
+          self.events.push({
+            name: times.taked ? "Bezet" : "Vrije Afspraak",
+            start: times.start,
+            end: times.end,
+            color: times.taked ? self.eventColor[1] : self.eventColor[0],
+            timed: true
+          })
+        });
+      }).catch(e => {
+        console.log(e)
       })
     },
     getEventColor(event) {
@@ -305,21 +294,24 @@ export default {
       return Math.floor((b - a + 1) * Math.random()) + a
     },
     showEvent({nativeEvent, event}) {
-      const open = () => {
-        this.selectedEvent = event
-        this.selectedElement = nativeEvent.target
-        setTimeout(() => {
-          this.selectedOpen = true
-        }, 10)
-      }
-      if (this.selectedOpen) {
-        this.selectedOpen = false
-        setTimeout(open, 10)
+      this.selectedEvent = event
+      this.selectedElement = nativeEvent.target
+      console.log(this.selectedEvent)
+      if (this.selectedEvent.color == 'red') {
+        if (this.showEventModal == false) {
+          setTimeout(() => {
+            this.showEventModal = true
+            console.log('yoyo12');
+          }, 10)
+        } else {
+          this.showEventModal = false;
+          console.log('yoyo13')
+        }
       } else {
-        open()
+        this.createEventModal = true
+        console.log('yoyo14')
       }
-      nativeEvent.stopPropagation()
-    },
+    }
   },
 }
 </script>
