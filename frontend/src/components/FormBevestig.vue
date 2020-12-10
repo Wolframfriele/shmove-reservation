@@ -134,7 +134,8 @@ export default {
   methods: {
     submit() {
       this.$refs.observer.validate()
-      axios.post(' http://127.0.0.1:8000/api/appointments/new_appointment/', 
+      let self = this
+      axios.post(`${self.$store.state.HOST}/api/appointments/new_appointment/`,
         {
         customer_id: 0,
         first: this.firstname,

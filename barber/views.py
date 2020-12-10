@@ -62,8 +62,8 @@ class AppointmentsView(viewsets.ModelViewSet):
         name = getpost(request, 'firstname')
         email = getpost(request, 'email')
         phone_number = getpost(request, 'phone_number')
-        start = datetime.strptime(getpost(request, 'start'), '%d-%m-%Y %H:%M:%S')
-        end = datetime.strptime(getpost(request, 'end'), '%d-%m-%Y %H:%M:%S')
+        start = datetime.strptime(getpost(request, 'start'), '%d/%m/%Y, %H:%M:%S')
+        end = datetime.strptime(getpost(request, 'end'), '%d/%m/%Y, %H:%M:%S')
         # split and send the treatments as string
         treatment = ','.join(getpost(request, 'treatment'))
         employee_id = getpost(request, 'employee_id') 

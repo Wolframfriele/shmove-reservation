@@ -31,11 +31,7 @@
           v-model="focus"
           color="primary"
           :events="events"
-<<<<<<< HEAD
-          :event-color="eventColor"
-=======
           :event-color="getEventColor"
->>>>>>> 82e04abfd8857c02b1b0c9262fb8316d2c76148a
           :type="type"
           :weekdays="weekdays"
           :first-interval="firstinterval"
@@ -103,7 +99,7 @@ export default {
     },
     parseDate(date){
       // parse date time to dd-mm-yyy h:m:s
-      return new Date(date).toLocaleString();
+      return new Date(date).toLocaleString('en-GB', { timeZone: 'UTC' });
     },
     getEventColor (event) {
         return event.color
