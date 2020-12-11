@@ -111,7 +111,8 @@ export default {
       return interval.time;
     },
     bevestigAfspraak({ event }) {
-      this.$router.push({name: "AfspraakBevestigen", params: {start: this.parseDate(event.start), end: this.parseDate(event.end), treatment: this.treatment}});
+      console.log(event.start);
+      this.$router.push({name: "AfspraakBevestigen", params: {start: event.start, end: event.end, treatment: this.treatment}});
     },
     getFreePlaces(){
       let self = this;

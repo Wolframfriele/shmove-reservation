@@ -132,6 +132,10 @@ export default {
     accepted: null,
   }),
   methods: {
+    parseDate(date){
+      // parse date time to dd-mm-yyy h:m:s
+      return new Date(date).toString();
+    },
     submit() {
       this.$refs.observer.validate()
       let self = this
@@ -142,10 +146,18 @@ export default {
             firstname: this.firstname,
             email: this.email,
             phone_number: this.phonenumber,
+<<<<<<< HEAD
             start: this.$route.params.start,
             end: this.$route.params.end,
             treatment: this.$route.params.treatment,
             employee_id: 0
+=======
+            start: this.parseDate(this.$route.params.start),
+            end: this.parseDate(this.$route.params.end),
+            // treatment: this.$route.params.treatment,
+            treatment: ['knippen', 'verven', 'masseren'],
+            employee_id: 0,
+>>>>>>> timezone issue
           }
         },
       )
