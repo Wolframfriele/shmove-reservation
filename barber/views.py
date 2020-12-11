@@ -73,7 +73,7 @@ class AppointmentsView(viewsets.ModelViewSet):
                                                  date_booked_start=start, date_booked_end=end,
                                                  treatment=treatment, employee_id=employee_id)
         if customer_id == 0:
-            make_credentials = Credentials.objects.create(appointment_id=make_appointment.pk, name=name, email=email, phone_number=phone_number)
+            make_credentials = Credentials.objects.create(appointment_id=make_appointment.pk, first_name=name, email=email, phone_number=phone_number)
         else:
             # snap de else statement hier niet
             name = User.objects.get(pk=customer_id).first_name

@@ -59,7 +59,6 @@
               @click:event="showEvent"
               @click:more="viewDay"
               @click:date="viewDay"
-              @change="getAllEvents()"
           ></v-calendar>
           <!--                                          @click:time="createEvent"-->
         </v-sheet>
@@ -73,7 +72,7 @@
         </v-toolbar>
         <v-card-text>
           <label for="email">Email: </label>
-          <span id="email" v-html="selectedEvent.email"></span><br/>
+          <span id="email" v-html="selectedEvent.firstname"></span><br/>
           <label for="phone">Telefoon: </label>
           <span id="phone" v-html="selectedEvent.phone"></span><br/>
           <label for="treatments">Behandelingen: </label>
@@ -131,7 +130,7 @@
                 </v-col>
 
                 <v-col cols="12" md="6">
-                  <v-text-field label="Telefoonnummer" dense id="phone"></v-text-field>
+                  <v-text-field label="Telefoonnummer" dense id="phone_number"></v-text-field>
                 </v-col>
               </v-row>
             </v-container>
@@ -172,27 +171,31 @@ export default {
     starttime: '',
     endtime: '',
     success: '',
-    body: {
-      customer_id: 0,
-      firstname: '',
-      lastname: '',
-      email: '',
-      phone: '',
-      treatment: [],
-      employee_id: 0,
-    }
   }),
   created() {
     this.getData();
+    this.getAllEvents();
   },
   mounted() {
     this.$refs.calendar.checkChange();
   },
   methods: {
     sendToBackEnd() {
-      console.log('fun')
+      this.selectedEvent.start = this.parseDate(this.selectedEvent.start);
+      this.selectedEvent.end = this.parseDate(this.selectedEvent.end);
+      let body = {
+      customer_id: 0,
+      firstname: '',
+      lastname: '',
+      email: '',
+      phone_number: '',
+      start: this.selectedEvent.start,
+      end: this.selectedEvent.end,
+      treatment: [],
+      employee_id: 0,
+      }
       let self = this;
-      axios.post(`${self.$store.state.HOST}/api/appointments/new_appointment/`, this.body)
+      axios.post(`${self.$store.state.HOST}/api/appointments/new_appointment/`, {body: body})
           .then((res) => {
             //Perform Success Action
             console.log(res.data);
@@ -206,6 +209,9 @@ export default {
     viewDay({date}) {
       this.focus = date
       this.type = 'day'
+    },
+    parseDate(date){
+      return new Date(date).toLocaleString();
     },
     setToday() {
       this.focus = ''
@@ -237,6 +243,7 @@ export default {
           self.events.push({
             name: times.taked ? "Bezet" : "Vrije Afspraak",
             start: times.start,
+            firstname: times.customer_id,
             end: times.end,
             color: times.taked ? self.eventColor[1] : self.eventColor[0],
             timed: true
