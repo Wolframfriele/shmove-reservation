@@ -70,15 +70,15 @@
           <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
           <v-spacer></v-spacer>
         </v-toolbar>
-        <v-card-text>
+        <v-card-text v-if='$store.state.dashboard.appointmentDataArr != 0'>
           <label for="email">Email: </label>
-          <span id="email" v-html="selectedEvent.firstname"></span><br/>
+          <span id="email">{{appointmentInfos[0].customer[0].email}}</span><br/>
           <label for="phone">Telefoon: </label>
-          <span id="phone" v-html="selectedEvent.phone"></span><br/>
+          <span id="phone">{{appointmentInfos[0].customer[0].phone_number}}</span><br/>
           <label for="treatments">Behandelingen: </label>
-          <span id="treatments" v-html="selectedEvent.treatments"></span><br/>
+          <span id="treatments" >{{appointmentInfos[0].appointment.treatment}}</span><br/>
           <label for="stylist">Stylist: </label>
-          <span id="stylist" v-html="selectedEvent.stylist"></span>
+          <span id="stylist">{{appointmentInfos[0].employee}}</span>
         </v-card-text>
         <v-card-actions>
           <v-btn text color="secondary" @click="selectedOpen = false">
@@ -142,6 +142,7 @@
   </div>
 </template>
 <script>
+import { mapGetters } from "vuex";
 import axios from 'axios';
 
 export default {
@@ -172,13 +173,22 @@ export default {
     endtime: '',
     success: '',
   }),
+
+  computed: {
+    ...mapGetters({
+      appointmentInfos: "dashboard/getAppointments",
+    }),
+  },
+
   created() {
     this.getData();
     this.getAllEvents();
   },
+
   mounted() {
     this.$refs.calendar.checkChange();
   },
+
   methods: {
     sendToBackEnd() {
       this.selectedEvent.start = this.parseDate(this.selectedEvent.start);
@@ -239,11 +249,12 @@ export default {
       await axios.get(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
           {}
       ).then(res => {
+        // console.log(res.data);
         res.data.forEach(times => {
           self.events.push({
             name: times.taked ? "Bezet" : "Vrije Afspraak",
             start: times.start,
-            firstname: times.customer_id,
+            appointmentId: times.appointment_id,
             end: times.end,
             color: times.taked ? self.eventColor[1] : self.eventColor[0],
             timed: true
@@ -253,7 +264,26 @@ export default {
         console.log(e)
       })
     },
+
+    async getAppointmentInfo(appointmentID){
+       let self = this;
+      await axios.get(`${self.$store.state.HOST}/api/appointments/get_appointment_data/`,
+          {
+            params: {
+              appointment_id: appointmentID
+            }
+          }
+      ).then(res => {
+        console.log(res.data);
+        
+        self.$store.getters['dashboard/setAppointments'](res.data)
+      }).catch(e => {
+        console.log(e)
+      })
+    },
+
     showEvent({nativeEvent, event}) {
+      let self = this;
       this.selectedEvent = event
       this.selectedElement = nativeEvent.target
       this.starttime = new Date(this.selectedEvent.start)
@@ -267,6 +297,8 @@ export default {
       this.endtime = endHours.padStart(2, '0') + ":" + endMinutes.padStart(2, '0')
 
       if (this.selectedEvent.color == 'red') {
+        // console.log(event)
+        self.getAppointmentInfo(event.appointmentId)
         if (this.showEventModal == false) {
           setTimeout(() => {
             this.showEventModal = true
