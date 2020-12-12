@@ -1,9 +1,5 @@
 <template>
-<<<<<<< HEAD
   <v-app :dark="true">
-=======
-  <v-app :dark='true'>
->>>>>>> Calender v01
     <Nav />
     <v-main>
       <router-view class="animated fadeIn"></router-view>
@@ -44,12 +40,8 @@ body {
   width: 100%;
   margin: 0px;
   padding: 0px;
-<<<<<<< HEAD
   font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;
 }
-=======
-  font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;}
->>>>>>> Calender v01
 #app {
   /* scroll-behavior: smooth; */
   font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;

@@ -5,7 +5,8 @@ import Dashboard from "../views/dashboard/Home.vue";
 
 Vue.use(VueRouter);
 
-const routes = [{
+const routes = [
+  {
     path: "/",
     name: "Home",
     component: Home
@@ -17,7 +18,7 @@ const routes = [{
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import( /* webpackChunkName: "about" */ "../views/AfspraakMaken.vue"),
+      import(/* webpackChunkName: "about" */ "../views/AfspraakMaken.vue"),
     props: true
   },
   {
@@ -27,7 +28,7 @@ const routes = [{
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import( /* webpackChunkName: "about" */ "../views/AfspraakBevestigen.vue"),
+      import(/* webpackChunkName: "about" */ "../views/AfspraakBevestigen.vue"),
     props: true
   },
   {
@@ -38,12 +39,12 @@ const routes = [{
     // which is lazy-loaded when the route is visited.
     component: () =>
 
-      import( /* webpackChunkName: "about" */ "../views/AfspraakGeboekt.vue"),
+      import(/* webpackChunkName: "about" */ "../views/AfspraakGeboekt.vue"),
     props: true
   },
 
   // dashboard/therapeut routes
-  {
+    {
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard

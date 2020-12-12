@@ -1,6 +1,6 @@
 clone deze repository
 Ga naar de map toe via je terminal
-in je terminal, je moet in shmove-reservation staan en doe:
+in je terminal, je moet in shmove-reservations staan en doe:
 
 # verander van branch
     git checkout yak-shaving
@@ -11,7 +11,7 @@ in je terminal, je moet in shmove-reservation staan en doe:
 - pipenv run pip install -r requirements.txt
 
 # start de server
-    python manage.py runserver
+    python manage.py run server
 
 # Frontend
 Installeer Vue global
