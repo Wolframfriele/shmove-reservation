@@ -24,11 +24,7 @@ from rest_framework.status import (
 )
 
 
-<<<<<<< HEAD
-from barber.serializers import TestSerializer, AppointmentSerializer
-=======
 from barber.serializers import TestSerializer, NewAppointmentSerializer, GetAppointmentSerializer
->>>>>>> 3327489e70c390d7285e91d02e4be219f984bf3a
 from django.core.files import File
 from django.conf import settings
 from datetime import datetime
