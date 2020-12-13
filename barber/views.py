@@ -199,7 +199,7 @@ class AppointmentsView(viewsets.ModelViewSet):
                 'first_name': credentials.first_name,
                 'last_name': credentials.last_name,
                 'email': credentials.email,
-                'phone_number':credentials.phone_number,
+                'phone_number': credentials.phone_number,
             }
         except:
             data = 'Customer credentials not found'

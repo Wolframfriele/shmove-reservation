@@ -71,6 +71,11 @@
           <v-spacer></v-spacer>
         </v-toolbar>
         <v-card-text v-if='$store.state.dashboard.appointmentDataArr != 0'>
+          <br/>
+          <label for="cstartTime">Begintijd: </label>
+          <span id="cstartTime">{{ convertTime(appointmentInfos[0].appointment.date_booked_start) }}</span><br />
+          <label for="cendtime">Eindtijd: </label>
+          <span id="cendtime">{{ convertTime(appointmentInfos[0].appointment.date_booked_end) }}</span><br />
           <label for="email">Email: </label>
           <span id="email">{{appointmentInfos[0].customer[0].email}}</span><br/>
           <label for="phone">Telefoon: </label>
@@ -153,11 +158,13 @@ export default {
       month: 'Maand',
       week: 'Week',
       day: 'Dag'
-    }, mode: 'column',
-    weekday: [1, 2, 3, 4, 5, 6, 0],
+    },
+    mode: 'column',
+    weekdays: [1, 2, 3, 4, 5, 6, 0],
     value: '',
-    firstinterval: '8',
-    intervalcount: '12',
+    firstinterval: "9",
+    intervalcount: "11",
+    locale: "nl",
     events: [],
     select: [{text: 'Massage', value: '120'}],
     allTreatments: [],
@@ -191,14 +198,14 @@ export default {
 
   methods: {
     sendToBackEnd() {
-      this.selectedEvent.start = this.parseDate(this.selectedEvent.start);
-      this.selectedEvent.end = this.parseDate(this.selectedEvent.end);
+      this.parseDate(this.selectedEvent.start);
+      this.parseDate(this.selectedEvent.end);
       let body = {
       customer_id: 0,
-      firstname: '',
-      lastname: '',
-      email: '',
-      phone_number: '',
+      firstname: this.firstname,
+      lastname: this.lastname,
+      email: this.email,
+      phone_number: this.phone_number,
       start: this.selectedEvent.start,
       end: this.selectedEvent.end,
       treatment: [],
@@ -275,7 +282,7 @@ export default {
           }
       ).then(res => {
         console.log(res.data);
-        
+
         self.$store.getters['dashboard/setAppointments'](res.data)
       }).catch(e => {
         console.log(e)
@@ -331,6 +338,42 @@ export default {
       let rHr = '' + Math.floor(rounded / 60)
       let rMin = '' + rounded % 60
       this.endtime = rHr.padStart(2, '0') + ':' + rMin.padStart(2, '0')
+    },
+    convertTime(date) {
+      const days = [
+        'zondag',
+        'maandag',
+        'dinsdag',
+        'woensdag',
+        'donderdag',
+        'vrijdag',
+        'zaterdag'
+      ];
+      const months = [
+        'januari',
+        'februari',
+        'maart',
+        'april',
+        'mei',
+        'juni',
+        'juli',
+        'augustus',
+        'september',
+        'oktober',
+        'november',
+        'december'
+      ];
+      const reserverings_tijd = new Date(date);
+
+      const dayIndex = reserverings_tijd.getDay();
+      const day = days[dayIndex];
+      const monthIndex = reserverings_tijd.getMonth();
+      const number = reserverings_tijd.getDate();
+      const month = months[monthIndex];
+      const hours = reserverings_tijd.getHours().toString();
+      const minutes = reserverings_tijd.getMinutes().toString();
+
+      return `${day} ${number} ${month} om ${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
     },
     // createEvent(tms) {
     //   if (this.createEventModal == false) {
