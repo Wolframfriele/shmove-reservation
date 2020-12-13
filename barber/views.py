@@ -24,7 +24,7 @@ from rest_framework.status import (
 )
 
 
-from barber.serializers import TestSerializer, NewAppointmentSerializer, GetAppointmentSerializer
+from barber.serializers import TestSerializer, AppointmentSerializer
 from django.core.files import File
 from django.conf import settings
 from datetime import datetime
@@ -45,7 +45,10 @@ class TestView(viewsets.ModelViewSet):
 
 
 def getpost(request, x):
-    return request.data['body'][x]
+    if request.method == 'POST':
+        return request.data['body'][x]
+    else:
+        return request.query_params.get(x)
 
 
 # serializers.serialize('json', appointments)
@@ -79,11 +82,11 @@ class AppointmentsView(viewsets.ModelViewSet):
         return Response({"created": True, "name": name, "email": email, "phone_number": phone_number, "date": start})
 
     @csrf_exempt
-    @action(methods=['post'], detail=False)
+    @action(methods=['get'], detail=False)
     def get_appointments_customer(self, request):
         dates = []
-        start_day = datetime.strptime(getpost(request, 'start_day'), '%Y-%m-%d')
-        end_day = datetime.strptime(getpost(request, 'end_day'), '%Y-%m-%d')
+        start_day = datetime.strptime(getpost(request, 'start_day'), '%d/%m/%Y, %H:%M:%S')
+        end_day = datetime.strptime(getpost(request, 'end_day'), '%d/%m/%Y, %H:%M:%S')
         employee_id = getpost(request, 'employee_id')
         appointments = Appointments.objects.filter(employee_id=employee_id, date_booked_start__gte=start_day,
                                                    date_booked_start__lte=end_day).values()

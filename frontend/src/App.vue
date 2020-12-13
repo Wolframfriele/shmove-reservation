@@ -1,13 +1,5 @@
 <template>
-<<<<<<< HEAD
-  <v-app :dark='true'>
-=======
-<<<<<<< HEAD
   <v-app :dark="true">
-=======
-  <v-app :dark='true'>
->>>>>>> 6d2b6ad... frontend merged
->>>>>>> 3327489e70c390d7285e91d02e4be219f984bf3a
     <Nav />
     <v-main>
       <router-view class="animated fadeIn"></router-view>
@@ -48,16 +40,8 @@ body {
   width: 100%;
   margin: 0px;
   padding: 0px;
-<<<<<<< HEAD
-  font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;}
-=======
-<<<<<<< HEAD
   font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;
 }
-=======
-  font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;}
->>>>>>> 6d2b6ad... frontend merged
->>>>>>> 3327489e70c390d7285e91d02e4be219f984bf3a
 #app {
   /* scroll-behavior: smooth; */
   font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;
