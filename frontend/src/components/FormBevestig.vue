@@ -134,16 +134,20 @@ export default {
   methods: {
     submit() {
       this.$refs.observer.validate()
-      axios.post(' http://127.0.0.1:8000/api/appointments/new_appointment/', 
+      let self = this
+      axios.post(`${self.$store.state.HOST}/api/appointments/new_appointment/`,
         {
-        firstname: this.firstname,
-        lastname: this.lastname,
-        email: this.email,
-        phone_number: this.phonenumber,
-        start: this.$route.params.start,
-        end: this.$route.params.end,
-        treatment: this.$route.params.treatment,
-        } 
+          body: {
+            customer_id: 0,
+            firstname: this.firstname,
+            email: this.email,
+            phone_number: this.phonenumber,
+            start: this.$route.params.start,
+            end: this.$route.params.end,
+            treatment: this.$route.params.treatment,
+            employee_id: 0
+          }
+        },
       )
       this.$router.push("afspraak-geboekt")
     },

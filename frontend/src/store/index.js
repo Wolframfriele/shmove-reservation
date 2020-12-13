@@ -9,9 +9,9 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    HOSt:
+    HOST:
       window.location.port != ""
-        ? " http://127.0.0.1:8000"
+        ? " http://127.0.0.1:8090"
         : "http://yanick007.pythonanywhere.com",
     AUTHENTICATED: undefined,
     usertoken: undefined
