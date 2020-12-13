@@ -24,13 +24,45 @@ from django.utils import timezone
 class Barbers(models.Model):
     name = models.CharField(max_length=200)
 
+    def __str__(self):
+        return self.name
+
+
+class WorktimeSlices(models.Model):
+    """the free places in the agenda
+        Args:
+            models (DB model instance): [DB fields]
+        """
+    time_from = models.DateTimeField()
+    time_to = models.DateTimeField()
+
+    def __str__(self):
+        return str(self.time_from) + ' to ' + str(self.time_to)
+
+
+class Worktimes(models.Model):
+    # employee = models.ForeignKey(Employees, on_delete=models.CASCADE)
+    day = models.CharField(max_length=10, default='<day>')
+    # is_working = models.BooleanField(default=False)
+    start = models.TimeField(default=datetime.now().time())
+    end = models.TimeField(default=datetime.now().time())
+    timeSlice = models.ManyToManyField(WorktimeSlices)
+    last_edit = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.day) + ' ' + str(self.start) + ' ' + str(self.end)
+
 
 class Employees(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     barber = models.ForeignKey(Barbers, on_delete=models.CASCADE)
     avatar_path = models.CharField(max_length=400)
     made_on = models.DateTimeField(auto_now_add=True)
+    work_time = models.ManyToManyField(Worktimes)  # if the employee is deleted, his work times would be also deleted
     last_edit = models.DateTimeField(auto_now_add=True)  # moet updated bij elke verandering in die row.
+
+    def __str__(self):
+        return User.objects.get(id=self.user.pk).username
 
 
 class Appointments(models.Model):
@@ -49,6 +81,9 @@ class Credentials(models.Model):
     last_name = models.CharField(max_length=200)
     email = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=10)
+
+    def __str__(self):
+        return self.first_name  # was eerst 'firstname'
 
 
 class Openinghours(models.Model):
@@ -76,11 +111,11 @@ class Answers(models.Model):
     last_edit = models.DateTimeField(auto_now_add=True)  # moet updated bij elke verandering in die row.
 
 
-class Worktimes(models.Model):
-    employee = models.ForeignKey(Employees, on_delete=models.CASCADE)
-    day = models.CharField(max_length=10, default='<day>')
-    is_open = models.BooleanField(default=False)
-    time_open = models.TimeField(default=datetime.now().time())
-    time_close = models.TimeField(default=datetime.now().time())
-    last_edit = models.DateTimeField(auto_now_add=True)
+# class Worktimes(models.Model):
+#     employee = models.ForeignKey(Employees, on_delete=models.CASCADE)
+#     day = models.CharField(max_length=10, default='<day>')
+#     is_open = models.BooleanField(default=False)
+#     time_open = models.TimeField(default=datetime.now().time())
+#     time_close = models.TimeField(default=datetime.now().time())
+#     last_edit = models.DateTimeField(auto_now_add=True)
 

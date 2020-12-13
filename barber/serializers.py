@@ -9,13 +9,7 @@ class TestSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email')
 
 
-class NewAppointmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Appointments
-        fields = '__all__'
-
-
-class GetAppointmentSerializer(serializers.ModelSerializer):
+class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointments
         fields = '__all__'

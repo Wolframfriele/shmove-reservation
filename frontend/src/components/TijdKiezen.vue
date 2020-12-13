@@ -85,12 +85,21 @@ export default {
   async created() {
     try {
       // const res = await axios.get(`https://run.mocky.io/v3/b456ae47-4cfe-438b-8098-cda5ebb8bbf3`)
-      const res = await axios.post(`http://127.0.0.1:8000/api/appointments/get_appointments_barber/`, 
+
+      const res = await axios.post(`http://127.0.0.1:8000/api/appointments/new_appointment/`, 
       {body: {
-        start_day: "2020-11-23",
-        end_day: "2020-11-29",
-        employee_id: 3,
-        }
+        customer_id: this.is_user ? 16 : 0,
+        name: "John",
+        email: "",
+        phone_number: "0612345678",
+        start: "2020-11-27 11:00",
+        end: "2020-11-27 12:00",
+        treatment:[
+          {"question1":"answer thingie"},
+          {"question2":"answer thingie"},
+          {"question3":"answer thingie"}
+        ],
+        employee_id:2}
       }
       )
 

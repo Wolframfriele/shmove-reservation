@@ -24,7 +24,7 @@ from rest_framework.status import (
 )
 
 
-from barber.serializers import TestSerializer, NewAppointmentSerializer, GetAppointmentSerializer
+from barber.serializers import TestSerializer, AppointmentSerializer
 from django.core.files import File
 from django.conf import settings
 from datetime import datetime
@@ -48,10 +48,36 @@ def getpost(request, x):
     return request.data['body'][x]
 
 
-class GetAppointments(viewsets.ModelViewSet):
+# serializers.serialize('json', appointments)
+
+
+class AppointmentsView(viewsets.ModelViewSet):
     queryset = Appointments.objects.all()
-    serializer_class = GetAppointmentSerializer
+    serializer_class = AppointmentSerializer
     permission_classes = [AllowAny]
+
+    @csrf_exempt
+    @action(methods=['post'], detail=False)
+    def new_appointment(self, request):
+        customer_id = request.data['body']['customer_id']
+        name = getpost(request, 'name')
+        email = getpost(request, 'email')
+        phone_number = getpost(request, 'phone_number')
+        start = datetime.strptime(getpost(request, 'start'), '%Y-%m-%d %H:%M')
+        end = datetime.strptime(getpost(request, 'end'), '%Y-%m-%d %H:%M')
+        treatment = getpost(request, 'treatment')
+        employee_id = getpost(request, 'employee_id')
+        make_appointment = Appointments.objects.create(customer_id=customer_id,
+                                                       date_booked_start=start, date_booked_end=end,
+                                                       treatment=treatment, employee_id=employee_id)
+        if customer_id == 0:
+            make_credentials = Credentials.objects.create(appointment_id=make_appointment.pk, name=name, email=email,
+                                                          phone_number=phone_number)
+        else:
+            name = User.objects.get(pk=customer_id).first_name
+            email = User.objects.get(pk=customer_id).email
+            # phone_number = User.objects.get(pk=customer_id).phone_number
+        return Response({"created": True, "name": name, "email": email, "phone_number": phone_number, "date": start})
 
     @csrf_exempt
     @action(methods=['post'], detail=False)
@@ -69,11 +95,18 @@ class GetAppointments(viewsets.ModelViewSet):
     @csrf_exempt
     @action(methods=['post'], detail=False)
     def get_appointments_barber(self, request):
-        the_info = []
+
         start_day = datetime.strptime(getpost(request, 'start_day'), '%Y-%m-%d')
         end_day = datetime.strptime(getpost(request, 'end_day'), '%Y-%m-%d')
-        appointments = Appointments.objects.filter(date_booked_start__gte=start_day,
-                                                   date_booked_start__lte=end_day).values()
+        barber_id = getpost(request, 'barber_id')
+
+        the_info = []
+        employee_ids = []
+        get_ids = Employees.objects.filter(barber_id=barber_id).values()
+        for mini_id in get_ids:
+            employee_ids.append(mini_id['id'])
+        appointments = Appointments.objects.filter(date_booked_start__gte=start_day, date_booked_start__lte=end_day,
+                                                   employee_id__in=employee_ids).values()
         for appointment in appointments:
             if appointment['customer_id'] == 0:
                 cust_data = Credentials.objects.get(pk=appointment['id'])
@@ -91,35 +124,6 @@ class GetAppointments(viewsets.ModelViewSet):
                              'employee_id': appointment['employee_id']
                              })
         return Response(the_info)
-# serializers.serialize('json', appointments)
-
-
-class NewAppointments(viewsets.ModelViewSet):
-    queryset = Appointments.objects.all()
-    serializer_class = NewAppointmentSerializer
-    permission_classes = [AllowAny]
-
-    @csrf_exempt
-    @action(methods=['post'], detail=False)
-    def new_appointment(self, request):
-        customer_id = request.data['body']['customer_id']
-        name = getpost(request, 'name')
-        email = getpost(request, 'email')
-        phone_number = getpost(request, 'phone_number')
-        start = datetime.strptime(getpost(request, 'start'), '%Y-%m-%d %H:%M')
-        end = datetime.strptime(getpost(request, 'end'), '%Y-%m-%d %H:%M')
-        treatment = getpost(request, 'treatment')
-        employee_id = getpost(request, 'employee_id')
-        make_appointment = Appointments.objects.create(customer_id=customer_id,
-                                                 date_booked_start=start, date_booked_end=end,
-                                                 treatment=treatment, employee_id=employee_id)
-        if customer_id == 0:
-            make_credentials = Credentials.objects.create(appointment_id=make_appointment.pk, name=name, email=email, phone_number=phone_number)
-        else:
-            name = User.objects.get(pk=customer_id).first_name
-            email = User.objects.get(pk=customer_id).email
-            # phone_number = User.objects.get(pk=customer_id).phone_number
-        return Response({"created": True, "name": name, "email": email, "phone_number": phone_number, "date": start})
 
 
 # def new_barber():
