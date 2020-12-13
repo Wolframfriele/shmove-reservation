@@ -63,18 +63,6 @@ export default {
   }),
   async created() {
     try {
-      // let self = this;
-      // const res = await axios.get('https://run.mocky.io/v3/b0538f87-56ff-4b09-b1ed-537e815507c2')
-      // console.log(res.data.open);
-      // res.data.open.forEach(element => {
-      //   this.events.push({
-      //     name: "Vrije Afspraak",
-      //     start: element.start,
-      //     end: element.end,
-      //     timed: true
-      //   })
-      // });
-
       await this.getFreePlaces();
 
     } catch (e) {
@@ -111,7 +99,7 @@ export default {
       return interval.time;
     },
     bevestigAfspraak({ event }) {
-      this.$router.push({name: "AfspraakBevestigen", params: {start: this.parseDate(event.start), end: this.parseDate(event.end), treatment: this.treatment}});
+      this.$router.push({name: "AfspraakBevestigen", params: {start: event.start, end: event.end, treatment: this.treatment}});
     },
     getFreePlaces(){
       let self = this;

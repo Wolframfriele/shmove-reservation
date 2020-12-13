@@ -132,6 +132,10 @@ export default {
     accepted: null,
   }),
   methods: {
+    parseDate(date){
+      // parse date time to dd-mm-yyy h:m:s
+      return new Date(date).toLocaleString('en-GB', { timeZone: 'UTC' });
+    },
     submit() {
       this.$refs.observer.validate()
       let self = this
@@ -142,8 +146,8 @@ export default {
             firstname: this.firstname,
             email: this.email,
             phone_number: this.phonenumber,
-            start: this.$route.params.start,
-            end: this.$route.params.end,
+            start: this.parseDate(this.$route.params.start),
+            end: this.parseDate(this.$route.params.end),
             treatment: this.$route.params.treatment,
             employee_id: 0
           }
@@ -189,7 +193,7 @@ export default {
       const monthIndex = reserverings_tijd.getMonth();
       const month = months[monthIndex];
       const hours = reserverings_tijd.getHours();
-      const minutes = reserverings_tijd.getMinutes();
+      const minutes = reserverings_tijd.getMinutes().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
 
       return `${ day } ${ date } ${ month } om ${ hours }:${ minutes }`;
     }
