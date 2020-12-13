@@ -24,6 +24,7 @@ from django.utils import timezone
 class Barbers(models.Model):
     name = models.CharField(max_length=200)
 
+<<<<<<< HEAD
     def __str__(self):
         return self.name
 
@@ -52,18 +53,25 @@ class Worktimes(models.Model):
     def __str__(self):
         return str(self.day) + ' ' + str(self.start) + ' ' + str(self.end)
 
+=======
+>>>>>>> 3327489e70c390d7285e91d02e4be219f984bf3a
 
 class Employees(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     barber = models.ForeignKey(Barbers, on_delete=models.CASCADE)
     avatar_path = models.CharField(max_length=400)
     made_on = models.DateTimeField(auto_now_add=True)
+<<<<<<< HEAD
     work_time = models.ManyToManyField(Worktimes)  # if the employee is deleted, his work times would be also deleted
     last_edit = models.DateTimeField(auto_now_add=True)  # moet updated bij elke verandering in die row.
 
     def __str__(self):
         return User.objects.get(id=self.user.pk).username
 
+=======
+    last_edit = models.DateTimeField(auto_now_add=True)  # moet updated bij elke verandering in die row.
+
+>>>>>>> 3327489e70c390d7285e91d02e4be219f984bf3a
 
 class Appointments(models.Model):
     customer_id = models.IntegerField(default=0)
@@ -81,9 +89,12 @@ class Credentials(models.Model):
     last_name = models.CharField(max_length=200)
     email = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=10)
+<<<<<<< HEAD
 
     def __str__(self):
         return self.first_name  # was eerst 'firstname'
+=======
+>>>>>>> 3327489e70c390d7285e91d02e4be219f984bf3a
 
 
 class Openinghours(models.Model):
@@ -111,6 +122,7 @@ class Answers(models.Model):
     last_edit = models.DateTimeField(auto_now_add=True)  # moet updated bij elke verandering in die row.
 
 
+<<<<<<< HEAD
 # class Worktimes(models.Model):
 #     employee = models.ForeignKey(Employees, on_delete=models.CASCADE)
 #     day = models.CharField(max_length=10, default='<day>')
@@ -118,4 +130,13 @@ class Answers(models.Model):
 #     time_open = models.TimeField(default=datetime.now().time())
 #     time_close = models.TimeField(default=datetime.now().time())
 #     last_edit = models.DateTimeField(auto_now_add=True)
+=======
+class Worktimes(models.Model):
+    employee = models.ForeignKey(Employees, on_delete=models.CASCADE)
+    day = models.CharField(max_length=10, default='<day>')
+    is_open = models.BooleanField(default=False)
+    time_open = models.TimeField(default=datetime.now().time())
+    time_close = models.TimeField(default=datetime.now().time())
+    last_edit = models.DateTimeField(auto_now_add=True)
+>>>>>>> 3327489e70c390d7285e91d02e4be219f984bf3a
 

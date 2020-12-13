@@ -17,7 +17,16 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
+<<<<<<< HEAD
       import(/* webpackChunkName: "about" */ "../views/AfspraakMaken.vue")
+=======
+<<<<<<< HEAD
+      import(/* webpackChunkName: "about" */ "../views/AfspraakMaken.vue"),
+    props: true
+=======
+      import(/* webpackChunkName: "about" */ "../views/AfspraakMaken.vue")
+>>>>>>> 6d2b6ad... frontend merged
+>>>>>>> 3327489e70c390d7285e91d02e4be219f984bf3a
   },
   {
     path: "/afspraak-bevestigen",
@@ -26,7 +35,16 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
+<<<<<<< HEAD
       import(/* webpackChunkName: "about" */ "../views/AfspraakBevestigen.vue")
+=======
+<<<<<<< HEAD
+      import(/* webpackChunkName: "about" */ "../views/AfspraakBevestigen.vue"),
+    props: true
+=======
+      import(/* webpackChunkName: "about" */ "../views/AfspraakBevestigen.vue")
+>>>>>>> 6d2b6ad... frontend merged
+>>>>>>> 3327489e70c390d7285e91d02e4be219f984bf3a
   },
   {
     path: "/afspraak-geboekt",
@@ -35,7 +53,16 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
+<<<<<<< HEAD
       import(/* webpackChunkName: "about" */ "../views/AfspraakGeboekt.vue")
+=======
+<<<<<<< HEAD
+      import(/* webpackChunkName: "about" */ "../views/AfspraakGeboekt.vue"),
+    props: true
+=======
+      import(/* webpackChunkName: "about" */ "../views/AfspraakGeboekt.vue")
+>>>>>>> 6d2b6ad... frontend merged
+>>>>>>> 3327489e70c390d7285e91d02e4be219f984bf3a
   }
 ];
 

@@ -1,4 +1,13 @@
 <template>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+  <v-container>
+    <h2>Type Afspraak:</h2>
+    <v-checkbox input-value="true" label="Shiatsu Therapie" v-model="shiatsu" @click:event="changeBehandeling"></v-checkbox>
+    <v-checkbox input-value="false" label="Voedingsadvies" v-model="voeding" @click:event="changeBehandeling"></v-checkbox>
+=======
+>>>>>>> 3327489e70c390d7285e91d02e4be219f984bf3a
   <v-container fluid>
     <h2>Type Behandeling:</h2>
     <v-checkbox
@@ -47,10 +56,41 @@
         value="3"
       ></v-radio>
     </v-radio-group>
+<<<<<<< HEAD
+=======
+>>>>>>> 6d2b6ad... frontend merged
+>>>>>>> 3327489e70c390d7285e91d02e4be219f984bf3a
   </v-container>
 </template>
 
 <script>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+import { bus } from '../main'
+export default {
+  data() {
+    return {
+      shiatsu: true,
+      voeding: false,
+      treatment: []
+    };
+  },
+  methods: {
+    changeBehandeling () {
+      if (this.shiatsu == true) {
+        this.treatment.push("shiatsu")
+      }
+      if (this.voeding == true) {
+        this.treatment.push("voeding")
+      }
+      bus.$emit('changeBehandeling', this.treatment);
+    }
+  }
+};
+</script>
+=======
+>>>>>>> 3327489e70c390d7285e91d02e4be219f984bf3a
   export default {
     data () {
       return {
@@ -59,4 +99,9 @@
       }
     },
   }
+<<<<<<< HEAD
 </script>
+=======
+</script>
+>>>>>>> 6d2b6ad... frontend merged
+>>>>>>> 3327489e70c390d7285e91d02e4be219f984bf3a

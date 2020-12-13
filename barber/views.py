@@ -24,7 +24,11 @@ from rest_framework.status import (
 )
 
 
+<<<<<<< HEAD
 from barber.serializers import TestSerializer, AppointmentSerializer
+=======
+from barber.serializers import TestSerializer, NewAppointmentSerializer, GetAppointmentSerializer
+>>>>>>> 3327489e70c390d7285e91d02e4be219f984bf3a
 from django.core.files import File
 from django.conf import settings
 from datetime import datetime
@@ -68,11 +72,10 @@ class AppointmentsView(viewsets.ModelViewSet):
         treatment = getpost(request, 'treatment')
         employee_id = getpost(request, 'employee_id')
         make_appointment = Appointments.objects.create(customer_id=customer_id,
-                                                       date_booked_start=start, date_booked_end=end,
-                                                       treatment=treatment, employee_id=employee_id)
+                                                 date_booked_start=start, date_booked_end=end,
+                                                 treatment=treatment, employee_id=employee_id)
         if customer_id == 0:
-            make_credentials = Credentials.objects.create(appointment_id=make_appointment.pk, name=name, email=email,
-                                                          phone_number=phone_number)
+            make_credentials = Credentials.objects.create(appointment_id=make_appointment.pk, name=name, email=email, phone_number=phone_number)
         else:
             name = User.objects.get(pk=customer_id).first_name
             email = User.objects.get(pk=customer_id).email

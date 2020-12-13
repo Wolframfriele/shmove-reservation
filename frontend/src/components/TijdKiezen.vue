@@ -2,6 +2,12 @@
   <v-row class="fill-height">
     <v-col>
       <v-sheet height="64">
+
+        <v-toolbar flat>
+          <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
+            Today
+          </v-btn>
+          <v-btn fab text small color="grey darken-2" @click="prev">
         <v-toolbar
           flat
         >
@@ -38,6 +44,9 @@
           <v-toolbar-title v-if="$refs.calendar">
             {{ $refs.calendar.title }}
           </v-toolbar-title>
+
+          <v-spacer>
+          </v-spacer>
           <v-spacer>
           </v-spacer>
           <v-toolbar-title>
@@ -85,21 +94,12 @@ export default {
   async created() {
     try {
       // const res = await axios.get(`https://run.mocky.io/v3/b456ae47-4cfe-438b-8098-cda5ebb8bbf3`)
-
-      const res = await axios.post(`http://127.0.0.1:8000/api/appointments/new_appointment/`, 
+      const res = await axios.post(`http://127.0.0.1:8000/api/appointments/get_appointments_barber/`, 
       {body: {
-        customer_id: this.is_user ? 16 : 0,
-        name: "John",
-        email: "",
-        phone_number: "0612345678",
-        start: "2020-11-27 11:00",
-        end: "2020-11-27 12:00",
-        treatment:[
-          {"question1":"answer thingie"},
-          {"question2":"answer thingie"},
-          {"question3":"answer thingie"}
-        ],
-        employee_id:2}
+        start_day: "2020-11-23",
+        end_day: "2020-11-29",
+        employee_id: 3,
+        }
       }
       )
 

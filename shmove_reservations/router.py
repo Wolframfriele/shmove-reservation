@@ -1,4 +1,5 @@
 from rest_framework import routers
+
 from barber.views import TestView, AppointmentsView  # example of rest api view import
 
 
