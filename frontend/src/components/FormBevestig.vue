@@ -124,6 +124,7 @@ export default {
     ValidationObserver
   },
   props: ["date"],
+
   data: () => ({
     firstname: "",
     lastname: "",
@@ -131,26 +132,39 @@ export default {
     phonenumber: '',
     accepted: null,
   }),
+
+  created(){
+    console.log(this.$route.params);
+  },
+
   methods: {
     submit() {
+      let self = this;
       this.$refs.observer.validate()
-      let self = this
-      axios.post(`${self.$store.state.HOST}/api/appointments/new_appointment/`,
-        {
+      axios.post(`${self.$store.state.HOST}/api/appointments/new_appointment/`,{
           body: {
             customer_id: 0,
             firstname: this.firstname,
+            lastname: this.lastname,
             email: this.email,
             phone_number: this.phonenumber,
             start: this.$route.params.start,
             end: this.$route.params.end,
-            treatment: this.$route.params.treatment,
-            employee_id: 0
+            // treatment: this.$route.params.treatment,
+            treatment: ['knippen', 'verven', 'masseren'],
+            employee_id: 0,
           }
-        },
-      )
-      this.$router.push("afspraak-geboekt")
+        } 
+      ).then(response => {
+        console.log(response.data);
+        if(response.data.created){
+          this.$router.push("afspraak-geboekt")
+        }
+      }).catch(e => {
+        console.log(e);
+      });
     },
+
     back() {
       this.$router.push("afspraak-maken")
     }

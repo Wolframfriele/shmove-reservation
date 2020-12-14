@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-// import work from "./modules/work";  // store file from modules map import example
+import dashboard from "./modules/dashboard";  // store file from modules map import example
 
 import axios from "axios";
 
@@ -98,5 +98,7 @@ export default new Vuex.Store({
     
   },
 
-  modules: {}
+  modules: {
+    dashboard: dashboard
+  }
 });

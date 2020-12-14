@@ -62,12 +62,12 @@ class Employees(models.Model):
 
 
 class Appointments(models.Model):
-    customer_id = models.IntegerField(default=0)
+    customer_id = models.IntegerField(default=0) #if 0 get custome info from credentials model else get info fron User model
     date_booked_start = models.DateTimeField(default=datetime.now())
     date_booked_end = models.DateTimeField(default=datetime.now())
     date_requested = models.DateTimeField(auto_now_add=True)
     treatment = models.CharField(max_length=1500)
-    employee_id = models.IntegerField(default=0)
+    employee_id = models.IntegerField(default=0) # if 0 no specific employee choosed else get data from employee model
     done = models.BooleanField(default=False)
 
 

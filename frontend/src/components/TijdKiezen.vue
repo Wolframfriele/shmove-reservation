@@ -48,7 +48,6 @@
 <script>
 import { bus } from '../main'
 import axios from "axios";
-
 export default {
   data: () => ({
     focus: "",
@@ -105,7 +104,6 @@ export default {
         return event.color
     },
     // updateRange ({ start, end }) {
-
     // },
     intervalFormat(interval) {
       return interval.time;

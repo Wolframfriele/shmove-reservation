@@ -27,7 +27,7 @@ SECRET_KEY = 'mz2cb&ktr0bm_-!(%^zy#+&am*kk!y%!qcqc(*&k18a=nk@gbs'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    
+    'django.yanickhost.ga:8085', '127.0.0.1:8000'
 ]
 
 

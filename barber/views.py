@@ -133,20 +133,112 @@ class AppointmentsView(viewsets.ModelViewSet):
             # format date time obj
             obj_tf = datetime.strptime(str_tf, '%Y-%m-%d %H:%M')
             obj_tt = datetime.strptime(str_tt, '%Y-%m-%d %H:%M')
-            # check if time already taked
-            time_taked = Appointments.objects.filter(
+            # check if there is an appointment plan on this time
+            appointment = Appointments.objects.filter(
                 Q(date_booked_start=t['time_from']) & 
                 Q(date_booked_end=t['time_to'])
-            ).count()
+            )
             
-            if time_taked == 0:
+            if appointment.count() == 0:
                 # append the formated date time
-                date_times_arr.append({'start': obj_tf, 'end': obj_tt, 'taked': False})
+                date_times_arr.append({'start': obj_tf, 'end': obj_tt, 'taked': False, 'appointment_id': None})
             else:
                 # append the formated date time
-                date_times_arr.append({'start': obj_tf, 'end': obj_tt, 'taked': True})
+                date_times_arr.append({'start': obj_tf, 'end': obj_tt, 'taked': True, 'appointment_id': appointment.values()[0]['id']})
             
         return Response(date_times_arr)
+    
+    def get_employee(self, id):
+        """get customer withou employee data fron the Employees model
+
+        Args:
+            id ([int]): [employee id]
+        """
+        employee = None
+        try:
+            employee = Employees.objects.get(id=id).user.username
+        except:
+            employee = 'Employee not longer exist'
+            
+        return employee
+    
+    def get_register_customer_data(self, id):
+        """get customer with account data fron the User model
+
+        Args:
+            id ([int]): [customer id]
+        """
+        data = {}
+        
+        try:
+            # remenber to add a profile model to get register customer tel numer and other info nor available in de User model
+            user = User.objects.get(id=id)
+            data = {
+                'username': user.username,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+                'phone_number': 'comming soon'
+            }
+        except:
+            data = 'Customer not found'
+        
+        return data,
+    
+    def get_unregister_customer_data(self, id):
+        """get customer without account data fron the Credentials model
+
+        Args:
+            id ([int]): [appointment id]
+        """
+        data = {}
+        
+        try:
+            credentials = Credentials.objects.get(id=id)
+            data = {
+                'first_name': credentials.first_name,
+                'last_name': credentials.last_name,
+                'email': credentials.email,
+                'phone_number':credentials.phone_number,
+            }
+        except:
+            data = 'Customer credentials not found'
+        
+        return data,
+            
+        
+    @csrf_exempt
+    @action(methods=['get'], detail=False)
+    def get_appointment_data(self, request):
+        appointment_id = request.query_params.get('appointment_id')
+        result = []
+        
+        appointment_info = Appointments.objects.get(id=appointment_id)
+        # check if customer have an account or not
+        if appointment_info.customer_id == 0 and appointment_info.employee_id == 0:
+            result.append({
+                'customer': self.get_unregister_customer_data(appointment_id).data,
+                'appointment': self.get_serializer(appointment_info),
+                'employee': None
+            })
+        elif appointment_info.customer_id == 0 and appointment_info.employee_id != 0:
+            employee_name = self.get_employee(appointment_info.employee_id)
+            
+            result.append({
+                'appointment': self.get_serializer(appointment_info),
+                'employee': employee_name,
+                'customer': self.get_unregister_customer_data(appointment_id.data),
+            })
+        elif appointment_info.customer_id != 0 and appointment_info.employee_id == 0:
+            customer_data = self.get_register_customer_data(appointment_info.customer_id)
+            
+            result.append({
+                'appointment': self.get_serializer(appointment_info).data,
+                'customer': customer_data,
+                'employee': 'Geen'
+            })
+            
+        return Response(result)
         
         
         
