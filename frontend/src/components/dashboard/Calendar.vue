@@ -59,6 +59,7 @@
               @click:event="showEvent"
               @click:more="viewDay"
               @click:date="viewDay"
+              @change="getAllEvents"
           ></v-calendar>
           <!--                                          @click:time="createEvent"-->
         </v-sheet>
@@ -123,19 +124,19 @@
             <v-container>
               <v-row>
                 <v-col cols="12" md="6">
-                  <v-text-field :counter="15" label="Voornaam" required dense id="firstname"></v-text-field>
+                  <v-text-field :counter="15" label="Voornaam" required dense v-model="firstname"></v-text-field>
                 </v-col>
 
                 <v-col cols="12" md="6">
-                  <v-text-field :counter="15" label="Achternaam" dense id="lastname"></v-text-field>
+                  <v-text-field :counter="15" label="Achternaam" dense v-model="lastname"></v-text-field>
                 </v-col>
 
                 <v-col cols="12" md="6">
-                  <v-text-field label="E-mail" dense id="email"></v-text-field>
+                  <v-text-field label="E-mail" dense v-model="email"></v-text-field>
                 </v-col>
 
                 <v-col cols="12" md="6">
-                  <v-text-field label="Telefoonnummer" dense id="phone_number"></v-text-field>
+                  <v-text-field label="Telefoonnummer" dense v-model="phone"></v-text-field>
                 </v-col>
               </v-row>
             </v-container>
@@ -179,6 +180,10 @@ export default {
     starttime: '',
     endtime: '',
     success: '',
+    firstname: '',
+    lastname: '',
+    email: '',
+    phone: '',
   }),
 
   computed: {
@@ -189,7 +194,6 @@ export default {
 
   created() {
     this.getData();
-    this.getAllEvents();
   },
 
   mounted() {
@@ -198,16 +202,16 @@ export default {
 
   methods: {
     sendToBackEnd() {
-      this.parseDate(this.selectedEvent.start);
-      this.parseDate(this.selectedEvent.end);
+      const start = this.parseDate(this.selectedEvent.start);
+      const end = this.parseDate(this.selectedEvent.end);
       let body = {
       customer_id: 0,
       firstname: this.firstname,
-      lastname: this.lastname,
+      last_name: this.lastname,
       email: this.email,
-      phone_number: this.phone_number,
-      start: this.selectedEvent.start,
-      end: this.selectedEvent.end,
+      phone_number: this.phone,
+      start: start,
+      end: end,
       treatment: [],
       employee_id: 0,
       }
@@ -216,6 +220,8 @@ export default {
           .then((res) => {
             //Perform Success Action
             console.log(res.data);
+            this.createEventModal = false
+            this.getAllEvents()
           })
           .catch((error) => {
             console.log(error)
@@ -256,6 +262,7 @@ export default {
       await axios.get(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
           {}
       ).then(res => {
+        this.events = []
         // console.log(res.data);
         res.data.forEach(times => {
           self.events.push({
@@ -363,7 +370,7 @@ export default {
         'november',
         'december'
       ];
-      const reserverings_tijd = new Date(date);
+      const reserverings_tijd = new Date(date).to;
 
       const dayIndex = reserverings_tijd.getDay();
       const day = days[dayIndex];
