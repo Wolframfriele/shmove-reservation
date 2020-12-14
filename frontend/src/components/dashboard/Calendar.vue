@@ -60,6 +60,7 @@
               @click:more="viewDay"
               @click:date="viewDay"
               @change="getAllEvents"
+              :weekdays="weekdays"
           ></v-calendar>
           <!--                                          @click:time="createEvent"-->
         </v-sheet>
@@ -87,7 +88,7 @@
           <span id="stylist">{{appointmentInfos[0].employee}}</span>
         </v-card-text>
         <v-card-actions>
-          <v-btn text color="secondary" @click="selectedOpen = false">
+          <v-btn text color="secondary" @click="showEventModal = false">
             Cancel
           </v-btn>
         </v-card-actions>
