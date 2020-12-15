@@ -30,8 +30,7 @@ export default {
 </script>
 
 <style>
-/* @import url("https://fonts.googleapis.com/css?family=Amita");
-@import url("https://fonts.googleapis.com/css?family=Arbutus+Slab"); */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap');
 html,
 body {
   scroll-behavior: smooth;
@@ -40,11 +39,11 @@ body {
   width: 100%;
   margin: 0px;
   padding: 0px;
-  font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
 }
 #app {
   /* scroll-behavior: smooth; */
-  font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
   margin: 0px;
   padding: 0px;
   width: 100%;

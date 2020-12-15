@@ -12,7 +12,7 @@ export default new Vuex.Store({
     HOST:
       window.location.port != ""
         ? " http://127.0.0.1:8000"
-        : "http://yanick007.pythonanywhere.com",
+        : "django.yanickhost.ga:8085",
     AUTHENTICATED: undefined,
     usertoken: undefined
   },

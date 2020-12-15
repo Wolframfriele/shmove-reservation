@@ -22,7 +22,11 @@ export default {
 <style scoped>
 h1 {
   text-align: center;
-  margin: 1em 1em 2em 1em;
+  margin: 0em 1em 1em 0;
+  color: #c49760;
+  font-size: .5em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .form {
@@ -31,6 +35,6 @@ h1 {
 }
 
 .text-center {
-  margin: 1em 1em 1em 1em;
+  margin: 0em 1em 1em 0em;
 }
 </style>

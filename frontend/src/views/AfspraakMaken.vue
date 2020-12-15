@@ -1,6 +1,6 @@
 <template>
   <v-main>
-    <h1 class="display-1">Afspraak Maken:</h1>\
+    <h1 class="display-1">Afspraak Maken:</h1>
     <TypeAfspraak class="type" />
     <TijdKiezen class="calendar" />
     <!-- <div class="text-center">
@@ -28,18 +28,27 @@ export default {
 </script>
 
 <style scoped>
+body {
+  overflow: hidden;
+}
+
 h1 {
-  text-align: center;
-  margin: 1em 1em 1em 1em;
+  margin: 1em 1em 0em 0em;
+  color: #c49760;
+  font-size: .5em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .type {
   width: 300px;
-  margin: auto;
+  margin: 0 1em 1em 0em;
   overflow: hidden;
 }
 .calendar {
   margin: 0;
+  height: auto;
+  overflow: hidden;
 }
 
 .text-center {

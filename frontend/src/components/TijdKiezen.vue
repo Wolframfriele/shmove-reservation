@@ -20,9 +20,9 @@
             {{ $refs.calendar.title }}
           </v-toolbar-title>
           <v-spacer> </v-spacer>
-          <v-toolbar-title>
+          <!-- <v-toolbar-title>
             Kies een afspraak:
-          </v-toolbar-title>
+          </v-toolbar-title> -->
         </v-toolbar>
       </v-sheet>
       <v-sheet>
@@ -85,10 +85,6 @@ export default {
     next() {
       this.$refs.calendar.next();
     },
-    parseDate(date){
-      // parse date time to dd-mm-yyy h:m:s
-      return new Date(date).toLocaleString('en-GB', { timeZone: 'UTC' });
-    },
     getEventColor (event) {
         return event.color
     },
@@ -107,14 +103,15 @@ export default {
       {}
       ).then(res => {
         console.log(res.data);
+        self.events = []
         res.data.forEach(times => {
-          if (times.taked != true) {
+          if (times.taked == false) {
             self.events.push({
             name: times.taked ? "Bezet" : "Vrije Afspraak",
             start: times.start,
             end: times.end,
             color: times.taked ? self.eventColor[1] : self.eventColor[0],
-            timed: !times.taked
+            timed: true
           })
           }
         });

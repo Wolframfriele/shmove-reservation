@@ -134,7 +134,7 @@ export default {
   methods: {
     parseDate(date){
       // parse date time to dd-mm-yyy h:m:s
-      return new Date(date).toLocaleString('en-GB', { timeZone: 'UTC' });
+      return new Date(date).toLocaleString('en-GB', { timeZone: 'CET' });
     },
     submit() {
       this.$refs.observer.validate()

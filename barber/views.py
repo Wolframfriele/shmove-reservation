@@ -1,4 +1,3 @@
-
 from django.shortcuts import render
 
 # Create your views here.
@@ -140,10 +139,10 @@ class AppointmentsView(viewsets.ModelViewSet):
             ).count()
             
             if time_taked == 0:
-                # append the formated date time
+                # append the formatted date time
                 date_times_arr.append({'start': obj_tf, 'end': obj_tt, 'taked': False})
             else:
-                # append the formated date time
+                # append the formatted date time
                 date_times_arr.append({'start': obj_tf, 'end': obj_tt, 'taked': True})
             
         return Response(date_times_arr)
