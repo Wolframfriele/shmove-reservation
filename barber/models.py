@@ -20,63 +20,30 @@ from django.utils import timezone
 #     preset_last_used = models.IntegerField(max_length=3)
 #     presets = models.CharField(max_length=100)
 
-
-class Barbers(models.Model):
-    name = models.CharField(max_length=200)
-
-    def __str__(self):
-        return self.name
+# timeSlice = models.ManyToManyField(WorktimeSlices)
 
 
-class WorktimeSlices(models.Model):
-    """the free places in the agenda
-        Args:
-            models (DB model instance): [DB fields]
-        """
-    time_from = models.DateTimeField()
-    time_to = models.DateTimeField()
+class Timelices(models.Model):
+    slice_start = models.TimeField()
+    slice_end = models.TimeField()
 
     def __str__(self):
-        return str(self.time_from) + ' to ' + str(self.time_to)
+        return str(self.slice_start) + ' to ' + str(self.slice_end)
 
 
-class Worktimes(models.Model):
-    # employee = models.ForeignKey(Employees, on_delete=models.CASCADE)
+class Openinghours(models.Model):
     day = models.CharField(max_length=10, default='<day>')
-    # is_working = models.BooleanField(default=False)
-    start = models.TimeField(default=datetime.now().time())
-    end = models.TimeField(default=datetime.now().time())
-    timeSlice = models.ManyToManyField(WorktimeSlices)
-    last_edit = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return str(self.day) + ' ' + str(self.start) + ' ' + str(self.end)
+    slices = models.ManyToManyField(Timelices)
 
 
-class Employees(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    barber = models.ForeignKey(Barbers, on_delete=models.CASCADE)
-    avatar_path = models.CharField(max_length=400)
-    made_on = models.DateTimeField(auto_now_add=True)
-    work_time = models.ManyToManyField(Worktimes)  # if the employee is deleted, his work times would be also deleted
-    last_edit = models.DateTimeField(auto_now_add=True)  # moet updated bij elke verandering in die row.
-
-    def __str__(self):
-        return User.objects.get(id=self.user.pk).username
-
-
-class Appointments(models.Model):
-    customer_id = models.IntegerField(default=0)
-    date_booked_start = models.DateTimeField(default=datetime.now())
-    date_booked_end = models.DateTimeField(default=datetime.now())
-    date_requested = models.DateTimeField(auto_now_add=True)
-    treatment = models.CharField(max_length=1500)
-    employee_id = models.IntegerField(default=0)
-    done = models.BooleanField(default=False)
+class Daily(models.Model):
+    date = models.DateField(auto_now_add=False)
+    is_open = models.BooleanField(default=False)
+    slice_count = models.IntegerField(max_length=2)
+    slices = models.ManyToManyField(Timelices)
 
 
 class Credentials(models.Model):
-    appointment = models.ForeignKey(Appointments, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
     email = models.CharField(max_length=200)
@@ -86,36 +53,14 @@ class Credentials(models.Model):
         return self.first_name  # was eerst 'firstname'
 
 
-class Openinghours(models.Model):
-    barber = models.ForeignKey(Barbers, on_delete=models.CASCADE)
-    day = models.CharField(max_length=10, default='<day>')
-    is_open = models.BooleanField(default=False)
-    time_open = models.TimeField(default=datetime.now().time())
-    time_close = models.TimeField(default=datetime.now().time())
-    last_edit = models.DateTimeField(auto_now_add=True)
+class Appointments(models.Model):
+    customer_id = models.IntegerField(default=0)
+    date_booked_start = models.DateTimeField(default=datetime.now())
+    date_booked_end = models.DateTimeField(default=datetime.now())
+    date_requested = models.DateTimeField(auto_now_add=True)
+    treatment = models.TextField(max_length=1500)
+    reason = models.TextField(max_length=3000)
+    done = models.BooleanField(default=False)
+    credentials = models.ManyToManyField(Credentials)
 
-
-class Questions(models.Model):
-    barber = models.ForeignKey(Barbers, on_delete=models.CASCADE)
-    question = models.CharField(max_length=500)
-    made_on = models.DateTimeField(auto_now_add=True)
-    last_edit = models.DateTimeField(auto_now_add=True)  # moet updated bij elke verandering in die row.
-
-
-class Answers(models.Model):
-    question = models.ForeignKey(Questions, on_delete=models.CASCADE)
-    answer = models.CharField(max_length=500)
-    duration = models.TimeField(default=datetime.now().time())
-    cost = models.DecimalField(max_digits=10, decimal_places=2)
-    made_on = models.DateTimeField(auto_now_add=True)
-    last_edit = models.DateTimeField(auto_now_add=True)  # moet updated bij elke verandering in die row.
-
-
-# class Worktimes(models.Model):
-#     employee = models.ForeignKey(Employees, on_delete=models.CASCADE)
-#     day = models.CharField(max_length=10, default='<day>')
-#     is_open = models.BooleanField(default=False)
-#     time_open = models.TimeField(default=datetime.now().time())
-#     time_close = models.TimeField(default=datetime.now().time())
-#     last_edit = models.DateTimeField(auto_now_add=True)
 

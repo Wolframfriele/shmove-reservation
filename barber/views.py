@@ -1,4 +1,3 @@
-
 from django.shortcuts import render
 
 # Create your views here.
@@ -23,11 +22,12 @@ from rest_framework.status import (
     HTTP_200_OK
 )
 
-
 from barber.serializers import TestSerializer, AppointmentSerializer
 from django.core.files import File
 from django.conf import settings
 from datetime import datetime
+
+
 # Create your views here.
 
 class TestView(viewsets.ModelViewSet):
@@ -71,10 +71,11 @@ class AppointmentsView(viewsets.ModelViewSet):
         treatment = getpost(request, 'treatment')
         employee_id = getpost(request, 'employee_id')
         make_appointment = Appointments.objects.create(customer_id=customer_id,
-                                                 date_booked_start=start, date_booked_end=end,
-                                                 treatment=treatment, employee_id=employee_id)
+                                                       date_booked_start=start, date_booked_end=end,
+                                                       treatment=treatment, employee_id=employee_id)
         if customer_id == 0:
-            make_credentials = Credentials.objects.create(appointment_id=make_appointment.pk, name=name, email=email, phone_number=phone_number)
+            make_credentials = Credentials.objects.create(appointment_id=make_appointment.pk, name=name, email=email,
+                                                          phone_number=phone_number)
         else:
             name = User.objects.get(pk=customer_id).first_name
             email = User.objects.get(pk=customer_id).email
@@ -95,7 +96,7 @@ class AppointmentsView(viewsets.ModelViewSet):
         return Response(dates)
 
     @csrf_exempt
-    @action(methods=['post'], detail=False)
+    @action(methods=['get'], detail=False)
     def get_appointments_barber(self, request):
 
         start_day = datetime.strptime(getpost(request, 'start_day'), '%Y-%m-%d')
@@ -126,7 +127,6 @@ class AppointmentsView(viewsets.ModelViewSet):
                              'employee_id': appointment['employee_id']
                              })
         return Response(the_info)
-
 
 # def new_barber():
 #     name = "Shmoving Test"
