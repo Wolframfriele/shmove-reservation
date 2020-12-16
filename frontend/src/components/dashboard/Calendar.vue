@@ -44,7 +44,7 @@
             </v-menu>
           </v-toolbar>
         </v-sheet>
-        <v-sheet height="600">
+        <v-sheet>
           <v-calendar
               ref="calendar"
               v-model="focus"
@@ -164,8 +164,8 @@ export default {
     mode: 'column',
     weekdays: [1, 2, 3, 4, 5, 6, 0],
     value: '',
-    firstinterval: "9",
-    intervalcount: "11",
+    firstinterval: "7",
+    intervalcount: "13",
     locale: "nl",
     events: [],
     select: [{text: 'Massage', value: '120'}],
@@ -420,6 +420,9 @@ export default {
   right: 15px;
   position: absolute;
   bottom: 15px;
+}
+div.v-calendar-daily__head {
+  margin-right: 0;
 }
 
 form .container {
