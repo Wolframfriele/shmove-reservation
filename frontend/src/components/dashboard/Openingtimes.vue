@@ -21,6 +21,7 @@
           label="Gesloten"
           :value="day.closed"
           ></v-switch>
+        <v-btn small light color="green accent-3" class="test">Opslaan</v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -32,43 +33,43 @@ export default {
     currency: "€",
     days: [
       {
-        title: "Monday",
+        title: "Maandag",
         start: "10:00",
         end: "18:00",
         closed: false
       },
       {
-        title: "Tuesday",
+        title: "Dinsdag",
         start: "10:00",
         end: "18:00",
         closed: false
       },
       {
-        title: "Wednesday",
+        title: "Woensdag",
         start: "10:00",
         end: "18:00",
         closed: false
       },
       {
-        title: "Thursday",
+        title: "Donderdag",
         start: "10:00",
         end: "18:00",
         closed: false
       },
       {
-        title: "Friday",
+        title: "Vrijdag",
         start: "10:00",
         end: "18:00",
         closed: false
       },
       {
-        title: "Saturday",
+        title: "Zaterdag",
         start: "10:00",
         end: "18:00",
         closed: false
       },
       {
-        title: "Sunday",
+        title: "Zondag",
         start: "10:00",
         end: "18:00",
         closed: true
@@ -79,12 +80,24 @@ export default {
 };
 </script>
 <style scoped>
+.test {
+  display: none;
+  margin-left: 10px;
+}
+h2 {
+  margin-bottom: 20px;
+}
 .textfieldContainer {
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-between;
+  position: relative;
+  max-width: 80%;
+}
+.textfieldContainer:hover .test{
+  display: block;
 }
 .textfield {
   margin: 0 10px;
+  max-width: 200px;
 }
 </style>

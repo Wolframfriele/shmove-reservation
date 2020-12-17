@@ -84,8 +84,6 @@
           <span id="phone">{{appointmentInfos[0].customer[0].phone_number}}</span><br/>
           <label for="treatments">Behandelingen: </label>
           <span id="treatments" >{{appointmentInfos[0].appointment.treatment}}</span><br/>
-          <label for="stylist">Stylist: </label>
-          <span id="stylist">{{appointmentInfos[0].employee}}</span>
         </v-card-text>
         <v-card-actions>
           <v-btn text color="secondary" @click="showEventModal = false">
@@ -371,7 +369,7 @@ export default {
         'november',
         'december'
       ];
-      const reserverings_tijd = new Date(date).to;
+      const reserverings_tijd = new Date(date);
 
       const dayIndex = reserverings_tijd.getDay();
       const day = days[dayIndex];
