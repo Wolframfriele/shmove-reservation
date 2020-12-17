@@ -75,9 +75,9 @@
         <v-card-text v-if='$store.state.dashboard.appointmentDataArr != 0'>
           <br/>
           <label for="cstartTime">Begintijd: </label>
-          <span id="cstartTime">{{ convertTime(appointmentInfos[0].appointment.date_booked_start) }}</span><br />
+          <span id="cstartTime">{{ convertTime(selectedEvent.start) }}</span><br />
           <label for="cendtime">Eindtijd: </label>
-          <span id="cendtime">{{ convertTime(appointmentInfos[0].appointment.date_booked_end) }}</span><br />
+          <span id="cendtime">{{ convertTime(selectedEvent.end) }}</span><br />
           <label for="email">Email: </label>
           <span id="email">{{appointmentInfos[0].customer[0].email}}</span><br/>
           <label for="phone">Telefoon: </label>
