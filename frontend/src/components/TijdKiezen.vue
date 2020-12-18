@@ -115,21 +115,30 @@ export default {
     },
     getFreePlaces(){
       let self = this;
-      axios.get(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
-      {}
+      axios.post(`${self.$store.state.HOST}/api/appointments/tijmen_test/`,
+      {body:{
+        date_booked_start: '2020-12-14 15:30',
+        date_booked_end: '2020-12-14 16:30',
+        treatment: 'Massage',
+        reason: 'Pijn in m\'n pijn!',
+        first_name: 'Hans',
+        last_name: 'Panmans',
+        email: 'panhansmans@gmail.com',
+        phone_number: '0612345678',
+      }}
       ).then(res => {
         console.log(res.data);
-        res.data.forEach(times => {
-          if (times.taked != true) {
-            self.events.push({
-            name: times.taked ? "Bezet" : "Vrije Afspraak",
-            start: times.start,
-            end: times.end,
-            color: times.taked ? self.eventColor[1] : self.eventColor[0],
-            timed: !times.taked
-          })
-          }
-        });
+        // res.data.forEach(times => {
+        //   if (times.taked != true) {
+        //     self.events.push({
+        //     name: times.taked ? "Bezet" : "Vrije Afspraak",
+        //     start: times.start,
+        //     end: times.end,
+        //     color: times.taked ? self.eventColor[1] : self.eventColor[0],
+        //     timed: !times.taked
+        //   })
+        //   }
+        // });
       }).catch(e => {
         console.log(e)
       })

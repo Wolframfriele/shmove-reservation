@@ -3,7 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
-from barber.models import Appointments, Barbers, Employees, Credentials
+from barber.models import Appointments, Credentials
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.core import serializers
@@ -127,6 +127,38 @@ class AppointmentsView(viewsets.ModelViewSet):
                              'employee_id': appointment['employee_id']
                              })
         return Response(the_info)
+
+    @csrf_exempt
+    @action(methods=['post'], detail=False)
+    def tijmen_test(self, request):
+        date_booked_start = datetime.strptime(getpost(request, 'date_booked_start'), '%Y-%m-%d %H:%M')
+        date_booked_end = datetime.strptime(getpost(request, 'date_booked_end'), '%Y-%m-%d %H:%M')
+        treatment = getpost(request, 'treatment')
+        reason = getpost(request, 'reason')
+
+        first_name = getpost(request, 'first_name')
+        last_name = getpost(request, 'last_name')
+        email = getpost(request, 'email')
+        phone_number = getpost(request, 'phone_number')
+
+        credential_key = 0
+
+        if_credentials = Credentials.objects.filter(first_name=first_name, last_name=last_name, email=email,
+                                                    phone_number=phone_number).values()
+        if if_credentials:
+            # credentials were found
+            credential_key = if_credentials[0]['id']
+        else:
+            # credentials were not found
+            make_credentials = Credentials.objects.create(first_name=first_name, last_name=last_name, email=email,
+                                                          phone_number=phone_number)
+            credential_key = make_credentials.pk
+
+        make_appointment = Appointments.objects.create(date_booked_start=date_booked_start,
+                                                       date_booked_end=date_booked_end,
+                                                       treatment=treatment, reason=reason, credentials=credential_key)
+
+        return Response(credential_key)
 
 # def new_barber():
 #     name = "Shmoving Test"
