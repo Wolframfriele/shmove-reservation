@@ -141,24 +141,21 @@ class AppointmentsView(viewsets.ModelViewSet):
         email = getpost(request, 'email')
         phone_number = getpost(request, 'phone_number')
 
-        credential_key = 0
-
-        if_credentials = Credentials.objects.filter(first_name=first_name, last_name=last_name, email=email,
-                                                    phone_number=phone_number).values()
+        if_credentials = Credentials.objects.get(first_name=first_name, last_name=last_name, email=email,
+                                                 phone_number=phone_number)
         if if_credentials:
             # credentials were found
-            credential_key = if_credentials[0]['id']
+            make_credentials = if_credentials
         else:
             # credentials were not found
             make_credentials = Credentials.objects.create(first_name=first_name, last_name=last_name, email=email,
                                                           phone_number=phone_number)
-            credential_key = make_credentials.pk
 
         make_appointment = Appointments.objects.create(date_booked_start=date_booked_start,
                                                        date_booked_end=date_booked_end,
-                                                       treatment=treatment, reason=reason, credentials=credential_key)
+                                                       treatment=treatment, reason=reason, credentials=make_credentials)
 
-        return Response(credential_key)
+        return Response("success")
 
 # def new_barber():
 #     name = "Shmoving Test"

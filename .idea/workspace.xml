@@ -3,17 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="243d40be-8ae8-490c-a948-6d162cbec5ce" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/barber/migrations/0002_auto_20201202_1235.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/barber/migrations/0003_auto_20201203_0849.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/barber/migrations/0004_auto_20201207_1305.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/barber/migrations/0005_auto_20201207_1313.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/barber/migrations/0006_auto_20201207_1315.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/barber/migrations/0007_auto_20201207_1321.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/barber/migrations/0008_auto_20201208_1022.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/barber/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/barber/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/barber/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/barber/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/TijdKiezen.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/TijdKiezen.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
