@@ -1,7 +1,7 @@
 <template>
   <v-main>
     <p>
-      Er is een plek in de agenda voor je gereserveerd! Je hebt ook een bevestigings mail ontvangen. Hier staat meer informatie over anuleren in.
+      Er is om {{ this.$route.params.time }} voor je gereserveerd! Je hebt ook een bevestigings mail ontvangen. Hier staat meer informatie over anuleren in.
     </p>
     <v-btn color="secondary" elevation="2" large>Voeg toe aan agenda</v-btn>
     <p>
@@ -9,6 +9,14 @@
     </p>
   </v-main>
 </template>
+
+<script>
+export default {
+  mounted() {
+    console.log(this.$route.params.time)
+  }
+}
+</script>
 
 <style scoped>
 p {

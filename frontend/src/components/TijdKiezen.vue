@@ -39,6 +39,7 @@
           :interval-format="intervalFormat"
           :locale="locale"
           @click:event="bevestigAfspraak"
+          @change="updateRange"
         ></v-calendar>
       </v-sheet>
     </v-col>
@@ -61,9 +62,9 @@ export default {
     treatment: [],
     events: []
   }),
-  async created() {
+  async created({ start, end }) {
     try {
-      await this.getFreePlaces();
+      await this.getFreePlaces(start, end);
 
     } catch (e) {
       console.error(e);
@@ -88,26 +89,29 @@ export default {
     getEventColor (event) {
         return event.color
     },
-    // updateRange ({ start, end }) {
-
-    // },
+    updateRange ({ start, end }) {
+      this.getFreePlaces(start, end)
+    },
     intervalFormat(interval) {
       return interval.time;
     },
     bevestigAfspraak({ event }) {
       this.$router.push({name: "AfspraakBevestigen", params: {start: event.start, end: event.end, treatment: this.treatment}});
     },
-    getFreePlaces(){
+    getFreePlaces(beginweek, endweek){
       let self = this;
+      this.events = []
       axios.get(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
-      {}
+      {
+        "beginweek": beginweek,
+        "endweek": endweek
+      }
       ).then(res => {
-        console.log(res.data);
         self.events = []
         res.data.forEach(times => {
           if (times.taked == false) {
             self.events.push({
-            name: times.taked ? "Bezet" : "Vrije Afspraak",
+            name: times.taked ? "Bezet" : "Vrij",
             start: times.start,
             end: times.end,
             color: times.taked ? self.eventColor[1] : self.eventColor[0],
@@ -118,13 +122,28 @@ export default {
       }).catch(e => {
         console.log(e)
       })
-    }
+    },
   }
 };
 </script>
 
-<style scoped>
+<style>
 .v-calendar-daily__scroll-area {
-  overflow: hidden;
+  overflow-y: hidden !important;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.v-calendar-daily__head {
+  margin-right: 0;
+}
+
+.col{
+  padding: 0;
+}
+
+html::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 </style>

@@ -41,6 +41,10 @@ body {
   padding: 0px;
   font-family: 'Open Sans', Helvetica, Arial, sans-serif;
 }
+
+::-webkit-scrollbar {
+  width: 0;
+}
 #app {
   /* scroll-behavior: smooth; */
   font-family: 'Open Sans', Helvetica, Arial, sans-serif;
@@ -52,4 +56,19 @@ body {
   align-items: center;
   /* overflow-x: hidden; */
 }
+
+.scroll-hide {
+  overflow: auto;
+  /* this will hide the scrollbar in mozilla based browsers */
+  overflow: -moz-scrollbars-none;
+  /* this will hide the scrollbar in internet explorers */
+  -ms-overflow-style: none;
+}
+
+/* this will hide the scrollbar in webkit based browsers - safari, chrome, etc */
+.scroll-hide ::-webkit-scrollbar { 
+  width: 0 !important;
+  display: none; 
+}
+
 </style>

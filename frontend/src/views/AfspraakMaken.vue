@@ -29,11 +29,15 @@ export default {
 
 <style scoped>
 body {
-  overflow: hidden;
+  overflow-y: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 0;
 }
 
 h1 {
-  margin: 1em 1em 0em 0em;
+  margin: 0em 0em 0em 0em;
   color: #c49760;
   font-size: .5em;
   text-transform: uppercase;
@@ -48,7 +52,7 @@ h1 {
 .calendar {
   margin: 0;
   height: auto;
-  overflow: hidden;
+  overflow-y: hidden;
 }
 
 .text-center {

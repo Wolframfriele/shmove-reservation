@@ -35,7 +35,7 @@
         </validation-provider>
         <validation-provider
         v-slot="{ errors }"
-        name="phoneNumber"
+        name="Telefoon Nummer"
         :rules="{
           required: true,
         }"
@@ -48,8 +48,15 @@
           required
         ></v-text-field>
       </validation-provider>
+      <v-textarea
+          outlined
+          v-model="reden"
+          name="reden"
+          label="Reden voor de behandeling"
+          value="Omschrijf wat voor klachten u heeft, of wat voor andere reden."
+        ></v-textarea>
         <p>
-          Uw afspraak staat gepland voor <strong>{{ convertDate }}</strong>. De afspraak duurt ongeveer 2 uur.
+          Uw selectie is <strong>{{ convertDate }}</strong>. De afspraak duurt ongeveer 2 uur.
         </p>
         <p class="caption">
           Annuleren is kosteloos tot 48 uur van tevoren, daarna wordt de gereserveerde tijd in principe in rekening gebracht. 
@@ -95,12 +102,12 @@ setInteractionMode("lazy");
 
 extend("digits", {
   ...digits,
-  message: "{_field_} needs to be {length} digits. ({_value_})"
+  message: "{_field_} moet minstens {length} characters lang zijn. ({_value_})"
 });
 
 extend("required", {
   ...required,
-  message: "{_field_} kan niet leeg zijn"
+  message: "{_field_} is verplicht"
 });
 
 extend("max", {
@@ -130,6 +137,8 @@ export default {
     email: "",
     phonenumber: '',
     accepted: null,
+    reden: '',
+    time: this.convertDate(),
   }),
   methods: {
     parseDate(date){
@@ -153,7 +162,8 @@ export default {
           }
         },
       )
-      this.$router.push("afspraak-geboekt")
+      console.log(this.time)
+      this.$router.push({name: "AfspraakGeboekt", params: { time: this.time}})
     },
     back() {
       this.$router.push("afspraak-maken")
@@ -186,7 +196,6 @@ export default {
       ];
       const reserverings_tijd = new Date(this.$route.params.start);
 
-      console.log(reserverings_tijd)
       const dayIndex = reserverings_tijd.getDay();
       const day = days[dayIndex];
       const date = reserverings_tijd.getDate();
