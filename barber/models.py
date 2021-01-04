@@ -38,7 +38,7 @@ class Openinghours(models.Model):
 
 class Daily(models.Model):
     date = models.DateField(auto_now_add=False)
-    is_open = models.BooleanField(default=False)
+    is_open = models.BooleanField(default=True)
     # bij integer field hoef je geen max_length aan te geven
     slice_count = models.IntegerField()
     slices = models.ManyToManyField(Timeslices)

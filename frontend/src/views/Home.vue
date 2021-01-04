@@ -17,7 +17,6 @@ export default {
   },
 
   created(){
-    this.getUser();
   },
 
   methods:{

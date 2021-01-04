@@ -115,6 +115,14 @@ class AppointmentsView(viewsets.ModelViewSet):
     @csrf_exempt
     @action(methods=['get'], detail=False)
     def get_free_places(self, request):
+        """get times from timeslices model on a weekly or monthly base
+
+        Args:
+            request ([request]): [contains sended data]
+
+        Returns:
+            [arr]: [time slices obj]
+        """
         date_times_arr = []
         data = False  # for testing
         start_date = getpost(
@@ -160,6 +168,18 @@ class AppointmentsView(viewsets.ModelViewSet):
                                            'taked': True, 'appointment_id': appointment.values()[0]['id']})
 
         return Response(date_times_arr)
+
+    @csrf_exempt
+    @action(methods=['get'], detail=False)
+    def block_times_lice(self, request):
+        """remove a specific time slice from agenda
+
+        Args:
+            request ([request]): [contains sended data]
+        Return:
+            type: arr: status of the query
+        """
+        pass
 
     def get_register_customer_data(self, id):
         """get customer with account data fron the User model
@@ -208,21 +228,32 @@ class AppointmentsView(viewsets.ModelViewSet):
     @csrf_exempt
     @action(methods=['get'], detail=False)
     def get_appointment_data(self, request):
+        """get appointment data and user info
+
+        Args:
+            request ([request]): [contains sended data]
+
+        Returns:
+            [arr]: [appointment data obj and user info obj]
+        """
         appointment_id = request.query_params.get('appointment_id')
         result = []
 
-        appointment_info = Appointments.objects.get(id=appointment_id)
-        # check if customer have an account or not
-        if appointment_info.customer_id == 0:
-            result.append({
-                'customer': self.get_unregister_customer_data(appointment_info.credentials_id),
-                'appointment': serializers.serialize('json', [appointment_info, ]),
-            })
-        else:
-            result.append({
-                'appointment': self.get_serializer(appointment_info).data,
-                'customer': self.get_register_customer_data(
-                    appointment_info.customer_id),
-            })
+        try:
+            appointment_info = Appointments.objects.get(id=appointment_id)
+            # check if customer have an account or not
+            if appointment_info.customer_id == 0:
+                result.append({
+                    'customer': self.get_unregister_customer_data(appointment_info.credentials_id),
+                    'appointment': serializers.serialize('json', [appointment_info, ]),
+                })
+            else:
+                result.append({
+                    'appointment': self.get_serializer(appointment_info).data,
+                    'customer': self.get_register_customer_data(
+                        appointment_info.customer_id),
+                })
+        except:
+            result.append('No appointment')
 
         return Response(result)

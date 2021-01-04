@@ -75,8 +75,8 @@
           <span id="email">{{appointmentInfos[0].customer[0].email}}</span><br/>
           <label for="phone">Telefoon: </label>
           <span id="phone">{{appointmentInfos[0].customer[0].phone_number}}</span><br/>
-          <label for="treatments">Behandelingen: </label>
-          <span id="treatments" >{{appointmentInfos[0].appointment.treatment}}</span><br/>
+          <label for="treatments">Behandelingen: {{JSON.parse(appointmentInfos[0].appointment)[0].fields.treatment}}</label>
+          <span id="treatments" ></span><br/>
           <label for="stylist">Stylist: </label>
           <span id="stylist">{{appointmentInfos[0].employee}}</span>
         </v-card-text>
@@ -203,6 +203,7 @@ export default {
       end: this.selectedEvent.end,
       treatment: [],
       employee_id: 0,
+      appointmentData: [],
       }
       let self = this;
       axios.post(`${self.$store.state.HOST}/api/appointments/new_appointment/`, {body: body})
@@ -277,6 +278,9 @@ export default {
         console.log(res.data);
         
         self.$store.getters['dashboard/setAppointments'](res.data)
+        // self.appointmentData.push(JSON.parse(self.appointmentInfos[0].appointment))
+        // print(self.appointmentData)
+        console.log(JSON.parse(self.appointmentInfos[0].appointment)[0].fields);
       }).catch(e => {
         console.log(e)
       })
