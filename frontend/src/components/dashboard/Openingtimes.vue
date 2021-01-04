@@ -5,23 +5,17 @@
       <v-col cols="2">
         <v-subheader>{{ day.title }}</v-subheader>
       </v-col>
-      <v-col cols="10" class="textfieldContainer">
-                <v-text-field
+      <v-col v-for="slot in timeslots" :key="slot.day_id" cols="10" class="textfieldContainer">
+        <v-text-field
           class="textfield"
-          label="Openingstijd"
-          :value="day.start"
+          label="Starttijd"
+          :value="slot.start"
         ></v-text-field>
         <v-text-field
           class="textfield"
-          label="Sluittijd"
-          :value="day.end"
+          label="Eindtijd"
+          :value="slot.end"
         ></v-text-field>
-          <v-switch
-          v-model="day.closed"
-          label="Gesloten"
-          :value="day.closed"
-          ></v-switch>
-        <v-btn small light color="green accent-3" class="test">Opslaan</v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -33,46 +27,69 @@ export default {
     currency: "€",
     days: [
       {
-        title: "Maandag",
-        start: "10:00",
-        end: "18:00",
-        closed: false
+        day_id: "0",
+        title: "Maandag"
       },
       {
-        title: "Dinsdag",
-        start: "10:00",
-        end: "18:00",
-        closed: false
+        day_id: "1",
+        title: "Dinsdag"
       },
       {
-        title: "Woensdag",
-        start: "10:00",
-        end: "18:00",
-        closed: false
+        day_id: "2",
+        title: "Woensdag"
       },
       {
-        title: "Donderdag",
-        start: "10:00",
-        end: "18:00",
-        closed: false
+        day_id: "3",
+        title: "Donderdag"
       },
       {
-        title: "Vrijdag",
-        start: "10:00",
-        end: "18:00",
-        closed: false
+        day_id: "4",
+        title: "Vrijdag"
       },
       {
-        title: "Zaterdag",
-        start: "10:00",
-        end: "18:00",
-        closed: false
+        day_id: "5",
+        title: "Zaterdag"
       },
       {
-        title: "Zondag",
+        day_id: "6",
+        title: "Zondag"
+      }
+    ],
+    timeslots: [
+      {
         start: "10:00",
         end: "18:00",
-        closed: true
+        day_id: "0"
+      },
+      {
+        start: "10:00",
+        end: "18:00",
+        day_id: "1"
+      },
+      {
+        start: "10:00",
+        end: "18:00",
+        day_id: "2"
+      },
+      {
+        start: "10:00",
+        end: "18:00",
+        day_id: "3"
+      },
+      {
+        start: "10:00",
+        end: "18:00",
+        day_id: "4"
+      },
+      {
+        start: "10:00",
+        end: "18:00",
+        day_id: "5"
+      },
+      {
+        start: "10:00",
+        end: "18:00",
+        day_id: "6"
       }
     ]
   }),
@@ -93,7 +110,7 @@ h2 {
   position: relative;
   max-width: 80%;
 }
-.textfieldContainer:hover .test{
+.textfieldContainer:hover .test {
   display: block;
 }
 .textfield {
