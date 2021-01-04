@@ -1,21 +1,24 @@
 <template>
   <v-container>
     <h2>Openingstijden wijzigen</h2>
-    <v-row v-for="day in days" :key="day.title">
+    <v-row v-for="day in days" :key="day.day_id">
       <v-col cols="2">
         <v-subheader>{{ day.title }}</v-subheader>
       </v-col>
       <v-col v-for="slot in timeslots" :key="slot.day_id" cols="10" class="textfieldContainer">
+        <div class="" v-if="day.day_id == slot.day_id">
         <v-text-field
           class="textfield"
           label="Starttijd"
           :value="slot.start"
+
         ></v-text-field>
         <v-text-field
           class="textfield"
           label="Eindtijd"
           :value="slot.end"
         ></v-text-field>
+      </div>
       </v-col>
     </v-row>
   </v-container>
@@ -62,6 +65,11 @@ export default {
         day_id: "0"
       },
       {
+        start: "12:00",
+        end: "14:00",
+        day_id: "0"
+      },
+      {
         start: "10:00",
         end: "18:00",
         day_id: "1"
@@ -93,6 +101,11 @@ export default {
       }
     ]
   }),
+  computed: {
+    // timesliceFilter: function () {
+    //   return this.slot.filter(this.day_id == day.day_id)
+    // }
+  },
   methods: {}
 };
 </script>
