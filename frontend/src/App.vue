@@ -1,6 +1,5 @@
 <template>
-  <v-app :dark="true">
-    <Nav />
+  <v-app >
     <v-main>
       <router-view class="animated fadeIn"></router-view>
     </v-main>
@@ -8,11 +7,9 @@
 </template>
 
 <script>
-import Nav from "./components/layouts/Nav";
 export default {
   name: "App",
   components: {
-    Nav
   },
   data: () => ({
     //

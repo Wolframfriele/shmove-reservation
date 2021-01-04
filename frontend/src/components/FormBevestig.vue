@@ -1,5 +1,4 @@
 <template>
-  <v-main>
     <validation-observer ref="observer" v-slot="{ invalid }">
       <form @submit.prevent="submit">
         <validation-provider v-slot="{ errors }" name="Voornaam">
@@ -85,7 +84,6 @@
         </v-btn>
       </form>
     </validation-observer>
-  </v-main>
 </template>
 
 <script>
@@ -142,7 +140,7 @@ export default {
   }),
   methods: {
     parseDate(date){
-      // parse date time to dd-mm-yyy h:m:s
+      // parse date time to dd/mm/yyy, h:m:s
       return new Date(date).toLocaleString('en-GB', { timeZone: 'CET' });
     },
     submit() {

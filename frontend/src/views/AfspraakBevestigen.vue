@@ -1,5 +1,5 @@
 <template>
-  <v-main>
+  <div>
     <h1 class="display-1">Afspraak Bevestigen:</h1>
     <FormBevestig class="form" />
     <!-- <div class="text-center">
@@ -7,7 +7,7 @@
       <v-icon color="primary">mdi-circle</v-icon>
       <v-icon color="grey">mdi-circle-slice-8</v-icon>
     </div> -->
-  </v-main>
+  </div>
 </template>
 
 <script>
