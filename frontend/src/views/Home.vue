@@ -1,27 +1,61 @@
 <template>
-  <div class="home">
-    <h1 class="display-3 animated bounceInUp font-weight-bold">
-      Welkom SHMOVERS
-    </h1>
-  </div>
+  <v-main>
+    <h1 class="display-1">Afspraak Maken:</h1>
+    <TypeAfspraak class="type" />
+    <TijdKiezen class="calendar" />
+    <!-- <div class="text-center">
+      <v-icon color="primary">mdi-circle</v-icon>
+      <v-icon color="grey">mdi-circle-slice-8</v-icon>
+      <v-icon color="grey">mdi-circle-slice-8</v-icon>
+    </div> -->
+  </v-main>
 </template>
 
 <script>
-// @ is an alias to /src
-// import HelloWorld from "@/components/HelloWorld.vue";
+import TypeAfspraak from "../components/TypeAfspraak.vue";
+import TijdKiezen from "../components/TijdKiezen.vue";
 
 export default {
-  name: "Home",
-  components: {}
+  components: {
+    TypeAfspraak,
+    TijdKiezen
+  },
+  methods: {},
+  data() {
+    return {};
+  }
 };
 </script>
 
 <style scoped>
-.home {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+body {
+  overflow-y: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+}
+
+h1 {
+  margin: 0em 0em 0em 0em;
+  color: #c49760;
+  font-size: .5em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.type {
+  width: 300px;
+  margin: 0 1em 1em 0em;
+  overflow: hidden;
+}
+.calendar {
+  margin: 0;
+  height: auto;
+  overflow-y: hidden;
+}
+
+.text-center {
+  margin: 1em 1em 1em 1em;
 }
 </style>
