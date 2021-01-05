@@ -23,7 +23,7 @@ from django.utils import timezone
 # timeSlice = models.ManyToManyField(WorktimeSlices)
 
 
-class Timelices(models.Model):
+class TimeSlices(models.Model):
     slice_start = models.TimeField()
     slice_end = models.TimeField()
 
@@ -31,16 +31,22 @@ class Timelices(models.Model):
         return str(self.slice_start) + ' to ' + str(self.slice_end)
 
 
-class Openinghours(models.Model):
-    day = models.CharField(max_length=10, default='<day>')
-    slices = models.ManyToManyField(Timelices)
+class StandardWeek(models.Model):
+    day = models.CharField(max_length=10)
+    slice_count = models.IntegerField(default=3)
+    slices = models.ManyToManyField(TimeSlices)
+
+    def __str__(self):
+        return str(self.day)
 
 
-class Daily(models.Model):
+class Changes(models.Model):
     date = models.DateField(auto_now_add=False)
-    is_open = models.BooleanField(default=False)
-    slice_count = models.IntegerField(max_length=2)
-    slices = models.ManyToManyField(Timelices)
+    slice_count = models.IntegerField(default=3)
+    slices = models.ManyToManyField(TimeSlices)
+
+    def __str__(self):
+        return str(self.date)
 
 
 class Credentials(models.Model):
@@ -50,17 +56,24 @@ class Credentials(models.Model):
     phone_number = models.CharField(max_length=10)
 
     def __str__(self):
-        return self.first_name  # was eerst 'firstname'
+        return self.first_name
+
+
+class Treatments(models.Model):
+    treatment = models.CharField(max_length=200)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return str(self.treatment) + " --- €" + str(self.price)
 
 
 class Appointments(models.Model):
-    customer_id = models.IntegerField(default=0)
     date_booked_start = models.DateTimeField(default=datetime.now())
-    date_booked_end = models.DateTimeField(default=datetime.now())
-    date_requested = models.DateTimeField(auto_now_add=True)
-    treatment = models.TextField(max_length=1500)
+    time_slice = models.ForeignKey(TimeSlices, on_delete=models.DO_NOTHING)
+    treatment = models.ForeignKey(Treatments, on_delete=models.DO_NOTHING)
     reason = models.TextField(max_length=3000)
     done = models.BooleanField(default=False)
-    credentials = models.ManyToManyField(Credentials)
+    credentials = models.ForeignKey(Credentials, on_delete=models.DO_NOTHING)
 
-
+    def __str__(self):
+        return "Date: " + str(self.date_booked_start) + ". Treatment: " + str(self.treatment)

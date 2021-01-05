@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import Appointments, Credentials, Daily, Openinghours, Timeslices
+from .models import Appointments, Credentials, Changes, StandardWeek, TimeSlices, Treatments
 
-# Register your models here.
 admin.site.register(Appointments)
 admin.site.register(Credentials)
-admin.site.register(Daily)
-admin.site.register(Openinghours)
-admin.site.register(Timeslices)
+admin.site.register(Changes)
+admin.site.register(StandardWeek)
+admin.site.register(TimeSlices)
+admin.site.register(Treatments)
