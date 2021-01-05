@@ -74,6 +74,6 @@ class Appointments(models.Model):
     reason = models.TextField()
     done = models.BooleanField(default=False)
     credentials = models.ForeignKey(Credentials, on_delete=models.DO_NOTHING)
-    #
-    # def __str__(self):
-    #     return "Date: " + str(self.date) + ". Treatment: " + str(self.treatment)
+
+    def __str__(self):
+        return "Date: " + str(self.date) + ". Treatment: " + str(self.treatment)
