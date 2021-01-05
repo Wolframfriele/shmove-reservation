@@ -60,12 +60,6 @@ export default {
     events: []
   }),
   created() {
-    // try {
-    //   this.getFreePlaces(start, end);
-
-    // } catch (e) {
-    //   console.error(e);
-    // }
     bus.$on('changeTreatment', (data) => {
       this.treatment = data;
     })
@@ -88,8 +82,6 @@ export default {
     },
     updateRange ({ start, end }) {
       this.getFreePlaces(start.date, end.date)
-      console.log(start.date)
-      console.log(end.date)
     },
     intervalFormat(interval) {
       return interval.time;
@@ -100,11 +92,12 @@ export default {
     getFreePlaces(beginweek, endweek){
       let self = this;
       this.events = []
-      axios.post(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
+      axios.get(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
       {
+      params: {
         beginweek: beginweek,
         endweek: endweek
-      }
+      }}
       ).then(res => {
         self.events = []
         res.data.forEach(times => {
