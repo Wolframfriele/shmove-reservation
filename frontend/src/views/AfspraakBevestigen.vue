@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="form">
     <h1 class="display-1">Afspraak Bevestigen:</h1>
-    <FormBevestig class="form" />
+    <FormBevestig />
     <!-- <div class="text-center">
       <v-icon color="primary">mdi-circle</v-icon>
       <v-icon color="primary">mdi-circle</v-icon>

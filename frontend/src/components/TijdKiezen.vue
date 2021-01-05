@@ -20,9 +20,6 @@
             {{ $refs.calendar.title }}
           </v-toolbar-title>
           <v-spacer> </v-spacer>
-          <!-- <v-toolbar-title>
-            Kies een afspraak:
-          </v-toolbar-title> -->
         </v-toolbar>
       </v-sheet>
       <v-sheet>
@@ -62,13 +59,13 @@ export default {
     treatment: [],
     events: []
   }),
-  async created({ start, end }) {
-    try {
-      await this.getFreePlaces(start, end);
+  created() {
+    // try {
+    //   this.getFreePlaces(start, end);
 
-    } catch (e) {
-      console.error(e);
-    }
+    // } catch (e) {
+    //   console.error(e);
+    // }
     bus.$on('changeTreatment', (data) => {
       this.treatment = data;
     })
@@ -90,7 +87,9 @@ export default {
         return event.color
     },
     updateRange ({ start, end }) {
-      this.getFreePlaces(start, end)
+      this.getFreePlaces(start.date, end.date)
+      console.log(start.date)
+      console.log(end.date)
     },
     intervalFormat(interval) {
       return interval.time;
@@ -101,10 +100,10 @@ export default {
     getFreePlaces(beginweek, endweek){
       let self = this;
       this.events = []
-      axios.get(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
+      axios.post(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
       {
-        "beginweek": beginweek,
-        "endweek": endweek
+        beginweek: beginweek,
+        endweek: endweek
       }
       ).then(res => {
         self.events = []

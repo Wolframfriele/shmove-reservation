@@ -121,7 +121,7 @@ class AppointmentsView(viewsets.ModelViewSet):
         return Response(the_info)
     
     @csrf_exempt
-    @action(methods=['get'], detail=False)
+    @action(methods=['post'], detail=False)
     def get_free_places(self, request):
         date_times_arr = []
         time_slices = WorktimeSlices.objects.values()
