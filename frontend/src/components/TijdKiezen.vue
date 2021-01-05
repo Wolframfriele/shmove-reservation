@@ -115,16 +115,10 @@ export default {
     },
     getFreePlaces(){
       let self = this;
-      axios.post(`${self.$store.state.HOST}/api/appointments/tijmen_test/`,
-      {body:{
-        date_booked_start: '2020-12-14 15:30',
-        date_booked_end: '2020-12-14 16:30',
-        treatment: 'Massage',
-        reason: 'Pijn in m\'n pijn!',
-        first_name: 'Hans',
-        last_name: 'Panmans',
-        email: 'panhansmans@gmail.com',
-        phone_number: '0612345678',
+      axios.get(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
+      {params:{
+        beginweek: '2021-01-05',
+        endweek: '2021-01-05',
       }}
       ).then(res => {
         console.log(res.data);

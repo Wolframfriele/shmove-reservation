@@ -3,7 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
-from barber.models import Appointments, Credentials
+from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.core import serializers
@@ -25,7 +25,7 @@ from rest_framework.status import (
 from barber.serializers import TestSerializer, AppointmentSerializer
 from django.core.files import File
 from django.conf import settings
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 # Create your views here.
@@ -87,6 +87,39 @@ class AppointmentsView(viewsets.ModelViewSet):
                                                        treatment=treatment, reason=reason, credentials=make_credentials)
         return Response({"created": True, "first_name": first_name, "email": email, "phone_number": phone_number,
                          "date": date_booked_start})
+
+    @csrf_exempt
+    @action(methods=['get'], detail=False)
+    def get_free_places(self, request):
+        beginweek = datetime.strptime(getpost(request, 'beginweek'), '%Y-%m-%d')
+        date = beginweek
+        endweek = datetime.strptime(getpost(request, 'endweek'), '%Y-%m-%d')
+        delta = timedelta(days=1)
+        day = 0
+        slicez = []
+        appointment_slices = Appointments.objects.filter(time_slice_id=2).values()
+        print(appointment_slices)
+        # while date <= endweek:
+        #     print(date)
+        #     # try:
+        #     if_changes = Changes.objects.get(date=date)
+        #     print("I found you", if_changes)
+        #     slices = TimeSlices.objects.filter(changes__date=date).values()
+        #     print(slices)
+        #     for f in slices:
+        #         print(f['id'])
+        #
+                # if appointment_slices:
+                #     print("found")
+                # else:
+                #     print("not found")
+            # except:
+            #     # print(":c did not found")
+            #     pass
+            # print(day)
+            # date += delta
+            # day += 1
+        return Response(slicez)
 
     @csrf_exempt
     @action(methods=['get'], detail=False)
