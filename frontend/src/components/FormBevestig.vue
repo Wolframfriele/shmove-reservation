@@ -149,14 +149,14 @@ export default {
       axios.post(`${self.$store.state.HOST}/api/appointments/new_appointment/`,
         {
           body: {
-            customer_id: 0,
-            firstname: this.firstname,
+            date_booked_start: this.parseDate(this.$route.params.start),
+            date_booked_end: this.parseDate(this.$route.params.end),
+            treatment: this.$route.params.treatment,
+            reason: "",
+            first_name: this.firstname,
+            last_name: this.lastname,
             email: this.email,
             phone_number: this.phonenumber,
-            start: this.parseDate(this.$route.params.start),
-            end: this.parseDate(this.$route.params.end),
-            treatment: this.$route.params.treatment,
-            employee_id: 0
           }
         },
       )
