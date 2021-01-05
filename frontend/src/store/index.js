@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-import dashboard from "./modules/dashboard";  // store file from modules map import example
+// import work from "./modules/work";  // store file from modules map import example
 
 import axios from "axios";
 
@@ -9,11 +9,10 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    HOST: "http://django.yanickhost.ga:8085",
-      // window.location.port != ""
-      //   ? " http://127.0.0.1:8000"
-      //   : "http://django.yanickhost.ga:8085",
-
+    HOST:
+      window.location.port != ""
+        ? " http://127.0.0.1:8000"
+        : "django.yanickhost.ga:8085",
     AUTHENTICATED: undefined,
     usertoken: undefined
   },
@@ -80,26 +79,7 @@ export default new Vuex.Store({
     }
   },
 
-  actions: {
+  actions: {},
 
-    getUser({
-      commit,
-      rootState,
-    }, payload) {
-      /**
-       *get programming languages name
-       */
-      commit("getAxiosCall", {
-        url: payload.url,
-        params: payload.params,
-        callback: payload.callback,
-        host: rootState.HOST,
-      });
-    },
-    
-  },
-
-  modules: {
-    dashboard: dashboard
-  }
+  modules: {}
 });

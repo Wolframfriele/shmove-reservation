@@ -23,7 +23,7 @@ from django.utils import timezone
 # timeSlice = models.ManyToManyField(WorktimeSlices)
 
 
-class Timeslices(models.Model):
+class Timelices(models.Model):
     slice_start = models.TimeField()
     slice_end = models.TimeField()
 
@@ -33,18 +33,14 @@ class Timeslices(models.Model):
 
 class Openinghours(models.Model):
     day = models.CharField(max_length=10, default='<day>')
-    slices = models.ManyToManyField(Timeslices)
+    slices = models.ManyToManyField(Timelices)
 
 
 class Daily(models.Model):
     date = models.DateField(auto_now_add=False)
-    is_open = models.BooleanField(default=True)
-    # bij integer field hoef je geen max_length aan te geven
-    slice_count = models.IntegerField()
-    slices = models.ManyToManyField(Timeslices)
-
-    def __str__(self):
-        return str(self.date)
+    is_open = models.BooleanField(default=False)
+    slice_count = models.IntegerField(max_length=2)
+    slices = models.ManyToManyField(Timelices)
 
 
 class Credentials(models.Model):
@@ -65,5 +61,6 @@ class Appointments(models.Model):
     treatment = models.TextField(max_length=1500)
     reason = models.TextField(max_length=3000)
     done = models.BooleanField(default=False)
-    # credentials = models.ManyToManyField(Credentials)
-    credentials = models.ForeignKey(Credentials, on_delete=models.CASCADE)
+    credentials = models.ManyToManyField(Credentials)
+
+

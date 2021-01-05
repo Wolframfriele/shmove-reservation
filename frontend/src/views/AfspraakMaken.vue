@@ -1,6 +1,6 @@
 <template>
-  <v-main>
-    <h1 class="display-1">Afspraak Maken:</h1>\
+  <div>
+    <h1 class="display-1">Afspraak Maken:</h1>
     <TypeAfspraak class="type" />
     <TijdKiezen class="calendar" />
     <!-- <div class="text-center">
@@ -8,7 +8,7 @@
       <v-icon color="grey">mdi-circle-slice-8</v-icon>
       <v-icon color="grey">mdi-circle-slice-8</v-icon>
     </div> -->
-  </v-main>
+  </div>
 </template>
 
 <script>
@@ -28,18 +28,31 @@ export default {
 </script>
 
 <style scoped>
+body {
+  overflow-y: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+}
+
 h1 {
-  text-align: center;
-  margin: 1em 1em 1em 1em;
+  margin: 0em 0em 0em 0em;
+  color: #c49760;
+  font-size: .5em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .type {
   width: 300px;
-  margin: auto;
+  margin: 0 1em 1em 0em;
   overflow: hidden;
 }
 .calendar {
   margin: 0;
+  height: auto;
+  overflow-y: hidden;
 }
 
 .text-center {

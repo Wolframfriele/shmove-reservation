@@ -20,9 +20,6 @@
             {{ $refs.calendar.title }}
           </v-toolbar-title>
           <v-spacer> </v-spacer>
-          <v-toolbar-title>
-            Kies een afspraak:
-          </v-toolbar-title>
         </v-toolbar>
       </v-sheet>
       <v-sheet>
@@ -39,6 +36,7 @@
           :interval-format="intervalFormat"
           :locale="locale"
           @click:event="bevestigAfspraak"
+          @change="updateRange"
         ></v-calendar>
       </v-sheet>
     </v-col>
@@ -48,6 +46,7 @@
 <script>
 import { bus } from '../main'
 import axios from "axios";
+
 export default {
   data: () => ({
     focus: "",
@@ -60,25 +59,7 @@ export default {
     treatment: [],
     events: []
   }),
-  async created() {
-    try {
-      // let self = this;
-      // const res = await axios.get('https://run.mocky.io/v3/b0538f87-56ff-4b09-b1ed-537e815507c2')
-      // console.log(res.data.open);
-      // res.data.open.forEach(element => {
-      //   this.events.push({
-      //     name: "Vrije Afspraak",
-      //     start: element.start,
-      //     end: element.end,
-      //     timed: true
-      //   })
-      // });
-
-      await this.getFreePlaces();
-
-    } catch (e) {
-      console.error(e);
-    }
+  created() {
     bus.$on('changeTreatment', (data) => {
       this.treatment = data;
     })
@@ -96,48 +77,65 @@ export default {
     next() {
       this.$refs.calendar.next();
     },
-    parseDate(date){
-      // parse date time to dd-mm-yyy h:m:s
-      return new Date(date).toLocaleString('en-GB', { timeZone: 'UTC' });
-    },
     getEventColor (event) {
         return event.color
     },
-    // updateRange ({ start, end }) {
-    // },
+    updateRange ({ start, end }) {
+      this.getFreePlaces(start.date, end.date)
+    },
     intervalFormat(interval) {
       return interval.time;
     },
     bevestigAfspraak({ event }) {
-      this.$router.push({name: "AfspraakBevestigen", params: {start: this.parseDate(event.start), end: this.parseDate(event.end), treatment: this.treatment}});
+      this.$router.push({name: "AfspraakBevestigen", params: {start: event.start, end: event.end, treatment: this.treatment}});
     },
-    getFreePlaces(){
+    getFreePlaces(beginweek, endweek){
       let self = this;
+      this.events = []
       axios.get(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
-      {}
+      {
+      params: {
+        beginweek: beginweek,
+        endweek: endweek
+      }}
       ).then(res => {
-        console.log(res.data);
+        self.events = []
         res.data.forEach(times => {
-          if (times.taked != true) {
+          if (times.taked == false) {
             self.events.push({
-            name: times.taked ? "Bezet" : "Vrije Afspraak",
+            name: times.taked ? "Bezet" : "Vrij",
             start: times.start,
             end: times.end,
             color: times.taked ? self.eventColor[1] : self.eventColor[0],
-            timed: !times.taked
+            timed: true
           })
           }
         });
       }).catch(e => {
         console.log(e)
       })
-    }
+    },
   }
 };
 </script>
 
-<style scoped>
+<style>
 .v-calendar-daily__scroll-area {
-  overflow: hidden;
+  overflow-y: hidden !important;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.v-calendar-daily__head {
+  margin-right: 0;
+}
+
+.col{
+  padding: 0;
+}
+
+html::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 </style>

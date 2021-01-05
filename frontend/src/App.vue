@@ -1,6 +1,5 @@
 <template>
-  <v-app :dark="true">
-    <Nav />
+  <v-app >
     <v-main>
       <router-view class="animated fadeIn"></router-view>
     </v-main>
@@ -8,11 +7,9 @@
 </template>
 
 <script>
-import Nav from "./components/layouts/Nav";
 export default {
   name: "App",
   components: {
-    Nav
   },
   data: () => ({
     //
@@ -30,8 +27,7 @@ export default {
 </script>
 
 <style>
-/* @import url("https://fonts.googleapis.com/css?family=Amita");
-@import url("https://fonts.googleapis.com/css?family=Arbutus+Slab"); */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap');
 html,
 body {
   scroll-behavior: smooth;
@@ -40,11 +36,15 @@ body {
   width: 100%;
   margin: 0px;
   padding: 0px;
-  font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 0;
 }
 #app {
   /* scroll-behavior: smooth; */
-  font-family: "Arbutus Slab", Helvetica, Arial, sans-serif;
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
   margin: 0px;
   padding: 0px;
   width: 100%;
@@ -53,4 +53,19 @@ body {
   align-items: center;
   /* overflow-x: hidden; */
 }
+
+.scroll-hide {
+  overflow: auto;
+  /* this will hide the scrollbar in mozilla based browsers */
+  overflow: -moz-scrollbars-none;
+  /* this will hide the scrollbar in internet explorers */
+  -ms-overflow-style: none;
+}
+
+/* this will hide the scrollbar in webkit based browsers - safari, chrome, etc */
+.scroll-hide ::-webkit-scrollbar { 
+  width: 0 !important;
+  display: none; 
+}
+
 </style>
