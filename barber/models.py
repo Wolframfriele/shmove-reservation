@@ -68,12 +68,12 @@ class Treatments(models.Model):
 
 
 class Appointments(models.Model):
-    date_booked_start = models.DateTimeField(default=datetime.now())
+    date = models.DateField(default=datetime.now().date())
     time_slice = models.ForeignKey(TimeSlices, on_delete=models.DO_NOTHING)
     treatment = models.ForeignKey(Treatments, on_delete=models.DO_NOTHING)
-    reason = models.TextField(max_length=3000)
+    reason = models.TextField()
     done = models.BooleanField(default=False)
     credentials = models.ForeignKey(Credentials, on_delete=models.DO_NOTHING)
-
-    def __str__(self):
-        return "Date: " + str(self.date_booked_start) + ". Treatment: " + str(self.treatment)
+    #
+    # def __str__(self):
+    #     return "Date: " + str(self.date) + ". Treatment: " + str(self.treatment)
