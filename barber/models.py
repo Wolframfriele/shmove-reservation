@@ -23,19 +23,30 @@ from django.utils import timezone
 # timeSlice = models.ManyToManyField(WorktimeSlices)
 
 
-class Day(models.Model):
-    date = models.DateField(auto_now_add=False)
-    day = models.CharField(max_length=10)
-    slice_count = models.IntegerField(default=3)
-
-
-class Timeslices(models.Model):
+class TimeSlices(models.Model):
     slice_start = models.TimeField()
     slice_end = models.TimeField()
-    # day_id = models.ForeignKey(Day, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.slice_start) + ' to ' + str(self.slice_end)
+
+
+class StandardWeek(models.Model):
+    day = models.CharField(max_length=10)
+    slice_count = models.IntegerField(default=3)
+    slices = models.ManyToManyField(TimeSlices)
+
+    def __str__(self):
+        return str(self.day)
+
+
+class Changes(models.Model):
+    date = models.DateField(auto_now_add=False)
+    slice_count = models.IntegerField(default=3)
+    slices = models.ManyToManyField(TimeSlices)
+
+    def __str__(self):
+        return str(self.date)
 
 
 class Credentials(models.Model):
@@ -45,19 +56,24 @@ class Credentials(models.Model):
     phone_number = models.CharField(max_length=10)
 
     def __str__(self):
-        return self.first_name  # was eerst 'firstname'
-
-
-class Appointments(models.Model):
-    date_booked_start = models.DateTimeField(default=datetime.now())
-    date_booked_end = models.DateTimeField(default=datetime.now())
-    date_requested = models.DateTimeField(auto_now_add=True)
-    treatment = models.TextField(max_length=1500)
-    reason = models.TextField(max_length=3000)
-    done = models.BooleanField(default=False)
-    credentials = models.ForeignKey(Credentials, on_delete=models.CASCADE)
+        return self.first_name
 
 
 class Treatments(models.Model):
     treatment = models.CharField(max_length=200)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return str(self.treatment) + " --- €" + str(self.price)
+
+
+class Appointments(models.Model):
+    date_booked_start = models.DateTimeField(default=datetime.now())
+    time_slice = models.ForeignKey(TimeSlices, on_delete=models.DO_NOTHING)
+    treatment = models.ForeignKey(Treatments, on_delete=models.DO_NOTHING)
+    reason = models.TextField(max_length=3000)
+    done = models.BooleanField(default=False)
+    credentials = models.ForeignKey(Credentials, on_delete=models.DO_NOTHING)
+
+    def __str__(self):
+        return "Date: " + str(self.date_booked_start) + ". Treatment: " + str(self.treatment)

@@ -62,25 +62,31 @@ class AppointmentsView(viewsets.ModelViewSet):
     @csrf_exempt
     @action(methods=['post'], detail=False)
     def new_appointment(self, request):
-        customer_id = request.data['body']['customer_id']
-        name = getpost(request, 'name')
+        date_booked_start = datetime.strptime(getpost(request, 'date_booked_start'), '%Y-%m-%d %H:%M')
+        date_booked_end = datetime.strptime(getpost(request, 'date_booked_end'), '%Y-%m-%d %H:%M')
+        treatment = getpost(request, 'treatment')
+        reason = getpost(request, 'reason')
+
+        first_name = getpost(request, 'first_name')
+        last_name = getpost(request, 'last_name')
         email = getpost(request, 'email')
         phone_number = getpost(request, 'phone_number')
-        start = datetime.strptime(getpost(request, 'start'), '%Y-%m-%d %H:%M')
-        end = datetime.strptime(getpost(request, 'end'), '%Y-%m-%d %H:%M')
-        treatment = getpost(request, 'treatment')
-        employee_id = getpost(request, 'employee_id')
-        make_appointment = Appointments.objects.create(customer_id=customer_id,
-                                                       date_booked_start=start, date_booked_end=end,
-                                                       treatment=treatment, employee_id=employee_id)
-        if customer_id == 0:
-            make_credentials = Credentials.objects.create(appointment_id=make_appointment.pk, name=name, email=email,
-                                                          phone_number=phone_number)
+
+        if_credentials = Credentials.objects.get(first_name=first_name, last_name=last_name, email=email,
+                                                 phone_number=phone_number)
+        if if_credentials:
+            # credentials were found
+            make_credentials = if_credentials
         else:
-            name = User.objects.get(pk=customer_id).first_name
-            email = User.objects.get(pk=customer_id).email
-            # phone_number = User.objects.get(pk=customer_id).phone_number
-        return Response({"created": True, "name": name, "email": email, "phone_number": phone_number, "date": start})
+            # credentials were not found
+            make_credentials = Credentials.objects.create(first_name=first_name, last_name=last_name, email=email,
+                                                          phone_number=phone_number)
+
+        make_appointment = Appointments.objects.create(date_booked_start=date_booked_start,
+                                                       date_booked_end=date_booked_end,
+                                                       treatment=treatment, reason=reason, credentials=make_credentials)
+        return Response({"created": True, "first_name": first_name, "email": email, "phone_number": phone_number,
+                         "date": date_booked_start})
 
     @csrf_exempt
     @action(methods=['get'], detail=False)
@@ -129,33 +135,10 @@ class AppointmentsView(viewsets.ModelViewSet):
         return Response(the_info)
 
     @csrf_exempt
-    @action(methods=['post'], detail=False)
-    def tijmen_test(self, request):
-        date_booked_start = datetime.strptime(getpost(request, 'date_booked_start'), '%Y-%m-%d %H:%M')
-        date_booked_end = datetime.strptime(getpost(request, 'date_booked_end'), '%Y-%m-%d %H:%M')
-        treatment = getpost(request, 'treatment')
-        reason = getpost(request, 'reason')
+    @action(methods=['get'], detail=False)
+    def get_appointments_barber(self, request):
 
-        first_name = getpost(request, 'first_name')
-        last_name = getpost(request, 'last_name')
-        email = getpost(request, 'email')
-        phone_number = getpost(request, 'phone_number')
-
-        if_credentials = Credentials.objects.get(first_name=first_name, last_name=last_name, email=email,
-                                                 phone_number=phone_number)
-        if if_credentials:
-            # credentials were found
-            make_credentials = if_credentials
-        else:
-            # credentials were not found
-            make_credentials = Credentials.objects.create(first_name=first_name, last_name=last_name, email=email,
-                                                          phone_number=phone_number)
-
-        make_appointment = Appointments.objects.create(date_booked_start=date_booked_start,
-                                                       date_booked_end=date_booked_end,
-                                                       treatment=treatment, reason=reason, credentials=make_credentials)
-
-        return Response("success")
+        return request("Grave Pain")
 
 # def new_barber():
 #     name = "Shmoving Test"
