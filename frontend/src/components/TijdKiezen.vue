@@ -69,11 +69,11 @@ export default {
     intervalcount: "11",
     locale: "nl",
     eventColor:  ['primary', 'red'],
-    treatment: [],
+    treatment: ["shiatsu"],
     events: []
   }),
   created() {
-    bus.$on('changeTreatment', (data) => {
+    bus.$on('treatmentArray', (data) => {
       this.treatment = data;
     })
   },
