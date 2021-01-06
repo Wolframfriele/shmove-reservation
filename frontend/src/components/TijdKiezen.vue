@@ -3,15 +3,15 @@
     <v-col>
       <v-sheet height="64">
         <v-toolbar flat>
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
+          <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday" aria-label="Navigeer naar vandaag">
             Today
           </v-btn>
-          <v-btn fab text small color="grey darken-2" @click="prev">
+          <v-btn fab text small color="grey darken-2" @click="prev" aria-label="Vorige week">
             <v-icon small>
               mdi-chevron-left
             </v-icon>
           </v-btn>
-          <v-btn fab text small color="grey darken-2" @click="next">
+          <v-btn fab text small color="grey darken-2" @click="next" aria-label="Volgende week">
             <v-icon small>
               mdi-chevron-right
             </v-icon>
@@ -36,8 +36,21 @@
           :interval-format="intervalFormat"
           :locale="locale"
           @click:event="bevestigAfspraak"
+
           @change="updateRange"
-        ></v-calendar>
+        >
+          <template v-slot:day-label-header="{date, day, present, past, weekday}">
+            <v-avatar v-if="past" color="white">{{ day }}</v-avatar>
+            <v-btn v-else-if="present" fab depressed color="primary" :aria-label="dateToString(date)" :href="returnID(weekday)">{{ day }}</v-btn>
+            <v-btn v-else fab depressed color="white" :aria-label="dateToString(date)" :href="returnID(weekday)">{{ day }} </v-btn>
+          </template>
+          <template v-slot:event="{event, eventParsed}">
+            <p class="event-text">Vrij</p>  
+            <p class="event-text" :id="eventParsed.start.weekday" tabindex="0" role="button" @keydown.enter="bevestigAfspraak({event})">
+              {{ eventParsed.start.time }} tot {{ eventParsed.end.time }}
+            </p>
+          </template>
+        </v-calendar>
       </v-sheet>
     </v-col>
   </v-row>
@@ -68,6 +81,12 @@ export default {
     this.$refs.calendar.checkChange();
   },
   methods: {
+    returnID(id) {
+      return `#${id}`;
+    },
+    log(input) {
+      console.log(input)
+    },
     setToday() {
       this.focus = "";
     },
@@ -115,6 +134,40 @@ export default {
         console.log(e)
       })
     },
+    dateToString: function (input) {
+      const days = [
+        'zondag',
+        'maandag',
+        'dinsdag',
+        'woensdag',
+        'donderdag',
+        'vrijdag',
+        'zaterdag'
+      ];
+      const months = [
+        'januari',
+        'februari',
+        'maart',
+        'april',
+        'mei',
+        'juni',
+        'juli',
+        'augustus',
+        'september',
+        'oktober',
+        'november',
+        'december'
+      ];
+      const datum = new Date(input);
+
+      const dayIndex = datum.getDay();
+      const day = days[dayIndex];
+      const date = datum.getDate();
+      const monthIndex = datum.getMonth();
+      const month = months[monthIndex];
+
+      return `${ day } ${ date } ${ month }`;
+    },
   }
 };
 </script>
@@ -137,5 +190,10 @@ export default {
 html::-webkit-scrollbar {
   width: 0;
   height: 0;
+}
+
+.event-text {
+  padding: 5px;
+  margin-bottom: 0px !important;
 }
 </style>

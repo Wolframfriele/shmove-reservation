@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <v-checkbox input-value="true" label="Shiatsu Therapie" v-model="shiatsu" @click:event="changeBehandeling"></v-checkbox>
-    <v-checkbox input-value="false" label="Voedingsadvies" v-model="voeding" @click:event="changeBehandeling"></v-checkbox>
+    <v-checkbox input-value="true" label="Shiatsu Therapie" v-model="shiatsu" @click:event="changeBehandeling" aria-label="Selecteer Type Afspraak: Shiatsu Therapie"></v-checkbox>
+    <v-checkbox input-value="false" label="Voedingsadvies" v-model="voeding" @click:event="changeBehandeling" aria-label="Selecteer Type Afspraak: Voedingsadvies"></v-checkbox>
   </v-container>
 </template>
 
