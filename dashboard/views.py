@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.core import serializers
 from django.db.models import Q
 import json
+from datetime import datetime, timedelta
 # from django.contrib.auth.hashers import make_password
 ################################## DRF IMPORTS #######################################
 from rest_framework import viewsets, permissions
@@ -21,7 +22,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 # )
 
 from dashboard.serializers import DashboardSerializer
-from barber.models import Appointments, Credentials, Changes, TimeSlices
+from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices
 from barber.serializers import AppointmentSerializer
 
 # Create your views here.
@@ -117,8 +118,120 @@ class DashboardView(viewsets.ModelViewSet):
         logout(request)
         return Response({'logout': True})
 
+    def get_date_form_day(self, day_index):
+        """get the date from a day index(0->monday, ... , 6->sunday)
+
+        Args:
+            day_index ([int]): [0->monday, ... , 6->sunday]
+
+        Returns:
+            [datetime obj]: [date]
+        """
+        date = None
+        b_week = datetime.today() - timedelta(
+            days=datetime.today().weekday() % 7
+        )  # begin of week
+
+        for d in range(7):
+            # add 1 day to the begin day of the week
+            updated_day = b_week + timedelta(days=d)
+            if updated_day.weekday() == day_index:
+                date = updated_day.date()
+
+        return date
+
     @csrf_exempt
     @action(methods=['post'], detail=False)
     @permission_classes((AllowAny,))
     def add_time_slices(self, request):
-        pass
+        current_date = None  # store the date base on the sended day
+        b_time = datetime.strptime(
+            request.query_params.get('begin_time'), '%H:%M').time()
+        e_time = datetime.strptime(
+            request.query_params.get('end_time'), '%H:%M').time()
+        day_index = request.query_params.get('day_index')
+        # get begin and end week date
+        b_week = datetime.today() - timedelta(days=datetime.today().weekday() %
+                                              7)  # begin of week
+        # e_week = b_week + timedelta(days=6)  # end of week
+
+        for d in range(7):
+            # add 1 day to the begin day of the week
+            updated_day = b_week + timedelta(days=d)
+            if updated_day.weekday() == day_index:
+                current_date = updated_day.date()
+        # add time slice
+        new_slice = TimeSlices(slice_start=b_time, slice_end=e_time)
+        # create new Changes
+        changes = Changes.objects.create(date=current_date)
+        changes.save()
+        # add slice to changes
+        changes.slices.add(new_slice)
+
+        return Response({'added': True})
+
+    @csrf_exempt
+    @action(methods=['get'], detail=False)
+    @permission_classes((AllowAny,))
+    def get_timeslices(self, request):
+        days_arr = ['monday', 'tuesday', 'wednesday',
+                    'thursday', 'friday', 'saturday', 'sunday']
+        slices_arr = []
+        # get the standard weeks
+        s_weeks = StandardWeek.objects.all().values()
+        for i, s_week in enumerate(s_weeks):
+            ts = TimeSlices.objects.filter(
+                standardweek__id=s_week['id']).values()
+            for tsl in ts:
+                print(
+                    {'bt': tsl['slice_start'], 'et': tsl['slice_end'], 'day': days_arr.index(days_arr[i])})
+                slices_arr.append(
+                    {
+                        'start': tsl['slice_start'],
+                        'end': tsl['slice_end'],
+                        'day_id': days_arr.index(days_arr[i]),
+                        'slice_id': tsl['id']
+                    }
+                )
+
+        return Response(slices_arr)
+
+    @csrf_exempt
+    @action(methods=['get'], detail=False)
+    @permission_classes((AllowAny,))
+    def update_timeslices(self, request):
+        b_time = datetime.strptime(
+            request.query_params.get('begin_time'), '%H:%M').time()
+        e_time = datetime.strptime(
+            request.query_params.get('end_time'), '%H:%M').time()
+        slice_id = request.query_params.get('slice_id')
+        day_index = request.query_params.get('day_id ')
+        # get date from day index
+        date = self.get_date_form_day(day_index)
+        # get changes base on date
+        change = Changes.objects.filter(date=date).values()
+        # filter and update slice
+        TimeSlices.objects.filter(
+            Q(changes__id=change['id'])
+            & Q(id=slice_id)
+        ).update(slice_start=b_time, slice_end=e_time)
+
+        return Response({'changed': True})
+
+    @csrf_exempt
+    @action(methods=['get'], detail=False)
+    @permission_classes((AllowAny,))
+    def remove_timeslices(self, request):
+        slice_id = request.query_params.get('slice_id')
+        day_index = request.query_params.get('day_id ')
+        # get date from day index
+        date = self.get_date_form_day(day_index)
+        # get changes base on date
+        change = Changes.objects.filter(date=date).values()
+        # filter and update slice
+        TimeSlices.objects.filter(
+            Q(changes__id=change['id'])
+            & Q(id=slice_id)
+        ).delete()
+
+        return Response({'deleted': True})
