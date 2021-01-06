@@ -90,8 +90,14 @@ class AppointmentsView(viewsets.ModelViewSet):
         date_ = parse_date(getpost(request, 'beginweek'))
         endweek = parse_date(getpost(request, 'endweek'))
         delta = timedelta(days=1)
-        day = 1
         date_timeslices = []
+        # get the day of the week
+        weekday = datetime.now().weekday() + 1
+        today_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f').split()
+        today_date = parse_date(today_datetime[0])
+        # check if the received date is earlier than today
+        if date_ < today_date:
+            date_ = today_date
         # loop through all days between the 2 received dates
         while date_ <= endweek:
             slice_array = []
@@ -110,8 +116,8 @@ class AppointmentsView(viewsets.ModelViewSet):
             except:
                 # get the timeslices from the standardweek using the day value
                 # hoping the date sent in starts with monday....
-                slices = TimeSlices.objects.filter(standardweek__pk=day).values()
-                slice_count = StandardWeek.objects.get(pk=day).slice_count
+                slices = TimeSlices.objects.filter(standardweek__pk=weekday).values()
+                slice_count = StandardWeek.objects.get(pk=weekday).slice_count
                 count = 0
                 for f in slices:
                     appointment_slices = Appointments.objects.filter(time_slice_id=f['id'], date=date_)
@@ -127,7 +133,7 @@ class AppointmentsView(viewsets.ModelViewSet):
                     date_timeslices.append({"start": "{} {}".format(date_, slice_data[0]["slice_start"]),
                                             "end": "{} {}".format(date_, slice_data[0]["slice_end"])})
             date_ += delta
-            day += 1
+            weekday += 1
         return Response(date_timeslices)
 
     @csrf_exempt
