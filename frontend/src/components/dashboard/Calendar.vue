@@ -509,7 +509,6 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 #appointmentbtn {
   right: 15px;
@@ -531,3 +530,4 @@ form .container {
   justify-content: space-between;
 }
 </style>
+

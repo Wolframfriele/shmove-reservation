@@ -5,7 +5,8 @@
       <v-col cols="2">
         <v-subheader>{{ day.title }}</v-subheader>
       </v-col>
-      <v-col v-for="slot in timeslots" :key="slot.day_id" cols="10" class="textfieldContainer">
+      <div v-for="slot in timeslots" :key="slot.day_id">
+      <v-col  cols="10" class="textfieldContainer">
         <div class="" v-if="day.day_id == slot.day_id">
         <v-text-field
           class="textfield"
@@ -20,6 +21,12 @@
         ></v-text-field>
       </div>
       </v-col>
+      </div>
+      <v-btn class="mx-2 plus" fab dark color="indigo" @click="addSlot(day.day_id)">
+      <v-icon dark>
+        mdi-plus
+      </v-icon>
+    </v-btn>
     </v-row>
   </v-container>
 </template>
@@ -28,6 +35,7 @@
 export default {
   data: () => ({
     currency: "€",
+    thisday: "",
     days: [
       {
         day_id: "0",
@@ -65,11 +73,6 @@ export default {
         day_id: "0"
       },
       {
-        start: "12:00",
-        end: "14:00",
-        day_id: "0"
-      },
-      {
         start: "10:00",
         end: "18:00",
         day_id: "1"
@@ -102,11 +105,19 @@ export default {
     ]
   }),
   computed: {
-    // timesliceFilter: function () {
-    //   return this.slot.filter(this.day_id == day.day_id)
-    // }
   },
-  methods: {}
+  methods: {
+    getSlices(){
+
+    },
+    addSlot(index) {
+      this.timeslots.push({
+        start: "",
+        end: "",
+        day_id: index
+      });
+    },
+  }
 };
 </script>
 <style scoped>
@@ -125,6 +136,10 @@ h2 {
 }
 .textfieldContainer:hover .test {
   display: block;
+}
+.textfieldContainer div {
+  display: flex;
+  flex-flow: row wrap;
 }
 .textfield {
   margin: 0 10px;
