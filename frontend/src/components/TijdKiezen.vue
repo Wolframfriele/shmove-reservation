@@ -115,10 +115,10 @@ export default {
     },
     getFreePlaces(){
       let self = this;
-      axios.get(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
-      {params:{
-        beginweek: '2021-01-05',
-        endweek: '2021-01-05',
+      axios.post(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
+      {body:{
+        beginweek: "2021-01-04",
+        endweek: "2021-01-10"
       }}
       ).then(res => {
         console.log(res.data);

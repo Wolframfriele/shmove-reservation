@@ -1,31 +1,19 @@
-from django.shortcuts import render
-
 # Create your views here.
-from django.shortcuts import render, redirect, get_object_or_404
+from datetime import datetime, timedelta, date
+
 from django.contrib.auth.models import User
-from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.core import serializers
-from django.db.models import Q
-import json
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.dateparse import parse_date
 # from django.contrib.auth.hashers import make_password
 ################################## DRF IMPORTS #######################################
-from rest_framework import viewsets, permissions
-from rest_framework.decorators import api_view, action, permission_classes
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.status import (
-    HTTP_400_BAD_REQUEST,
-    HTTP_404_NOT_FOUND,
-    HTTP_200_OK
-)
 
+from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices, Treatments
 from barber.serializers import TestSerializer, AppointmentSerializer
-from django.core.files import File
-from django.conf import settings
-from datetime import datetime, timedelta
 
 
 # Create your views here.
@@ -62,8 +50,14 @@ class AppointmentsView(viewsets.ModelViewSet):
     @csrf_exempt
     @action(methods=['post'], detail=False)
     def new_appointment(self, request):
-        date_booked_start = datetime.strptime(getpost(request, 'date_booked_start'), '%Y-%m-%d %H:%M')
-        date_booked_end = datetime.strptime(getpost(request, 'date_booked_end'), '%Y-%m-%d %H:%M')
+        dbs_string = getpost(request, 'date_booked_start')
+        dbs_strings = dbs_string.split()
+        date = dbs_string[0]
+        dbe_string = getpost(request, 'date_booked_end')
+        dbe_strings = dbe_string.split()
+        time_start = dbs_strings[1]
+        time_end = dbe_strings[1]
+
         treatment = getpost(request, 'treatment')
         reason = getpost(request, 'reason')
 
@@ -72,54 +66,69 @@ class AppointmentsView(viewsets.ModelViewSet):
         email = getpost(request, 'email')
         phone_number = getpost(request, 'phone_number')
 
-        if_credentials = Credentials.objects.get(first_name=first_name, last_name=last_name, email=email,
-                                                 phone_number=phone_number)
-        if if_credentials:
+        try:
             # credentials were found
-            make_credentials = if_credentials
-        else:
+            make_credentials = Credentials.objects.get(first_name=first_name, last_name=last_name, email=email,
+                                                       phone_number=phone_number)
+        except:
             # credentials were not found
             make_credentials = Credentials.objects.create(first_name=first_name, last_name=last_name, email=email,
                                                           phone_number=phone_number)
 
-        make_appointment = Appointments.objects.create(date_booked_start=date_booked_start,
-                                                       date_booked_end=date_booked_end,
-                                                       treatment=treatment, reason=reason, credentials=make_credentials)
+        treatment_ = Treatments.objects.get(pk=treatment)
+        get_slice = TimeSlices.objects.get(slice_start=time_start, slice_end=time_end).pk
+
+        make_appointment = Appointments.objects.create(time_slice_id=get_slice, treatment=treatment_, reason=reason,
+                                                       credentials=make_credentials)
         return Response({"created": True, "first_name": first_name, "email": email, "phone_number": phone_number,
-                         "date": date_booked_start})
+                         "date": date, "time_start": time_start, "time_end": time_end})
 
     @csrf_exempt
-    @action(methods=['get'], detail=False)
+    @action(methods=['post'], detail=False)
     def get_free_places(self, request):
-        beginweek = datetime.strptime(getpost(request, 'beginweek'), '%Y-%m-%d')
-        date = beginweek
-        endweek = datetime.strptime(getpost(request, 'endweek'), '%Y-%m-%d')
+        # get variables
+        date_ = parse_date(getpost(request, 'beginweek'))
+        endweek = parse_date(getpost(request, 'endweek'))
         delta = timedelta(days=1)
-        day = 0
-        slicez = []
-        appointment_slices = Appointments.objects.filter(time_slice_id=2).values()
-        print(appointment_slices)
-        # while date <= endweek:
-        #     print(date)
-        #     # try:
-        #     if_changes = Changes.objects.get(date=date)
-        #     print("I found you", if_changes)
-        #     slices = TimeSlices.objects.filter(changes__date=date).values()
-        #     print(slices)
-        #     for f in slices:
-        #         print(f['id'])
-        #
-                # if appointment_slices:
-                #     print("found")
-                # else:
-                #     print("not found")
-            # except:
-            #     # print(":c did not found")
-            #     pass
-            # print(day)
-            # date += delta
-            # day += 1
-        return Response(slicez)
+        day = 1
+        date_timeslices = []
+        # loop through all days between the 2 received dates
+        while date_ <= endweek:
+            slice_array = []
+            # test if there is a entry in the model "Changes"
+            try:
+                if_changes = Changes.objects.get(date=date_).slice_count
+                slice_count = int(if_changes)
+                slices = TimeSlices.objects.filter(changes__date=date_).values()
+                count = 0
+                for f in slices:
+                    appointment_slices = Appointments.objects.filter(time_slice_id=f['id'], date=date_).values()
+                    if appointment_slices:
+                        count += 1
+                    else:
+                        slice_array.append(f['id'])
+            except:
+                # get the timeslices from the standardweek using the day value
+                # hoping the date sent in starts with monday....
+                slices = TimeSlices.objects.filter(standardweek__pk=day).values()
+                slice_count = StandardWeek.objects.get(pk=day).slice_count
+                count = 0
+                for f in slices:
+                    appointment_slices = Appointments.objects.filter(time_slice_id=f['id'], date=date_)
+                    if appointment_slices:
+                        count += 1
+                    else:
+                        slice_array.append(f['id'])
+
+            # only send back the timeslices when there are less slices on this day than set as "slice_count"
+            if count < slice_count:
+                for i in slice_array:
+                    slice_data = TimeSlices.objects.filter(pk=i).values()
+                    date_timeslices.append({"start": "{} {}".format(date_, slice_data[0]["slice_start"]),
+                                            "end": "{} {}".format(date_, slice_data[0]["slice_end"])})
+            date_ += delta
+            day += 1
+        return Response(date_timeslices)
 
     @csrf_exempt
     @action(methods=['get'], detail=False)
