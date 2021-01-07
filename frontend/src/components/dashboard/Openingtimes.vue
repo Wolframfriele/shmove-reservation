@@ -116,7 +116,7 @@ export default {
       let self = this;
       await axios
         .get(`${self.$store.state.HOST}/api/dashboard/get_timeslices/`, {
-            headers: {
+          headers: {
             Accept: "application/json",
             "Content-type": "application/json"
             //"Authorization: token ${payload.auth},
@@ -177,6 +177,28 @@ export default {
         });
     },
     deleteSlot(slice_id) {
+      let body = {
+        slice_id: slice_id
+      }
+      let self = this;
+      axios
+        .delete(`${self.$store.state.HOST}/api/dashboard/delete_timeslices`, {
+          headers: {
+            Accept: "application/json",
+            "Content-type": "application/json"
+            //"Authorization: token ${payload.auth},
+            //"X-CSRFToken": payload.csrftoken,
+          },
+          body: body
+        })
+        .then(res => {
+          //Perform Success Action
+          console.log(res.data);
+          this.getSlices();
+        })
+        .catch(error => {
+          console.log(error);
+        });
       //http://django.yanickhost.ga:8085/api/dashboard/remove_timeslices/
       this.timeslots.splice(slice_id, 1);
     }

@@ -64,7 +64,7 @@
             @click:event="showEvent"
             @click:more="viewDay"
             @click:date="viewDay"
-            @change="getAllEvents"
+            @change="getFreePlaces"
             :weekdays="weekdays"
           ></v-calendar>
           <!--                                          @click:time="createEvent"-->
@@ -248,7 +248,6 @@ export default {
     select: [{ text: "Massage", value: "120" }],
     allTreatments: [],
     eventColor: ["primary", "red"],
-    // stylists: ['Geen voorkeur', 'Gert', 'Truus', 'Piet', 'Julia'],
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
@@ -333,6 +332,9 @@ export default {
     next() {
       this.$refs.calendar.next();
     },
+    getFreePlaces({start, end}) {
+      this.getAllEvents(start.date, end.date)
+    },
     async getData() {
       let self = this;
       await axios
@@ -356,10 +358,14 @@ export default {
           });
         });
     },
-    async getAllEvents() {
+    async getAllEvents(start, end) {
       let self = this;
       await axios
         .get(`${self.$store.state.HOST}/api/appointments/get_free_places/`, {
+          body: {
+            beginweek: start,
+            endweek: end
+          },
           headers: {
             Accept: "application/json",
             "Content-type": "application/json"
