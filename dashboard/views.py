@@ -197,7 +197,7 @@ class DashboardView(viewsets.ModelViewSet):
         return Response(slices_arr)
 
     @csrf_exempt
-    @action(methods=['get'], detail=False)
+    @action(methods=['put'], detail=False)
     @permission_classes((AllowAny,))
     def update_timeslices(self, request):
         b_time = datetime.strptime(
@@ -219,7 +219,7 @@ class DashboardView(viewsets.ModelViewSet):
         return Response({'changed': True})
 
     @csrf_exempt
-    @action(methods=['get'], detail=False)
+    @action(methods=['delete'], detail=False)
     @permission_classes((AllowAny,))
     def remove_timeslices(self, request):
         slice_id = request.query_params.get('slice_id')

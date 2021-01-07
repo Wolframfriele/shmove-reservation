@@ -63,8 +63,6 @@ export default {
     bus.$on('changeTreatment', (data) => {
       this.treatment = data;
     })
-
-    this.getFreePlaces("2021-01-01", "2021-01-05")
   },
   mounted() {
     this.$refs.calendar.checkChange();
