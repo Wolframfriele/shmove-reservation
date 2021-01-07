@@ -52,7 +52,7 @@ class AppointmentsView(viewsets.ModelViewSet):
     def new_appointment(self, request):
         dbs_string = getpost(request, 'date_booked_start')
         dbs_strings = dbs_string.split()
-        date = dbs_string[0]
+        date_ = dbs_string[0]
         dbe_string = getpost(request, 'date_booked_end')
         dbe_strings = dbe_string.split()
         time_start = dbs_strings[1]
@@ -66,22 +66,62 @@ class AppointmentsView(viewsets.ModelViewSet):
         email = getpost(request, 'email')
         phone_number = getpost(request, 'phone_number')
 
-        try:
-            # credentials were found
-            make_credentials = Credentials.objects.get(first_name=first_name, last_name=last_name, email=email,
-                                                       phone_number=phone_number)
-        except:
-            # credentials were not found
-            make_credentials = Credentials.objects.create(first_name=first_name, last_name=last_name, email=email,
-                                                          phone_number=phone_number)
+        valid = 0
 
-        treatment_ = Treatments.objects.get(pk=treatment)
-        get_slice = TimeSlices.objects.get(slice_start=time_start, slice_end=time_end).pk
+        if treatment:
+            valid += 1
+        if reason:
+            valid += 1
+        if first_name:
+            valid += 1
+        if last_name:
+            valid += 1
+        if email:
+            valid += 1
+        if phone_number:
+            valid += 1
 
-        make_appointment = Appointments.objects.create(time_slice_id=get_slice, treatment=treatment_, reason=reason,
-                                                       credentials=make_credentials)
-        return Response({"created": True, "first_name": first_name, "email": email, "phone_number": phone_number,
-                         "date": date, "time_start": time_start, "time_end": time_end})
+        if valid == 6:
+            if dbs_string:
+                valid += 1
+            if dbe_string:
+                valid += 1
+            if valid == 8:
+                try:
+                    # credentials were found
+                    make_credentials = Credentials.objects.get(first_name=first_name, last_name=last_name,
+                                                               email=email, phone_number=phone_number)
+                except:
+                    # credentials were not found
+                    make_credentials = Credentials.objects.create(first_name=first_name, last_name=last_name,
+                                                                  email=email, phone_number=phone_number)
+
+                treatment_ = Treatments.objects.get(pk=treatment)
+                get_slice = TimeSlices.objects.get(slice_start=time_start, slice_end=time_end).pk
+
+                make_appointment = Appointments.objects.create(time_slice_id=get_slice, treatment=treatment_,
+                                                               reason=reason, credentials=make_credentials, date=date_)
+                test_credentials = Credentials.objects.get(first_name=first_name, last_name=last_name,
+                                                           email=email, phone_number=phone_number)
+                if test_credentials:
+                    test_appointment = Appointments.objects.get(treatment=treatment_, reason=reason,
+                                                                credentials=test_credentials, date=date_)
+                    if test_appointment:
+                        return Response({"Error": "None",
+                                         "first_name": first_name,
+                                         "email": email,
+                                         "phone_number": phone_number,
+                                         "date": date,
+                                         "time_start": time_start,
+                                         "time_end": time_end})
+                    else:
+                        return Response({"error": "Appointment_Failed"})
+                else:
+                    return Response({"error": "Credentials_Failed"})
+            else:
+                return Response({"error": "Empty_Internal_Field"})
+        else:
+            return Response({"error": "Empty_Field"})
 
     @csrf_exempt
     @action(methods=['post'], detail=False)
