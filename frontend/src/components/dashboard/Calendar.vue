@@ -106,16 +106,16 @@
             ><br />
           </div>
           <div v-if="appointmentInfos[0].customer[0].email">
-          <label for="email">Email: </label>
-          <span id="email">{{ appointmentInfos[0].customer[0].email }}</span
-          ><br />
-        </div>
+            <label for="email">Email: </label>
+            <span id="email">{{ appointmentInfos[0].customer[0].email }}</span
+            ><br />
+          </div>
           <div v-if="appointmentInfos[0].customer[0].phone_number">
-          <label for="phone">Telefoon: </label>
-          <span id="phone">{{
-            appointmentInfos[0].customer[0].phone_number
-          }}</span
-          ><br />
+            <label for="phone">Telefoon: </label>
+            <span id="phone">{{
+              appointmentInfos[0].customer[0].phone_number
+            }}</span
+            ><br />
           </div>
           <label for="treatments">Behandelingen: </label>
           <span id="treatments">{{
@@ -296,7 +296,13 @@ export default {
       let self = this;
       axios
         .post(`${self.$store.state.HOST}/api/appointments/new_appointment/`, {
-          body: body
+          body: body,
+          headers: {
+            Accept: "application/json",
+            "Content-type": "application/json"
+            //"Authorization: token ${payload.auth},
+            //"X-CSRFToken": payload.csrftoken,
+          }
         })
         .then(res => {
           //Perform Success Action
@@ -332,7 +338,14 @@ export default {
       await axios
         .get(
           "https://my-json-server.typicode.com/liambenschop/school/treatments/",
-          {}
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-type": "application/json"
+              //"Authorization: token ${payload.auth},
+              //"X-CSRFToken": payload.csrftoken,
+            }
+          }
         )
         .then(response => {
           response.data.forEach(item => {
@@ -346,7 +359,14 @@ export default {
     async getAllEvents() {
       let self = this;
       await axios
-        .get(`${self.$store.state.HOST}/api/appointments/get_free_places/`, {})
+        .get(`${self.$store.state.HOST}/api/appointments/get_free_places/`, {
+          headers: {
+            Accept: "application/json",
+            "Content-type": "application/json"
+            //"Authorization: token ${payload.auth},
+            //"X-CSRFToken": payload.csrftoken,
+          }
+        })
         .then(res => {
           this.events = [];
           // console.log(res.data);
@@ -530,4 +550,3 @@ form .container {
   justify-content: space-between;
 }
 </style>
-
