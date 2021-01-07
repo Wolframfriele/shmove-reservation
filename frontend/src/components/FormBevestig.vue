@@ -1,5 +1,5 @@
 <template>
-    <validation-observer ref="observer" v-slot="{ invalid }">
+    <validation-observer ref="observer" v-slot="{ }">
       <form @submit.prevent="submit">
         <validation-provider v-slot="{ errors }" name="Voornaam">
           <v-text-field
@@ -60,6 +60,7 @@
         <p class="caption">
           Annuleren is kosteloos tot 48 uur van tevoren, daarna wordt de gereserveerde tijd in principe in rekening gebracht. 
         </p>
+        
         <validation-provider
           v-slot="{ errors }"
           rules="required"
@@ -68,10 +69,11 @@
           <v-checkbox
             v-model="accepted"
             :error-messages="errors"
-            value="1"
+            input-value="false"
             label="Ja, ik ga akkoord met de algemene voorwaarden."
             type="checkbox"
-            required
+
+            @click="logCheckbox"
           ></v-checkbox>
         </validation-provider>
 
@@ -79,7 +81,7 @@
           Terug
         </v-btn>
 
-        <v-btn class="mr-4" color="primary" type="submit" :disabled="invalid">
+        <v-btn class="mr-4" color="primary" type="submit" :disabled="!accepted">
           Bevestig
         </v-btn>
       </form>
@@ -134,10 +136,13 @@ export default {
     lastname: "",
     email: "",
     phonenumber: '',
-    accepted: null,
+    accepted: false,
     reason: '',
   }),
   methods: {
+    logCheckbox() {
+      console.log(this.accepted)
+    },
     dateToString: function () {
       const days = [
         'zondag',
