@@ -1,37 +1,52 @@
 <template>
   <v-container>
     <h2>Openingstijden wijzigen</h2>
-    <v-row v-for="day in days" :key="day.day_id">
-      <v-col cols="2">
-        <v-subheader>{{ day.title }}</v-subheader>
-      </v-col>
-      <div v-for="slot in timeslots" :key="slot.day_id">
-      <v-col  cols="10" class="textfieldContainer">
-        <div class="" v-if="day.day_id == slot.day_id">
+    <div class="flexbox">
+    <v-row v-for="day in days" :key="day.day_id" class="dayrow">
+        <h3>{{ day.title }}</h3>
+      <div class="outerbigbox" v-for="(slot, slice_id) in timeslots" :key="slot.day_id">
+        <div class="bigbox" v-if="day.day_id == slot.day_id">
         <v-text-field
           class="textfield"
           label="Starttijd"
           :value="slot.start"
-
+          solo
+          clearable
         ></v-text-field>
         <v-text-field
           class="textfield"
           label="Eindtijd"
           :value="slot.end"
+          solo
+          clearable
         ></v-text-field>
+      <v-btn x-small class="mx-2 plus" fab dark color="red" @click="deleteSlot(slice_id)">
+                  <v-icon dark>
+        mdi-delete
+      </v-icon>
+    </v-btn>
+      <v-btn x-small class="mx-2 plus" fab dark color="green" @click="saveSlot(slot.slice_id)">
+                  <v-icon dark>
+        mdi-check
+      </v-icon>
+    </v-btn>
       </div>
-      </v-col>
       </div>
+      <div class="buttonrow">
       <v-btn class="mx-2 plus" fab dark color="indigo" @click="addSlot(day.day_id)">
       <v-icon dark>
         mdi-plus
       </v-icon>
     </v-btn>
+        </div>
     </v-row>
+    </div>
   </v-container>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data: () => ({
     currency: "€",
@@ -67,48 +82,33 @@ export default {
       }
     ],
     timeslots: [
-      {
-        start: "10:00",
-        end: "18:00",
-        day_id: "0"
-      },
-      {
-        start: "10:00",
-        end: "18:00",
-        day_id: "1"
-      },
-      {
-        start: "10:00",
-        end: "18:00",
-        day_id: "2"
-      },
-      {
-        start: "10:00",
-        end: "18:00",
-        day_id: "3"
-      },
-      {
-        start: "10:00",
-        end: "18:00",
-        day_id: "4"
-      },
-      {
-        start: "10:00",
-        end: "18:00",
-        day_id: "5"
-      },
-      {
-        start: "10:00",
-        end: "18:00",
-        day_id: "6"
-      }
     ]
   }),
+  created() {
+    this.getSlices();
+  },
   computed: {
   },
   methods: {
-    getSlices(){
-
+    async getSlices() {
+      let self = this;
+      await axios
+        .get(`${self.$store.state.HOST}/api/dashboard/get_timeslices/`, {})
+        .then(slices => {
+          this.events = [];
+          // console.log(res.data);
+          slices.data.forEach(slice => {
+            self.timeslots.push({
+              start: slice.start,
+              end: slice.end,
+              day_id: slice.day_id,
+              slice_id: slice.slice_id
+            });
+          });
+        })
+        .catch(e => {
+          console.log(e);
+        });
     },
     addSlot(index) {
       this.timeslots.push({
@@ -117,6 +117,36 @@ export default {
         day_id: index
       });
     },
+    saveSlot() {
+      //http://django.yanickhost.ga:8085/api/dashboard/update_timeslices/
+      //http://django.yanickhost.ga:8085/api/dashboard/add_time_slices/
+      let body = {
+        day_id: this.day_id,
+        start: this.start,
+        end: this.end,
+      };
+      let self = this;
+      axios
+        .post(`${self.$store.state.HOST}/api/appointments/new_appointment/`, {
+          body: body
+        })
+        .then(res => {
+          //Perform Success Action
+          console.log(res.data);
+          this.createEventModal = false;
+          this.getAllEvents();
+        })
+        .catch(error => {
+          console.log(error);
+        })
+        .finally(() => {
+          //Perform action in always
+        });
+    },
+    deleteSlot(slice_id){
+      //http://django.yanickhost.ga:8085/api/dashboard/remove_timeslices/
+      this.timeslots.splice(slice_id, 1);
+    }
   }
 };
 </script>
@@ -125,8 +155,39 @@ export default {
   display: none;
   margin-left: 10px;
 }
+.outerbigbox:empty {
+  display:none;
+}
 h2 {
   margin-bottom: 20px;
+}
+.outerbigbox {
+  width: 100%;
+}
+.flexbox {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: baseline;
+}
+.dayrow {
+  justify-content: center;
+  width: 30%;
+  max-width: 30%;
+  background-color: #f3f3f399;
+  border-radius: 15px;
+  margin:20px;
+}
+.dayrow h3{
+  margin: 20px;
+  font-size: 18px;
+}
+.buttonrow {
+  margin-bottom: 15px;
+}
+.bigbox {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
 }
 .textfieldContainer {
   display: flex;
