@@ -10,10 +10,10 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     HOST:
-      // window.location.port != ""
-        // ? " http://127.0.0.1:8000"
-        // : "django.yanickhost.ga:8085",
-       "http://django.yanickhost.ga:8085",
+      window.location.port != ""
+        ? " http://127.0.0.1:8000"
+        : "django.yanickhost.ga:8085",
+      //  "http://django.yanickhost.ga:8085",
     AUTHENTICATED: undefined,
     usertoken: undefined
   },

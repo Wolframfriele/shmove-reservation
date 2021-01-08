@@ -6,6 +6,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.core import serializers
 from django.db.models import Q
+from django.http import QueryDict
 import json
 from datetime import datetime, timedelta
 # from django.contrib.auth.hashers import make_password
@@ -118,7 +119,7 @@ class DashboardView(viewsets.ModelViewSet):
         logout(request)
         return Response({'logout': True})
 
-    def get_date_form_day(self, day_index):
+    def get_date_from_day(self, day_index):
         """get the date from a day index(0->monday, ... , 6->sunday)
 
         Args:
@@ -144,31 +145,49 @@ class DashboardView(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False)
     @permission_classes((AllowAny,))
     def add_time_slices(self, request):
-        current_date = None  # store the date base on the sended day
+        params = request.data['body']
+
         b_time = datetime.strptime(
-            request.query_params.get('begin_time'), '%H:%M').time()
+            params['begin_time'], '%H:%M:%S').time()
         e_time = datetime.strptime(
-            request.query_params.get('end_time'), '%H:%M').time()
-        day_index = request.query_params.get('day_index')
+            params['end_time'], '%H:%M:%S').time()
+        day_index = int(params['day_index'])
         # get begin and end week date
         b_week = datetime.today() - timedelta(days=datetime.today().weekday() %
                                               7)  # begin of week
         # e_week = b_week + timedelta(days=6)  # end of week
 
-        for d in range(7):
-            # add 1 day to the begin day of the week
-            updated_day = b_week + timedelta(days=d)
-            if updated_day.weekday() == day_index:
-                current_date = updated_day.date()
-        # add time slice
-        new_slice = TimeSlices(slice_start=b_time, slice_end=e_time)
-        # create new Changes
-        changes = Changes.objects.create(date=current_date)
-        changes.save()
-        # add slice to changes
-        changes.slices.add(new_slice)
+        # store the date base on the sended day
+        current_date = self.get_date_from_day(day_index)
 
-        return Response({'added': True})
+        # create new Changes
+        # changes = Changes.objects.get_or_create(date=current_date)
+        # changes.save()
+        try:
+            changes = Changes.objects.get(date=current_date)
+            # check if time slice exists
+            ts = TimeSlices.objects.filter(
+                Q(slice_start=b_time) & Q(slice_end=e_time))
+            if ts.count() == 0:
+                # add time slice
+                new_slice = TimeSlices(slice_start=b_time, slice_end=e_time)
+                new_slice.save()
+                # add slice to changes
+                changes.slices.add(new_slice)
+
+                return Response({'added': True, 'msg': 'tijdslot toegevoegd'})
+            else:
+                return Response({'added': False, 'msg': 'tijdslot {} - {} bestaat al'.format(b_time, e_time)})
+        except Changes.DoesNotExist:
+            changes = Changes.objects.create(date=current_date)
+            changes.save()
+            # add time slice
+            new_slice = TimeSlices(slice_start=b_time, slice_end=e_time)
+            new_slice.save()
+            # add slice to changes
+            changes.slices.add(new_slice)
+
+            return Response({'added': True, 'msg': 'tijdslot toegevoegd'})
 
     @csrf_exempt
     @action(methods=['get'], detail=False)
@@ -200,21 +219,26 @@ class DashboardView(viewsets.ModelViewSet):
     @action(methods=['put'], detail=False)
     @permission_classes((AllowAny,))
     def update_timeslices(self, request):
+        # params = QueryDict(request.body)
+        params = request.data['body']
+
         b_time = datetime.strptime(
-            request.query_params.get('begin_time'), '%H:%M').time()
+            params['begin_time'], '%H:%M:%S').time()
         e_time = datetime.strptime(
-            request.query_params.get('end_time'), '%H:%M').time()
-        slice_id = request.query_params.get('slice_id')
-        day_index = request.query_params.get('day_id ')
+            params['end_time'], '%H:%M:%S').time()
+        slice_id = int(params['slice_id'])
+        day_index = int(params['day_id'])
         # get date from day index
-        date = self.get_date_form_day(day_index)
+        date = self.get_date_from_day(day_index)
         # get changes base on date
         change = Changes.objects.filter(date=date).values()
-        # filter and update slice
-        TimeSlices.objects.filter(
-            Q(changes__id=change['id'])
-            & Q(id=slice_id)
-        ).update(slice_start=b_time, slice_end=e_time)
+        # check if changes exists
+        if change.count() > 0:
+            # filter and update slice
+            TimeSlices.objects.filter(
+                Q(changes__id=change[0]['id'])
+                & Q(id=slice_id)
+            ).update(slice_start=b_time, slice_end=e_time)
 
         return Response({'changed': True})
 
@@ -222,15 +246,17 @@ class DashboardView(viewsets.ModelViewSet):
     @action(methods=['delete'], detail=False)
     @permission_classes((AllowAny,))
     def remove_timeslices(self, request):
-        slice_id = request.query_params.get('slice_id')
-        day_index = request.query_params.get('day_id ')
+        params = request.query_params
+
+        slice_id = int(params.get('slice_id'))
+        day_index = int(params.get('day_id'))
         # get date from day index
-        date = self.get_date_form_day(day_index)
+        date = self.get_date_from_day(day_index)
         # get changes base on date
         change = Changes.objects.filter(date=date).values()
         # filter and update slice
         TimeSlices.objects.filter(
-            Q(changes__id=change['id'])
+            Q(changes__id=change[0]['id'])
             & Q(id=slice_id)
         ).delete()
 

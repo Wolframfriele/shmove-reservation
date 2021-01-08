@@ -76,11 +76,13 @@ export default {
     bus.$on('treatmentArray', (data) => {
       this.treatment = data;
     })
+
   },
   mounted() {
     this.$refs.calendar.checkChange();
   },
   methods: {
+
     returnID(id) {
       return `#${id}`;
     },
