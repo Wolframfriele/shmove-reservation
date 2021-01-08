@@ -198,9 +198,17 @@ export default {
             email: this.email,
             phone_number: this.phonenumber,
           }
-        },
-      )
-      this.$router.push({name: "AfspraakGeboekt", params: { time: this.dateToString()}})
+        }
+      ).then(res => {
+      const error = res.error
+      if (error == "None") {
+        this.$router.push({name: "AfspraakGeboekt", params: { time: this.dateToString()}})
+      }
+    }).catch(e => {
+      console.log(e)
+    })
+    // this.$router.push({name: "AfspraakGeboekt", params: { time: this.dateToString()}})
+      
     },
     back() {
       this.$router.push("afspraak-maken")
