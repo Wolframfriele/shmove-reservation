@@ -1,5 +1,5 @@
 <template>
-    <validation-observer ref="observer" v-slot="{ invalid }">
+    <validation-observer ref="observer" v-slot="{ }">
       <form @submit.prevent="submit">
         <validation-provider v-slot="{ errors }" name="Voornaam">
           <v-text-field
@@ -49,17 +49,18 @@
       </validation-provider>
       <v-textarea
           outlined
-          v-model="reden"
+          v-model="reason"
           name="reden"
           label="Reden voor de behandeling"
           value="Omschrijf wat voor klachten u heeft, of wat voor andere reden."
         ></v-textarea>
         <p>
-          Uw selectie is <strong>{{ convertDate }}</strong>. De afspraak duurt ongeveer 2 uur.
+          Uw selectie is <strong>{{ dateToString() }}</strong>. De afspraak duurt ongeveer 2 uur.
         </p>
         <p class="caption">
           Annuleren is kosteloos tot 48 uur van tevoren, daarna wordt de gereserveerde tijd in principe in rekening gebracht. 
         </p>
+        
         <validation-provider
           v-slot="{ errors }"
           rules="required"
@@ -68,10 +69,11 @@
           <v-checkbox
             v-model="accepted"
             :error-messages="errors"
-            value="1"
+            input-value="false"
             label="Ja, ik ga akkoord met de algemene voorwaarden."
             type="checkbox"
-            required
+
+            @click="logCheckbox"
           ></v-checkbox>
         </validation-provider>
 
@@ -79,7 +81,7 @@
           Terug
         </v-btn>
 
-        <v-btn class="mr-4" color="primary" type="submit" :disabled="invalid">
+        <v-btn class="mr-4" color="primary" type="submit" :disabled="!accepted">
           Bevestig
         </v-btn>
       </form>
@@ -134,41 +136,14 @@ export default {
     lastname: "",
     email: "",
     phonenumber: '',
-    accepted: null,
-    reden: '',
-    time: this.convertDate(),
+    accepted: false,
+    reason: '',
   }),
   methods: {
-    parseDate(date){
-      // parse date time to dd/mm/yyy, h:m:s
-      return new Date(date).toLocaleString('en-GB', { timeZone: 'CET' });
+    logCheckbox() {
+      console.log(this.accepted)
     },
-    submit() {
-      this.$refs.observer.validate()
-      let self = this
-      axios.post(`${self.$store.state.HOST}/api/appointments/new_appointment/`,
-        {
-          body: {
-            date_booked_start: this.parseDate(this.$route.params.start),
-            date_booked_end: this.parseDate(this.$route.params.end),
-            treatment: this.$route.params.treatment,
-            reason: "",
-            first_name: this.firstname,
-            last_name: this.lastname,
-            email: this.email,
-            phone_number: this.phonenumber,
-          }
-        },
-      )
-      console.log(this.time)
-      this.$router.push({name: "AfspraakGeboekt", params: { time: this.time}})
-    },
-    back() {
-      this.$router.push("afspraak-maken")
-    }
-  },
-  computed: {
-    convertDate: function () {
+    dateToString: function () {
       const days = [
         'zondag',
         'maandag',
@@ -203,6 +178,32 @@ export default {
       const minutes = reserverings_tijd.getMinutes().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
 
       return `${ day } ${ date } ${ month } om ${ hours }:${ minutes }`;
+    },
+    parseDate(date){
+      // parse date time to dd/mm/yyy, h:m:s
+      return new Date(date).toLocaleString('en-GB', { timeZone: 'CET' });
+    },
+    submit() {
+      this.$refs.observer.validate()
+      let self = this
+      axios.post(`${self.$store.state.HOST}/api/appointments/new_appointment/`,
+        {
+          body: {
+            date_booked_start: this.parseDate(this.$route.params.start),
+            date_booked_end: this.parseDate(this.$route.params.end),
+            treatment: this.$route.params.treatment,
+            reason: this.reason,
+            first_name: this.firstname,
+            last_name: this.lastname,
+            email: this.email,
+            phone_number: this.phonenumber,
+          }
+        },
+      )
+      this.$router.push({name: "AfspraakGeboekt", params: { time: this.dateToString()}})
+    },
+    back() {
+      this.$router.push("afspraak-maken")
     }
   }
 };
