@@ -164,7 +164,8 @@ export default {
       this.timeslots.push({
         start: "",
         end: "",
-        day_id: index
+        day_id: index,
+        slice_id: 1
       });
     },
     saveSlot() {
