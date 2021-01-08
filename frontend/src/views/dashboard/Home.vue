@@ -5,6 +5,11 @@
         <v-tab v-for="item in items" :key="item.title">
           {{ item.title }} <v-icon class="icon"> {{ item.icon }} </v-icon>
         </v-tab>
+        <v-container class="signout" @click="signout()">
+          <div class="signoutbtn">
+          Uitloggen<v-icon class="icon"> mdi-exit-to-app </v-icon>
+          </div>
+        </v-container>
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item v-for="item in items" :key="item.title">
@@ -23,6 +28,7 @@
 import Calendar from "../../components/dashboard/Calendar";
 import OpeningTimes from "@/components/dashboard/Openingtimes";
 import Treatments from "@/components/dashboard/Treatments";
+import Holidays from "@/components/dashboard/Holidays";
 export default {
   data: () => ({
     tab: null,
@@ -39,17 +45,28 @@ export default {
         title: "Openingstijden",
         icon: "mdi-storefront",
         content: "OpeningTimes"
+      },
+      {
+        title: "Vakanties",
+        icon: "mdi-weather-sunset",
+        content: "Holidays"
       }
     ]
   }),
   components: {
     Calendar,
     OpeningTimes,
-    Treatments
+    Treatments,
+    Holidays
   },
   created() {},
   mounted() {},
-  methods: {}
+  methods: {
+    signout(){
+      //Signout ??
+      this.$router.push('/dashboard');
+    }
+  }
 };
 </script>
 <style>
@@ -79,8 +96,36 @@ html::-webkit-scrollbar {
   margin: 0;
   max-width: 100%;
 }
+.signout {
+  background-color: #7955484d;
+  width: 150px;
+  height: 48px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.signout:hover {
+  background-color: #795548ab;
+  color: #fff;
+}
+.signout:hover .icon {
+  color: #fff;
+}
+.signoutbtn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
 .icon {
   margin-left: 8px;
+  transition: 0.3s ease-in-out;
 }
 .home-core {
   display: flex;
