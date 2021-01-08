@@ -1,15 +1,24 @@
 <template>
   <v-container>
-    <h2>Openingstijden wijzigen</h2>
+    <div class="openingHeader">
+      <h2>Openingstijden wijzigen</h2>
+      <div class="successt" v-if="this.saveSuccess">
+        {{ text }}
+      </div>
+      <div class="errort" v-if="this.saveError">
+        {{ text }}
+      </div>
+    </div>
     <div class="flexbox">
       <v-row v-for="day in days" :key="day.day_id" class="dayrow">
         <h3>{{ day.title }}</h3>
         <div
           class="outerbigbox"
-          v-for="(slot, slice_id) in timeslots"
-          :key="slot.day_id"
+          v-for="(slot, j) in timeslotsFilter(day.day_id)"
+          :key="j"
         >
-          <div class="bigbox" v-if="day.day_id == slot.day_id">
+          {{ day.day_id }}
+          <div class="bigbox">
             <v-text-field
               class="textfield"
               label="Starttijd"
@@ -24,13 +33,14 @@
               solo
               clearable
             ></v-text-field>
+            {{slot.slice_id}}
             <v-btn
               x-small
               class="mx-2 plus"
               fab
               dark
               color="red"
-              @click="deleteSlot(slice_id)"
+              @click="deleteSlot(slot.slice_id, day.day_id)"
             >
               <v-icon dark>
                 mdi-delete
@@ -75,6 +85,10 @@ export default {
   data: () => ({
     currency: "€",
     thisday: "",
+    saveSuccess: false,
+    saveError: false,
+    text: "",
+    sleep: "",
     days: [
       {
         day_id: "0",
@@ -139,6 +153,13 @@ export default {
           console.log(e);
         });
     },
+    timeslotsFilter(id) {
+      let scoped = this.timeslots.filter(item => {
+        return item.day_id == id;
+      });
+      console.log(scoped);
+      return scoped;
+    },
     addSlot(index) {
       this.timeslots.push({
         start: "",
@@ -169,17 +190,28 @@ export default {
         })
         .then(res => {
           //Perform Success Action
-          console.log(res.data);
+          console.log(res.status);
+          this.saveSucces = true;
+          this.text = "Tijden succesvol aangepast!";
           this.getSlices();
+          setTimeout(() => {
+            this.saveSucces = false;
+          }, 5000);
         })
         .catch(error => {
           console.log(error);
+          this.saveError = true;
+          this.text = "Er is iets fout gegaan bij het opslaan van de tijden!";
+          setTimeout(() => {
+            this.saveError = false;
+          }, 5000);
         });
     },
-    deleteSlot(slice_id) {
+    deleteSlot(slice_id,day_id) {
       let body = {
-        slice_id: slice_id
-      }
+        slice_id: slice_id,
+        day_id: day_id
+      };
       let self = this;
       axios
         .delete(`${self.$store.state.HOST}/api/dashboard/delete_timeslices`, {
@@ -200,7 +232,7 @@ export default {
           console.log(error);
         });
       //http://django.yanickhost.ga:8085/api/dashboard/remove_timeslices/
-      this.timeslots.splice(slice_id, 1);
+      //this.timeslots.splice(slice_id, day_id);
     }
   }
 };
@@ -241,8 +273,20 @@ h2 {
 .dayrow h3 {
   margin: 20px;
   font-size: 18px;
+  width: 100%;
+  text-align: center;
 }
-
+.openingHeader {
+  text-align: center;
+}
+.successt {
+  color: green;
+  margin-bottom: 10px;
+}
+.errort {
+  color: red;
+  margin-bottom: 10px;
+}
 .buttonrow {
   margin-bottom: 15px;
 }
