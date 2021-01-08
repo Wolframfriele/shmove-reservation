@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, date
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.dateparse import parse_date
+from django.utils.dateparse import parse_date, parse_time
 # from django.contrib.auth.hashers import make_password
 ################################## DRF IMPORTS #######################################
 from rest_framework import viewsets
@@ -137,6 +137,7 @@ class AppointmentsView(viewsets.ModelViewSet):
         today_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f').split()
         # get today's date
         today_date = parse_date(today_datetime[0])
+        current_time = parse_time(today_datetime[1])
         # check if the received date is earlier than today
         if date_ < today_date:
             date_ = today_date
@@ -168,8 +169,10 @@ class AppointmentsView(viewsets.ModelViewSet):
             if count < slice_count:
                 for i in slice_array:
                     slice_data = TimeSlices.objects.filter(pk=i).values()
-                    date_timeslices.append({"start": "{} {}".format(date_, slice_data[0]["slice_start"]),
-                                            "end": "{} {}".format(date_, slice_data[0]["slice_end"])})
+                    # make sure no past time_slices get sent
+                    if slice_data[0]["slice_start"] > current_time:
+                        date_timeslices.append({"start": "{} {}".format(date_, slice_data[0]["slice_start"]),
+                                                "end": "{} {}".format(date_, slice_data[0]["slice_end"])})
             date_ += delta
             weekday += 1
         return Response(date_timeslices)
