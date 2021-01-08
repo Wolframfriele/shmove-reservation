@@ -115,11 +115,21 @@ export default {
     },
     getFreePlaces(){
       let self = this;
-      axios.post(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
-      {body:{
+      axios.get(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
+      {params:{
         beginweek: "2021-01-04",
         endweek: "2021-01-10"
       }}
+      // {body:{
+      //   date_booked_start: '2021-01-08 15:00:00',
+      //   date_booked_end: '2021-01-08 17:00:00',
+      //   treatment: 1,
+      //   reason: 'Test',
+      //   first_name: 'Tijmen',
+      //   last_name: 'Simons',
+      //   email: 'tijmen.simons@gmail.com',
+      //   phone_number: '0612312398',
+      // }}
       ).then(res => {
         console.log(res.data);
         // res.data.forEach(times => {

@@ -5,12 +5,14 @@ from django.contrib.auth.models import User
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.dateparse import parse_date, parse_time
+from django.core.mail import send_mail
 # from django.contrib.auth.hashers import make_password
 ################################## DRF IMPORTS #######################################
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from django.db.models import Q
 
 from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices, Treatments
 from barber.serializers import TestSerializer, AppointmentSerializer
@@ -52,7 +54,7 @@ class AppointmentsView(viewsets.ModelViewSet):
     def new_appointment(self, request):
         dbs_string = getpost(request, 'date_booked_start')
         dbs_strings = dbs_string.split()
-        date_ = dbs_string[0]
+        date_ = dbs_strings[0]
         dbe_string = getpost(request, 'date_booked_end')
         dbe_strings = dbe_string.split()
         time_start = dbs_strings[1]
@@ -98,25 +100,43 @@ class AppointmentsView(viewsets.ModelViewSet):
 
                 treatment_ = Treatments.objects.get(pk=treatment)
                 get_slice = TimeSlices.objects.get(slice_start=time_start, slice_end=time_end).pk
-
-                make_appointment = Appointments.objects.create(time_slice_id=get_slice, treatment=treatment_,
-                                                               reason=reason, credentials=make_credentials, date=date_)
-                test_credentials = Credentials.objects.get(first_name=first_name, last_name=last_name,
-                                                           email=email, phone_number=phone_number)
-                if test_credentials:
-                    test_appointment = Appointments.objects.get(treatment=treatment_, reason=reason,
-                                                                credentials=test_credentials, date=date_)
-                    if test_appointment:
-                        return Response({"Error": "None",
+                print('test1')
+                print(make_credentials)
+                # make_appointment = Appointments.objects.create(time_slice_id=get_slice, treatment=treatment_,
+                #                                                reason=reason, credentials=make_credentials, date=date_)
+                print('test2')
+                try:
+                    test_credentials = Credentials.objects.get(first_name=first_name, last_name=last_name,
+                                                               email=email, phone_number=phone_number)
+                    print('test4')
+                    try:
+                        print(treatment_)
+                        print(reason)
+                        print(test_credentials)
+                        print(date_)
+                        test_appointment = Appointments.objects.filter(Q(treatment=treatment_) & Q(reason=reason) &
+                                                                       Q(credentials=test_credentials) & Q(date=date_) &
+                                                                       Q(time_slice_id=get_slice)).values()
+                        print('test5')
+                        # send_mail(
+                        #     'Afspraak geplant - IN-KI Shiatsu Delft',
+                        #     'Bedankt voor het maken van een afspraak!<br><br>Test voor enters..',
+                        #     'mailman@shiatsu-delft.nl',
+                        #     ['tijmen.simons@gmail.com'],
+                        #     fail_silently=False,
+                        # )
+                        return Response({"error": "None",
                                          "first_name": first_name,
                                          "email": email,
                                          "phone_number": phone_number,
-                                         "date": date,
+                                         "date": date_,
                                          "time_start": time_start,
                                          "time_end": time_end})
-                    else:
+                    except:
+                        print('test6')
                         return Response({"error": "Appointment_Failed"})
-                else:
+                except:
+                    print('test7')
                     return Response({"error": "Credentials_Failed"})
             else:
                 return Response({"error": "Empty_Internal_Field"})
@@ -124,7 +144,7 @@ class AppointmentsView(viewsets.ModelViewSet):
             return Response({"error": "Empty_Field"})
 
     @csrf_exempt
-    @action(methods=['post'], detail=False)
+    @action(methods=['get'], detail=False)
     def get_free_places(self, request):
         # get variables
         date_ = parse_date(getpost(request, 'beginweek'))
