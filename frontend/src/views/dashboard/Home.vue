@@ -29,6 +29,8 @@ import Calendar from "../../components/dashboard/Calendar";
 import OpeningTimes from "@/components/dashboard/Openingtimes";
 import Treatments from "@/components/dashboard/Treatments";
 import Holidays from "@/components/dashboard/Holidays";
+import Settings from "@/components/dashboard/Settings";
+import Statistics from "@/components/dashboard/Statistics";
 export default {
   data: () => ({
     tab: null,
@@ -50,6 +52,16 @@ export default {
         title: "Vakanties",
         icon: "mdi-weather-sunset",
         content: "Holidays"
+      },
+      {
+        title: "Instellingen",
+        icon: "mdi-cog-outline",
+        content: "Settings"
+      },
+      {
+        title: "Statistieken",
+        icon: "mdi-chart-bar",
+        content: "Statistics"
       }
     ]
   }),
@@ -57,7 +69,9 @@ export default {
     Calendar,
     OpeningTimes,
     Treatments,
-    Holidays
+    Holidays,
+    Settings,
+    Statistics
   },
   created() {},
   mounted() {},
