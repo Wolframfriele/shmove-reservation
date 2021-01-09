@@ -2,6 +2,7 @@
   <v-row class="fill-height">
     <v-col>
       <v-sheet height="64">
+        <!-- Calendar Toolbar -->
         <v-toolbar flat>
           <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday" aria-label="Navigeer naar vandaag">
             Today
@@ -39,11 +40,15 @@
 
           @change="updateRange"
         >
+          <!-- Usabillity Modifications -->
+
+          <!-- Modified Calendar Header -->
           <template v-slot:day-label-header="{date, day, present, past, weekday}">
             <v-avatar v-if="past" color="white">{{ day }}</v-avatar>
             <v-btn v-else-if="present" fab depressed color="primary" :aria-label="dateToString(date)" :href="returnID(weekday)">{{ day }}</v-btn>
             <v-btn v-else fab depressed color="white" :aria-label="dateToString(date)" :href="returnID(weekday)">{{ day }} </v-btn>
           </template>
+          <!-- Modified Calendar Events -->
           <template v-slot:event="{event, eventParsed}">
             <p class="event-text">Vrij</p>  
             <p class="event-text" :id="eventParsed.start.weekday" tabindex="0" role="button" @keydown.enter="bevestigAfspraak({event})">
@@ -73,6 +78,7 @@ export default {
     events: []
   }),
   created() {
+    // Receive Data from treatments
     bus.$on('treatmentArray', (data) => {
       this.treatment = data;
     })
@@ -111,7 +117,7 @@ export default {
     getFreePlaces(beginweek, endweek){
       let self = this;
       this.events = []
-      axios.get(`${self.$store.state.HOST}/api/appointments/get_free_places/`,
+      axios.get(`${self.$store.state.HOST}/api/appointments/get_appointments/`,
       {
       params: {
         beginweek: beginweek,
@@ -120,12 +126,12 @@ export default {
       ).then(res => {
         self.events = []
         res.data.forEach(times => {
-          if (times.taked == false) {
+          if (times.taken == false) {
             self.events.push({
-            name: times.taked ? "Bezet" : "Vrij",
+            name: times.taken ? "Bezet" : "Vrij",
             start: times.start,
             end: times.end,
-            color: times.taked ? self.eventColor[1] : self.eventColor[0],
+            color: times.taken ? self.eventColor[1] : self.eventColor[0],
             timed: true
           })
           }
