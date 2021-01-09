@@ -72,8 +72,6 @@
             input-value="false"
             label="Ja, ik ga akkoord met de algemene voorwaarden."
             type="checkbox"
-
-            @click="logCheckbox"
           ></v-checkbox>
         </validation-provider>
 
@@ -140,9 +138,6 @@ export default {
     reason: '',
   }),
   methods: {
-    logCheckbox() {
-      console.log(this.accepted)
-    },
     dateToString: function () {
       const days = [
         'zondag',
@@ -200,15 +195,13 @@ export default {
           }
         }
       ).then(res => {
-      const error = res.error
-      if (error == "None") {
-        this.$router.push({name: "AfspraakGeboekt", params: { time: this.dateToString()}})
-      }
+        const error = res.data.error
+        if (error == "None") {
+          this.$router.push({name: "AfspraakGeboekt", params: { time: this.dateToString()}})
+        }
     }).catch(e => {
       console.log(e)
-    })
-    // this.$router.push({name: "AfspraakGeboekt", params: { time: this.dateToString()}})
-      
+    })      
     },
     back() {
       this.$router.push("afspraak-maken")
