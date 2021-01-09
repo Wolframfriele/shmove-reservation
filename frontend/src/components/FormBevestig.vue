@@ -74,7 +74,7 @@
             type="checkbox"
           ></v-checkbox>
         </validation-provider>
-
+        <span id="error-message">Er is iets mis gegaan met het bevestigen van de afspraak, probeert U het nog eens of neem contact op met de beheerder.</span>
         <v-btn @click="back">
           Terug
         </v-btn>
@@ -136,6 +136,7 @@ export default {
     phonenumber: '',
     accepted: false,
     reason: '',
+    error: "",
   }),
   methods: {
     dateToString: function () {
@@ -198,9 +199,14 @@ export default {
         const error = res.data.error
         if (error == "None") {
           this.$router.push({name: "AfspraakGeboekt", params: { time: this.dateToString()}})
+        } else {
+          document.getElementById("error-message").style.display = "inline-block"
         }
     }).catch(e => {
       console.log(e)
+      if (e != "") {
+        document.getElementById("error-message").style.display = "inline-block"
+      }
     })      
     },
     back() {
@@ -213,5 +219,11 @@ export default {
 <style scoped>
 .mr-4 {
   margin-left: 3em;
+}
+
+#error-message {
+  color: red;
+  display: none;
+  padding: 5px;
 }
 </style>
