@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-import dashboard from "./modules/dashboard";  // store file from modules map import example
+import dashboard from "./modules/dashboard"; // store file from modules map import example
 
 import axios from "axios";
 
@@ -9,10 +9,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    HOST:
-      window.location.port != ""
-        ? " http://127.0.0.1:8000"
-        : "http://yanick007.pythonanywhere.com",
+    HOST: "http://django.yanickhost.ga:8085",
     AUTHENTICATED: undefined,
     usertoken: undefined
   },
