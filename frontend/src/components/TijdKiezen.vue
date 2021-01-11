@@ -23,6 +23,14 @@
           <v-spacer> </v-spacer>
         </v-toolbar>
       </v-sheet>
+      <div class='loader' v-if='!appointmentsLoaded'>
+        <v-progress-circular
+          :size="50"
+          color="primary"
+          indeterminate
+        ></v-progress-circular>
+        <p style="color:#895638" class='mt-5'>Vrije plaatsen worden geladen</p>
+      </div>
       <v-sheet>
         <v-calendar
           ref="calendar"
@@ -75,7 +83,8 @@ export default {
     locale: "nl",
     eventColor:  ['primary', 'red'],
     treatment: ["shiatsu"],
-    events: []
+    events: [],
+    appointmentsLoaded: false,
   }),
   created() {
     // Receive Data from treatments
@@ -124,6 +133,11 @@ export default {
         endweek: endweek
       }}
       ).then(res => {
+        if(res.data){
+          self.appointmentsLoaded = true
+        }else{
+          self.appointmentsLoaded = false
+        }
         self.events = []
         res.data.forEach(times => {
           if (times.taken == false) {
@@ -201,5 +215,17 @@ html::-webkit-scrollbar {
 .event-text {
   padding: 5px;
   margin-bottom: 0px !important;
+}
+.loader{
+  width: 100%;
+  height:auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-bottom: -50px;
+  position: relative;
+  top: 45%;
+  z-index: 10;
 }
 </style>
