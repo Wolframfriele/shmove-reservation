@@ -72,11 +72,9 @@
             input-value="false"
             label="Ja, ik ga akkoord met de algemene voorwaarden."
             type="checkbox"
-
-            @click="logCheckbox"
           ></v-checkbox>
         </validation-provider>
-
+        <span id="error-message">Er is iets mis gegaan met het bevestigen van de afspraak, probeert U het nog eens of neem contact op met de beheerder.</span>
         <v-btn @click="back">
           Terug
         </v-btn>
@@ -138,11 +136,9 @@ export default {
     phonenumber: '',
     accepted: false,
     reason: '',
+    error: "",
   }),
   methods: {
-    logCheckbox() {
-      console.log(this.accepted)
-    },
     dateToString: function () {
       const days = [
         'zondag',
@@ -200,15 +196,18 @@ export default {
           }
         }
       ).then(res => {
-      const error = res.error
-      if (error == "None") {
-        this.$router.push({name: "AfspraakGeboekt", params: { time: this.dateToString()}})
-      }
+        const error = res.data.error
+        if (error == "None") {
+          this.$router.push({name: "AfspraakGeboekt", params: { time: this.dateToString()}})
+        } else {
+          document.getElementById("error-message").style.display = "inline-block"
+        }
     }).catch(e => {
       console.log(e)
-    })
-    // this.$router.push({name: "AfspraakGeboekt", params: { time: this.dateToString()}})
-      
+      if (e != "") {
+        document.getElementById("error-message").style.display = "inline-block"
+      }
+    })      
     },
     back() {
       this.$router.push("afspraak-maken")
@@ -220,5 +219,11 @@ export default {
 <style scoped>
 .mr-4 {
   margin-left: 3em;
+}
+
+#error-message {
+  color: red;
+  display: none;
+  padding: 5px;
 }
 </style>

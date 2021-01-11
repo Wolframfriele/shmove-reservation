@@ -128,12 +128,12 @@ export default {
         res.data.forEach(times => {
           if (times.taken == false) {
             self.events.push({
-              name: times.taken ? "Bezet" : "Vrij",
-              start: times.start,
-              end: times.end,
-              color: times.taken ? self.eventColor[1] : self.eventColor[0],
-              timed: true
-            })
+            name: times.taken ? "Bezet" : "Vrij",
+            start: times.start,
+            end: times.end,
+            color: times.taken ? self.eventColor[1] : self.eventColor[0],
+            timed: true
+          })
           }
         });
       }).catch(e => {
