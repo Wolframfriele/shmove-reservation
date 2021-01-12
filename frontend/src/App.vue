@@ -14,7 +14,6 @@ export default {
   data: () => ({
     //
   }),
-  created() {alert(0)},
   methods: {
     scrollTopAnimation() {
       let scrollValue = document.documentElement.scrollTop;
