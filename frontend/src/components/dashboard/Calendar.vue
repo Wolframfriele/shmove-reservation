@@ -78,7 +78,9 @@
       hide-overlay
       offset-x
     >
-      <v-card color="grey lighten-4" min-width="350px" flat>
+      <v-card color="grey lighten-4" min-width="350px" flat 
+        :id='appointmentInfos.length > 0 ? appointment.done : null'
+      >
         <v-toolbar :color="selectedEvent.color" dark>
           <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
           <v-spacer></v-spacer>
@@ -91,41 +93,41 @@
           <label for="cendtime">Eindtijd: </label>
           <span id="cendtime">{{ convertTime(selectedEvent.end) }}</span
           ><br />
-          <div v-if="appointmentInfos[0].customer[0].first_name">
+          <div v-if="customer.first_name">
             <label for="firstname">Voornaam: </label>
             <span id="firstname">{{
-              appointmentInfos[0].customer[0].first_name
+              customer.first_name
             }}</span
             ><br />
           </div>
-          <div v-if="appointmentInfos[0].customer[0].last_name">
+          <div v-if="customer.last_name">
             <label for="lastname">Achternaam: </label>
             <span id="lastname">{{
-              appointmentInfos[0].customer[0].last_name
+              customer.last_name
             }}</span
             ><br />
           </div>
-          <div v-if="appointmentInfos[0].customer[0].email">
+          <div v-if="customer.email">
             <label for="email">Email: </label>
-            <span id="email">{{ appointmentInfos[0].customer[0].email }}</span
+            <span id="email">{{ customer.email }}</span
             ><br />
           </div>
-          <div v-if="appointmentInfos[0].customer[0].phone_number">
+          <div v-if="customer.phone_number">
             <label for="phone">Telefoon: </label>
             <span id="phone">{{
-              appointmentInfos[0].customer[0].phone_number
+              customer.phone_number
             }}</span
             ><br />
           </div>
           <label for="treatments">Behandelingen: </label>
           <span id="treatments">{{
-            JSON.parse(appointmentInfos[0].appointment)[0].fields.treatment
+            treatment.treatment
           }}</span
           ><br />
           <label for="comments">Opmerkingen: </label>
           <span id="comments"
             >{{
-              JSON.parse(appointmentInfos[0].appointment)[0].fields.reason
+              appointment.reason
             }} </span
           ><br />
         </v-card-text>
@@ -266,7 +268,35 @@ export default {
   computed: {
     ...mapGetters({
       appointmentInfos: "dashboard/getAppointments"
-    })
+    }),
+    customer: function(){
+      let customerData = null
+      if(this.appointmentInfos.length > 0){
+         customerData = JSON.parse(this.appointmentInfos[0].customer)[0].fields
+      }
+      return customerData
+    },
+    appointment: function(){
+      let appointmentData = null
+      if(this.appointmentInfos.length > 0){
+        appointmentData = JSON.parse(this.appointmentInfos[0].appointment)[0].fields
+      }
+      return appointmentData
+    },
+    timeSlice: function(){
+      let tsData = null
+      if(this.appointmentInfos.length > 0){
+        tsData = JSON.parse(this.appointmentInfos[0].time_slice)[0].fields
+      }
+      return tsData
+    },
+    treatment: function(){
+      let treatmentData = null
+      if(this.appointmentInfos.length > 0){
+        treatmentData = JSON.parse(this.appointmentInfos[0].treatment)[0].fields
+      }
+      return  treatmentData
+    }
   },
 
   created() {
@@ -274,7 +304,7 @@ export default {
   },
 
   mounted() {
-    this.$refs.calendar.checkChange();
+    // this.$refs.calendar.checkChange();
   },
 
   methods: {
@@ -404,7 +434,7 @@ export default {
           }
         )
         .then(res => {
-          console.log(res.data);
+          // console.log(res.data);
 
           self.$store.getters["dashboard/setAppointments"](res.data);
         })
