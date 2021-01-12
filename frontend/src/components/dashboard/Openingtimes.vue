@@ -37,7 +37,7 @@
               class="mx-2 plus"
               fab
               dark
-              color="red"
+              color="red lighten-2"
               @click="deleteSlot(slot.slice_id, day.day_id)"
             >
               <v-icon dark>
@@ -49,7 +49,7 @@
               class="mx-2 plus"
               fab
               dark
-              color="green"
+              color="green lighten-2"
               @click="saveSlot(slot.slice_id)"
             >
               <v-icon dark>
@@ -63,7 +63,7 @@
             class="mx-2 plus"
             fab
             dark
-            color="indigo"
+            color="indigo lighten-2"
             @click="addSlot(day.day_id)"
           >
             <v-icon dark>
@@ -263,6 +263,7 @@ h2 {
   width: 30%;
   max-width: 30%;
   background-color: #f3f3f399;
+  border: 1px solid #ececec;
   border-radius: 15px;
   margin: 20px;
 }
