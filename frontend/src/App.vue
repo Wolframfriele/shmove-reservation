@@ -14,7 +14,7 @@ export default {
   data: () => ({
     //
   }),
-  created() {},
+  created() {alert(0)},
   methods: {
     scrollTopAnimation() {
       let scrollValue = document.documentElement.scrollTop;
@@ -31,8 +31,6 @@ export default {
 html,
 body {
   scroll-behavior: smooth;
-  overflow-x: hidden;
-  overflow-y: hidden;
   width: 100%;
   margin: 0px;
   padding: 0px;
