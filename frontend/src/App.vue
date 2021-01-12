@@ -9,6 +9,7 @@
 
 <script>
 import Nav from "./components/layouts/Nav";
+import axios from "axios";
 export default {
   name: "App",
   components: {
@@ -17,14 +18,35 @@ export default {
   data: () => ({
     //
   }),
-  created() {},
+  created() {
+    this.generateWeekDates()
+  },
   methods: {
     scrollTopAnimation() {
       let scrollValue = document.documentElement.scrollTop;
       while (scrollValue > 0) {
         document.documentElement.scrollTop--;
       }
-    }
+    },
+
+    async generateWeekDates() {
+      let self = this;
+      await axios
+        .post(
+          `${self.$store.state.HOST}/api/dashboard/generate_week_dates/`,
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-type": "application/json"
+              //"Authorization: token ${payload.auth},
+              //"X-CSRFToken": payload.csrftoken,
+            }
+          }
+        )
+        .then(res => {
+          console.log(res.data);
+        });
+    },
   }
 };
 </script>
