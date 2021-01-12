@@ -282,15 +282,14 @@ export default {
       const start = this.parseDate(this.selectedEvent.start);
       const end = this.parseDate(this.selectedEvent.end);
       let body = {
-        customer_id: 0,
-        firstname: this.firstname,
+        first_name: this.firstname,
         last_name: this.lastname,
         email: this.email,
         phone_number: this.phone,
-        start: start,
-        end: end,
-        treatment: [],
-        employee_id: 0
+        date_booked_start: start,
+        date_booked_end: end,
+        treatment: this.select,
+        reason: ""
       };
       let self = this;
       axios
@@ -360,9 +359,10 @@ export default {
     },
     async getAllEvents(start, end) {
       let self = this;
+      console.log(end)
       await axios
-        .get(`${self.$store.state.HOST}/api/appointments/get_free_places/`, {
-          body: {
+        .get(`${self.$store.state.HOST}/api/appointments/get_appointments/`, {
+          params: {
             beginweek: start,
             endweek: end
           },
@@ -378,11 +378,11 @@ export default {
           // console.log(res.data);
           res.data.forEach(times => {
             self.events.push({
-              name: times.taked ? "Bezet" : "Vrije Afspraak",
+              name: times.taken ? "Bezet" : "Vrije Afspraak",
               start: times.start,
               appointmentId: times.appointment_id,
               end: times.end,
-              color: times.taked ? self.eventColor[1] : self.eventColor[0],
+              color: times.taken? self.eventColor[1] : self.eventColor[0],
               timed: true
             });
           });
