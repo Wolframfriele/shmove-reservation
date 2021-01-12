@@ -17,7 +17,6 @@
           v-for="(slot, j) in timeslotsFilter(day.day_id)"
           :key="j"
         >
-          {{ day.day_id }}
           <div class="bigbox">
             <v-text-field
               class="textfield"
@@ -33,7 +32,6 @@
               solo
               clearable
             ></v-text-field>
-            {{slot.slice_id}}
             <v-btn
               x-small
               class="mx-2 plus"
@@ -157,7 +155,6 @@ export default {
       let scoped = this.timeslots.filter(item => {
         return item.day_id == id;
       });
-      console.log(scoped);
       return scoped;
     },
     addSlot(index) {
@@ -173,14 +170,14 @@ export default {
       //http://django.yanickhost.ga:8085/api/dashboard/add_time_slices/
       let body = {
         day_id: this.day_id,
-        start: this.start,
-        end: this.end,
+        begin_time: this.start,
+        end_time: this.end,
         slice_id: this.slice_id
       };
 
       let self = this;
       axios
-        .put(`${self.$store.state.HOST}/api/dashboard/update_timeslices`, {
+        .put(`${self.$store.state.HOST}/api/dashboard/update_timeslices/`, {
           body: body,
           headers: {
             Accept: "application/json",
@@ -208,21 +205,19 @@ export default {
           }, 5000);
         });
     },
-    deleteSlot(slice_id,day_id) {
-      let body = {
-        slice_id: slice_id,
-        day_id: day_id
-      };
-      let self = this;
+    deleteSlot(slice_id, day_id) {
       axios
         .delete(`${self.$store.state.HOST}/api/dashboard/delete_timeslices`, {
+          body: {
+            slice_id: slice_id,
+            day_id: day_id
+          },
           headers: {
             Accept: "application/json",
             "Content-type": "application/json"
             //"Authorization: token ${payload.auth},
             //"X-CSRFToken": payload.csrftoken,
-          },
-          body: body
+          }
         })
         .then(res => {
           //Perform Success Action
