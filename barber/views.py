@@ -263,8 +263,8 @@ class AppointmentsView(viewsets.ModelViewSet):
         today_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f').split()
         # get today's date
         today_date = parse_date(today_datetime[0])
-        print(date_)
-        print(today_date)
+        # print(date_)
+        # print(today_date)
         current_time = parse_time(today_datetime[1])
         while date_ <= endweek:
             count = 0
@@ -310,10 +310,10 @@ class AppointmentsView(viewsets.ModelViewSet):
                                         "available": available})
             date_ += delta
             weekday += 1
-            print("date = ", date_)
+            # print("date = ", date_)
             if weekday == 8:
                 weekday = 1
-            print("weekday = ", weekday)
+            # print("weekday = ", weekday)
         return Response(date_timeslices)
 
     @csrf_exempt

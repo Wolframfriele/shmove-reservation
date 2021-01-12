@@ -206,9 +206,10 @@ export default {
         });
     },
     deleteSlot(slice_id, day_id) {
+      let self = this
       axios
-        .delete(`${self.$store.state.HOST}/api/dashboard/delete_timeslices`, {
-          body: {
+        .delete(`${self.$store.state.HOST}/api/dashboard/remove_timeslices/`, {
+          params: {
             slice_id: slice_id,
             day_id: day_id
           },
@@ -222,7 +223,7 @@ export default {
         .then(res => {
           //Perform Success Action
           console.log(res.data);
-          this.getSlices();
+          // this.getSlices();
         })
         .catch(error => {
           console.log(error);
