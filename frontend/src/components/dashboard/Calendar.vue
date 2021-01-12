@@ -133,7 +133,10 @@
         </v-card-text>
         <v-card-actions>
           <v-btn text color="secondary" @click="showEventModal = false">
-            Cancel
+            Terug
+          </v-btn>
+          <v-btn text color="red" @click="cancelAppointment">
+            Annuleren
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -216,6 +219,13 @@
                     v-model="phone"
                   ></v-text-field>
                 </v-col>
+                <v-col cols="12" md="12">
+                  <v-text-field
+                    label="Reden van behandeling / Opmerkingen"
+                    dense
+                    v-model="reason"
+                  ></v-text-field>
+                </v-col>
               </v-row>
             </v-container>
           </v-form>
@@ -262,7 +272,8 @@ export default {
     firstname: "",
     lastname: "",
     email: "",
-    phone: ""
+    phone: "",
+    reason: ""
   }),
 
   computed: {
@@ -319,7 +330,7 @@ export default {
         date_booked_start: start,
         date_booked_end: end,
         treatment: this.select,
-        reason: ""
+        reason: this.reason
       };
       let self = this;
       axios
@@ -442,7 +453,9 @@ export default {
           console.log(e);
         });
     },
+    cancelAppointment(){
 
+    },
     showEvent({ nativeEvent, event }) {
       let self = this;
       this.selectedEvent = event;
