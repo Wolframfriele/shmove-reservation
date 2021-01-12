@@ -183,8 +183,7 @@ class DashboardView(viewsets.ModelViewSet):
                 # regenerate
                 self.generate_week_dates(request)
 
-        # return Response('changes for {} to {} generated'.format(b_week, e_week))
-        return Response(week_dates)
+        return Response('changes for {} to {} generated'.format(b_week, e_week))
 
     @csrf_exempt
     @action(methods=['post'], detail=False)
@@ -242,11 +241,10 @@ class DashboardView(viewsets.ModelViewSet):
                     'thursday', 'friday', 'saturday', 'sunday']
         slices_arr = []
         # get the standard weeks
-        # s_weeks = StandardWeek.objects.all().values()
-        s_weeks = Changes.objects.all().values()
+        s_weeks = StandardWeek.objects.all().values()
         for i, s_week in enumerate(s_weeks):
             ts = TimeSlices.objects.filter(
-                change__id=s_week['id']).values()
+                standardweek=s_week['id']).values()
             for tsl in ts:
                 # print(
                 #     {'bt': tsl['slice_start'], 'et': tsl['slice_end'], 'day': days_arr.index(days_arr[i])})
@@ -277,12 +275,12 @@ class DashboardView(viewsets.ModelViewSet):
         # get date from day index
         date = self.get_date_from_day(day_index)
         # get changes base on date
-        change = Changes.objects.filter(date=date).values()
+        week_date = WeekDates.objects.filter(date=date).values()
         # check if changes exists
-        if change.count() > 0:
+        if week_date.count() > 0:
             # filter and update slice
             TimeSlices.objects.filter(
-                Q(changes__id=change[0]['id'])
+                Q(changes__id=week_date[0]['id'])
                 & Q(id=slice_id)
             ).update(slice_start=b_time, slice_end=e_time)
 
@@ -299,12 +297,11 @@ class DashboardView(viewsets.ModelViewSet):
         # get date from day index
         date = self.get_date_from_day(day_index)
         # get changes base on date
-        change = Changes.objects.filter(date=date).values()
-        print(change)
-        # filter and update slice
-        # TimeSlices.objects.filter(
-        #     Q(changes__id=change[0]['id'])
-        #     & Q(id=slice_id)
-        # ).delete()
+        change = WeekDates.objects.filter(date=date).values()
+        # filter and delete slice
+        TimeSlices.objects.filter(
+            Q(changes__id=change[0]['id'])
+            & Q(id=slice_id)
+        ).delete()
 
         return Response({'deleted': True})
