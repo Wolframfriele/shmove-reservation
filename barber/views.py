@@ -180,66 +180,43 @@ class AppointmentsView(viewsets.ModelViewSet):
 
     @csrf_exempt
     @action(methods=['get'], detail=False)
-    def get_free_places(self, request):
-        # get variables
-        date_ = parse_date(getpost(request, 'beginweek'))
-        endweek = parse_date(getpost(request, 'endweek'))
+    def set_vacation(self, request):
+        start_date = parse_date(getpost(request, 'start_date'))
+        end_date = parse_date(getpost(request, 'end_date'))
         delta = timedelta(days=1)
-
-        date_timeslices = []
-        # get the day of the week
-        weekday = datetime.now().weekday() + 1
-        today_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f').split()
-        # get today's date
-        today_date = parse_date(today_datetime[0])
-        current_time = parse_time(today_datetime[1])
-        # check if the received date is earlier than today
-        if date_ < today_date:
-            date_ = today_date
-        # loop through all days between the 2 received dates
-        while date_ <= endweek:
-            slice_array = []
-            count = 0
-            # test if there is a entry in the model "Changes"
+        date_ = start_date
+        while date_ <= end_date:
             try:
-                if_changes = Changes.objects.get(date=date_).slice_count
-                slice_count = int(if_changes)
-                slices = TimeSlices.objects.filter(changes__date=date_).values()
+                Appointments.objects.get(date=date_)
+                return Response("Error_Appointment")
             except:
-                # get the timeslices from the standardweek using the day value
-                slices = TimeSlices.objects.filter(standardweek__pk=weekday).values()
-                slice_count = StandardWeek.objects.get(pk=weekday).slice_count
-
-            # for every timeslice connected to this date, check if there is an appointment affiliated
-            for f in slices:
-                appointment_slices = Appointments.objects.filter(time_slice_id=f['id'], date=date_)
-                if appointment_slices:
-                    # if an appointment is affiliated
-                    count += 1
-                else:
-                    # if no appointment is affiliated
-                    slice_array.append(f['id'])
-
-            # only send back the timeslices when there are less slices on this day than set as "slice_count"
-            if count < slice_count:
-                for i in slice_array:
-                    slice_data = TimeSlices.objects.filter(pk=i).values()
-                    # make sure no past time_slices get sent
-                    if slice_data[0]["slice_start"] > current_time:
-                        date_timeslices.append({"start": "{} {}".format(date_, slice_data[0]["slice_start"]),
-                                                "end": "{} {}".format(date_, slice_data[0]["slice_end"]),
-                                                "taked": "{} {}".format(date_, slice_data[0]["slice_end"])
-                                                })
+                pass
+            date_ += delta
+        date_ = start_date
+        weekday = datetime.now().weekday() + 1
+        while date_ <= end_date:
+            try:
+                changes = Changes.objects.get(date=date_)
+                changes.slice_count = 0
+                changes.save()
+            except:
+                changes = Changes.objects.create(date=date_, slice_count=0)
+                slices = TimeSlices.objects.filter(standardweek__pk=weekday)
+                for i in slices:
+                    changes.slices.add(i)
             date_ += delta
             weekday += 1
-        return Response(date_timeslices)
+            if weekday > 7:
+                weekday -= 7
+        return Response("Success")
 
     @csrf_exempt
     @action(methods=['get'], detail=False)
     def get_appointments(self, request):
         # get variables
-        date_ = parse_date(getpost(request, 'beginweek'))
-        endweek = parse_date(getpost(request, 'endweek'))
+        start_date = parse_date(getpost(request, 'beginweek'))
+        date_ = start_date
+        end_date = parse_date(getpost(request, 'endweek'))
         delta = timedelta(days=1)
 
         date_timeslices = []
@@ -248,19 +225,22 @@ class AppointmentsView(viewsets.ModelViewSet):
         today_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f').split()
         # get today's date
         today_date = parse_date(today_datetime[0])
-        print(date_)
-        print(today_date)
         current_time = parse_time(today_datetime[1])
-        while date_ <= endweek:
+        while date_ <= end_date:
             count = 0
+            print("date = ", date_)
+            print("weekday = ", weekday)
             try:
                 if_changes = Changes.objects.get(date=date_).slice_count
                 slice_count = int(if_changes)
                 slices = TimeSlices.objects.filter(changes__date=date_).values()
+                print("There were changes")
             except:
                 # get the timeslices from the standardweek using the day value
                 slice_count = StandardWeek.objects.get(pk=weekday).slice_count
                 slices = TimeSlices.objects.filter(standardweek__pk=weekday).values()
+                print("There were no changes")
+            print(slices)
             # test if there is still enough room for more appointments
             for i in slices:
                 appointment_slices = Appointments.objects.filter(time_slice_id=i['id'], date=date_)
@@ -284,17 +264,20 @@ class AppointmentsView(viewsets.ModelViewSet):
                 if appointment_slices > 0:
                     taken = 1
                     appointment_id = appointment_slices
+                free = 0
+                if slice_count == 0:
+                    free = 1
                 date_timeslices.append({"start": "{} {}".format(date_, slice_data[0]["slice_start"]),
                                         "end": "{} {}".format(date_, slice_data[0]["slice_end"]),
-                                        "appointment_id": appointment_id,
                                         "taken": taken,
-                                        "available": available})
+                                        "available": available,
+                                        "free": free,
+                                        "appointment_id": appointment_id})
             date_ += delta
             weekday += 1
-            print("date = ", date_)
-            if weekday == 8:
-                weekday = 1
-            print("weekday = ", weekday)
+            if weekday > 7:
+                weekday -= 7
+            print("------------------------------------------------------")
         return Response(date_timeslices)
 
 

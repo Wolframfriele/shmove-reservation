@@ -117,8 +117,8 @@ export default {
       let self = this;
       axios.get(`${self.$store.state.HOST}/api/appointments/get_appointments/`,
       {params:{
-        beginweek: "2021-01-04",
-        endweek: "2021-01-10"
+        beginweek: "2021-01-11",
+        endweek: "2021-01-17"
       }}
       // {body:{
       //   date_booked_start: '2021-01-08 15:00:00',
