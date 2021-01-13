@@ -117,7 +117,7 @@
             ><br />
           </div>
           <label for="treatments">Behandelingen: </label>
-          <span id="treatments">{{ treatment.treatment }}</span
+          <span id="treatments">{{ treatments.treatment }}</span
           ><br />
           <label for="comments">Opmerkingen: </label>
           <span id="comments">{{ appointment.reason }} </span><br />
@@ -291,7 +291,7 @@ export default {
       }
       return tsData;
     },
-    treatment: function() {
+    treatments: function() {
       let treatmentData = null;
       if (this.appointmentInfos.length > 0) {
         treatmentData = JSON.parse(this.appointmentInfos[0].treatment)[0]
@@ -316,7 +316,8 @@ export default {
       let body = {
         date_booked_start: start,
         date_booked_end: end,
-        treatment: this.treatment,
+        // treatment: this.treatment,
+        treatment: ['Massage'],
         reason: this.reason,
         first_name: this.firstname,
         last_name: this.lastname,
@@ -338,7 +339,8 @@ export default {
           //Perform Success Action
           console.log(res.data);
           this.createEventModal = false;
-          this.getAllEvents();
+          // this.getAllEvents();
+          // window.location.reload()
         })
         .catch(error => {
           console.log(error);
@@ -352,7 +354,7 @@ export default {
       this.type = "day";
     },
     parseDate(date) {
-      return new Date(date).toLocaleString();
+       return new Date(date).toLocaleString('en-GB', { timeZone: 'UTC' });
     },
     setToday() {
       this.focus = "";
