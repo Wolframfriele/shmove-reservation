@@ -340,7 +340,7 @@ export default {
           console.log(res.data);
           this.createEventModal = false;
           // this.getAllEvents();
-          // window.location.reload()
+          window.location.reload();
         })
         .catch(error => {
           console.log(error);
@@ -354,7 +354,7 @@ export default {
       this.type = "day";
     },
     parseDate(date) {
-       return new Date(date).toLocaleString('en-GB', { timeZone: 'UTC' });
+        return new Date(date).toLocaleString('en-GB');
     },
     setToday() {
       this.focus = "";
