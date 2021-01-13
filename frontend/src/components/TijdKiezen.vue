@@ -115,10 +115,13 @@ export default {
     },
     getFreePlaces(){
       let self = this;
-      axios.get(`${self.$store.state.HOST}/api/appointments/get_appointments/`,
+      axios.get(`${self.$store.state.HOST}/api/appointments/make_change/`,
       {params:{
-        beginweek: "2021-01-11",
-        endweek: "2021-01-17"
+        date: "2021-01-11",
+        old_start_time: "10:10:00",
+        old_end_time: "12:10:00",
+        new_start_time: "10:20:00",
+        new_end_time: "12:20:00",
       }}
       // {body:{
       //   date_booked_start: '2021-01-08 15:00:00',

@@ -1,5 +1,6 @@
 # Create your views here.
 from datetime import datetime, timedelta, date
+import time
 
 from django.contrib.auth.models import User
 from django.core import serializers
@@ -209,6 +210,48 @@ class AppointmentsView(viewsets.ModelViewSet):
             if weekday > 7:
                 weekday -= 7
         return Response("Success")
+
+    @csrf_exempt
+    @action(methods=['get'], detail=False)
+    def make_change(self, request):
+        # get variables
+        date_ = parse_date(getpost(request, 'date'))
+        old_start_time = parse_time(getpost(request, 'old_start_time'))
+        old_end_time = parse_time(getpost(request, 'old_end_time'))
+        new_start_time = parse_time(getpost(request, 'new_start_time'))
+        new_end_time = parse_time(getpost(request, 'new_end_time'))
+
+        # get the day of the week (+1 because of the ID's in the table)
+        weekday = datetime.strptime("{} {}".format(date_, old_start_time), '%Y-%m-%d %H:%M:%S').weekday() + 1
+        standart_week = StandardWeek.objects.get(pk=weekday)
+        # see if there were changes made previously
+        try:
+            change = Changes.objects.get(date=date_)
+        except:
+            # if there were no changes, just make them
+            change = Changes.objects.create(date=date_, slice_count=standart_week.slice_count)
+            slices = TimeSlices.objects.filter(standardweek__pk=weekday)
+            for i in slices:
+                change.slices.add(i)
+        # find the old timeslice which is going to be changed
+        try:
+            old_slice = TimeSlices.objects.get(slice_start=old_start_time, slice_end=old_end_time,
+                                               changes__pk=change.pk)
+            print(old_slice)
+        except:
+            return Response("ERROR: No old slice found!")
+        # find or make the new timeslice
+        try:
+            new_slice = TimeSlices.objects.get(slice_start=new_start_time, slice_end=new_end_time)
+        except:
+            new_slice = TimeSlices.objects.create(slice_start=new_start_time, slice_end=new_end_time)
+        # apply the changes
+        try:
+            change.slices.remove(old_slice)
+            change.slices.add(new_slice)
+        except:
+            return Response("ERROR: I don't really know what went wrong... Maybe try again or contact an admin ;-;")
+        return Response("SUCCESS")
 
     @csrf_exempt
     @action(methods=['get'], detail=False)
