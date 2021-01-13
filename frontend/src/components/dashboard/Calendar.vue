@@ -338,7 +338,8 @@ export default {
           //Perform Success Action
           console.log(res.data);
           this.createEventModal = false;
-          this.getAllEvents();
+          // this.getAllEvents();
+          window.location.reload();
         })
         .catch(error => {
           console.log(error);
@@ -352,7 +353,7 @@ export default {
       this.type = "day";
     },
     parseDate(date) {
-      return new Date(date).toLocaleString();
+        return new Date(date).toLocaleString('en-GB');
     },
     setToday() {
       this.focus = "";
