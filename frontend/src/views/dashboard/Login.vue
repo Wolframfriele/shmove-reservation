@@ -1,78 +1,92 @@
 <template id="signin">
-  <v-container>
-    <v-container fill-height="fill-height">
-      <div class="outerContainer">
-        <h1>Inloggen</h1>
-        <div class="mainContainer">
-          <div class="innerContainer">
-            <validation-observer ref="observer" v-slot="{ invalid }">
-              <form @submit.prevent="submit">
-                <validation-provider
-                  v-slot="{ errors }"
-                  name="Username"
-                  rules="required"
-                >
-                  <v-text-field
-                    v-model="username"
-                    :error-messages="errors"
-                    label="Username"
-                    required
-                  ></v-text-field>
-                </validation-provider>
-                <validation-provider
-                  v-slot="{ errors }"
-                  name="password"
-                  :rules="{
-                    required: true,
-                    digits: 7,
-                    regex: '^(71|72|74|76|81|82|84|85|86|87|88|89)\\d{5}$'
-                  }"
-                >
-                  <v-text-field
-                    v-model="password"
-                    :error-messages="errors"
-                    label="Password"
-                    required
-                  ></v-text-field>
-                </validation-provider>
-                <v-btn class="mr-4" type="submit" :disabled="invalid">
-                  submit
-                </v-btn>
-                <v-btn @click="clear">
-                  clear
-                </v-btn>
-              </form>
-            </validation-observer>
-          </div>
-        </div>
-      </div>
-    </v-container>
+  <v-container class="container" fill-height>
+    <v-row align="center"
+      justify="center">
+      <v-col>
+        <v-card class="card">
+          <v-system-bar color="primary" height="200">
+            <v-img
+            height="160"
+            contain
+            src="https://www.shiatsu-delft.nl/wp-content/uploads/2016/10/IN-KI-Shiatsu-voeding-logo-1.png"
+            background="primary"
+          ></v-img>
+          </v-system-bar>
+          <v-card-title>Inloggen Dashboard</v-card-title>
+          <validation-observer>
+            <form @submit.prevent="submit" class="login">
+              <validation-provider
+                v-slot="{ errors }"
+                name="Gebruikersnaam"
+                rules="required"
+              >
+                <v-text-field
+                  v-model="username"
+                  :error-messages="errors"
+                  label="Gebruikersnaam"
+                  required
+                  outlined
+                ></v-text-field>
+              </validation-provider>
+              <validation-provider
+                v-slot="{ errors }"
+                name="Wachtwoord"
+                rules="required">
+
+                <v-text-field
+                  v-model="password"
+                  :error-messages="errors"
+                  :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="show1 ? 'text' : 'password'"
+                  label="Wachtwoord"
+                  outlined
+                  @click:append="show1 = !show1"
+                ></v-text-field>
+              </validation-provider>
+              <v-btn
+                  class="mr-4"
+                  large
+                  @click="submit"
+                  :disabled="invalid"
+                >Submit</v-btn>
+            </form>
+          <v-card-subtitle>Shmove Reservations</v-card-subtitle>
+          </validation-observer>
+        </v-card>
+      </v-col>
+  </v-row>
   </v-container>
 </template>
 <script>
-import { required, regex } from "vee-validate/dist/rules";
+import { required } from "vee-validate/dist/rules";
 import {
   extend,
   ValidationObserver,
   ValidationProvider,
   setInteractionMode
 } from "vee-validate";
-setInteractionMode("eager");
+setInteractionMode("lazy");
 
 extend("required", {
   ...required,
-  message: "{_field_} can not be empty"
+  message: "{_field_} is verplicht"
 });
-extend("regex", {
-  ...regex,
-  message: "{_field_} {_value_} does not match {regex}"
-});
-// import axios from 'axios';
+import axios from 'axios';
 export default {
-  data: () => ({
-    username: "",
-    password: ""
-  }),
+  data () {
+      return {
+        show1: false,
+        show2: true,
+        show3: false,
+        show4: false,
+        username: "",
+        password: "",
+        rules: {
+          required: value => !!value || 'Required.',
+          emailMatch: () => (`The email and password you entered don't match`),
+        },
+      }
+  },
   components: {
     ValidationProvider,
     ValidationObserver
@@ -82,29 +96,33 @@ export default {
   methods: {
     submit() {
       this.$refs.observer.validate();
-    },
-    clear() {
-      this.username = "";
-      this.password = "";
-      this.$refs.observer.reset();
+      axios.get(`${self.$store.state.HOST}/api/dashboard/signin/`,
+      {
+        params: {
+          username: this.username,
+          password: this.password,
+        }
+      }
+      ).then(res => {
+        console.log(res.data);
+        }).catch(e => {
+        console.log(e)
+      })
     }
   }
 };
 </script>
 <style scoped>
-.outerContainer {
-  max-width: 800px;
-  max-height: 800px;
-  height: 100%;
-  width: 100%;
-  margin: 0 auto;
-
-  text-align: center;
+.container {
+  width: 550px;
 }
-.mainContainer {
 
+.login {
+  width: 515px;
+  margin: auto;
 }
-.innerContainer {
 
+.card{
+  padding: 0px;
 }
 </style>
