@@ -13,7 +13,7 @@
           ></v-img>
           </v-system-bar>
           <v-card-title>Inloggen Dashboard</v-card-title>
-          <validation-observer>
+          <validation-observer ref="observer" v-slot="{ invalid }">
             <form @submit.prevent="submit" class="login">
               <validation-provider
                 v-slot="{ errors }"
@@ -91,16 +91,14 @@ export default {
     ValidationProvider,
     ValidationObserver
   },
-  created() {},
-  mounted() {},
   methods: {
     submit() {
-      this.$refs.observer.validate();
-      axios.get(`${self.$store.state.HOST}/api/dashboard/signin/`,
+      // this.$refs.observer.validate();
+      axios.post(`${this.$store.state.HOST}/api/dashboard/signin/`,
       {
-        params: {
-          username: this.username,
-          password: this.password,
+        body: {
+          email: this.username,
+        password: this.password
         }
       }
       ).then(res => {
