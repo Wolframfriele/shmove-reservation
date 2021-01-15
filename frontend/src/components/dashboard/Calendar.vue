@@ -78,7 +78,12 @@
       hide-overlay
       offset-x
     >
-      <v-card color="grey lighten-4" min-width="350px" flat>
+      <v-card
+        color="grey lighten-4"
+        min-width="350px"
+        flat
+        :id="appointmentInfos.length > 0 ? appointment.done : null"
+      >
         <v-toolbar :color="selectedEvent.color" dark>
           <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
           <v-spacer></v-spacer>
@@ -91,47 +96,38 @@
           <label for="cendtime">Eindtijd: </label>
           <span id="cendtime">{{ convertTime(selectedEvent.end) }}</span
           ><br />
-          <div v-if="appointmentInfos[0].customer[0].first_name">
+          <div v-if="customer.first_name">
             <label for="firstname">Voornaam: </label>
-            <span id="firstname">{{
-              appointmentInfos[0].customer[0].first_name
-            }}</span
+            <span id="firstname">{{ customer.first_name }}</span
             ><br />
           </div>
-          <div v-if="appointmentInfos[0].customer[0].last_name">
+          <div v-if="customer.last_name">
             <label for="lastname">Achternaam: </label>
-            <span id="lastname">{{
-              appointmentInfos[0].customer[0].last_name
-            }}</span
+            <span id="lastname">{{ customer.last_name }}</span
             ><br />
           </div>
-          <div v-if="appointmentInfos[0].customer[0].email">
+          <div v-if="customer.email">
             <label for="email">Email: </label>
-            <span id="email">{{ appointmentInfos[0].customer[0].email }}</span
+            <span id="email">{{ customer.email }}</span
             ><br />
           </div>
-          <div v-if="appointmentInfos[0].customer[0].phone_number">
+          <div v-if="customer.phone_number">
             <label for="phone">Telefoon: </label>
-            <span id="phone">{{
-              appointmentInfos[0].customer[0].phone_number
-            }}</span
+            <span id="phone">{{ customer.phone_number }}</span
             ><br />
           </div>
           <label for="treatments">Behandelingen: </label>
-          <span id="treatments">{{
-            JSON.parse(appointmentInfos[0].appointment)[0].fields.treatment
-          }}</span
+          <span id="treatments">{{ treatments.treatment }}</span
           ><br />
           <label for="comments">Opmerkingen: </label>
-          <span id="comments"
-            >{{
-              JSON.parse(appointmentInfos[0].appointment)[0].fields.reason
-            }} </span
-          ><br />
+          <span id="comments">{{ appointment.reason }} </span><br />
         </v-card-text>
         <v-card-actions>
           <v-btn text color="secondary" @click="showEventModal = false">
-            Cancel
+            Terug
+          </v-btn>
+          <v-btn text color="red" @click="cancelAppointment">
+            Annuleren
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -150,77 +146,81 @@
           </v-card-title>
         </v-toolbar>
         <v-card-text>
-          <br />
+        <br />
+          <form @submit.prevent="sendToBackEnd">
+            <div class="times">
+              <div class="timea">
+                <label for="startTime">Begintijd: </label>
+                <span id="startTime">{{
+                  convertTime(this.selectedEvent.start)
+                }}</span>
+              </div>
+              <div class="timeb">
+                <label for="endtime">Eindtijd: </label>
+                <span id="endtime">{{
+                  convertTime(this.selectedEvent.end)
+                }}</span>
+              </div>
+            </div>
+                      <br />
           <label>Kies behandeling(en)</label>
-          <v-select
-            id="picktreatments"
-            v-model="select"
-            :items="allTreatments"
-            outlined
-            dense
-            multiple
-            :menu-props="{ top: false, offsetY: true }"
-            @change="calculateDuration()"
-          ></v-select>
-          <div class="times">
-            <div class="timea">
-              <label for="startTime">Begintijd: </label>
-              <span id="startTime">{{ starttime }}</span>
+            <v-select
+              id="picktreatments"
+              v-model="select"
+              :items="allTreatments"
+              outlined
+              dense
+              :menu-props="{ top: false, offsetY: true }"
+            ></v-select>
+            <div class="container">
+              <v-col cols="12" md="12" class="nopadding">
+                <v-text-field
+                  :counter="15"
+                  label="Voornaam"
+                  required
+                  dense
+                  v-model="firstname"
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12" md="12" class="nopadding">
+                <v-text-field
+                  :counter="15"
+                  label="Achternaam"
+                  dense
+                  v-model="lastname"
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12" md="12" class="nopadding">
+                <v-text-field
+                  label="E-mail"
+                  dense
+                  v-model="email"
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12" md="12" class="nopadding">
+                <v-text-field
+                  label="Telefoonnummer"
+                  dense
+                  v-model="phonenumber"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="12" class="nopadding">
+                <v-textarea
+                  v-model="reason"
+                  name="reden"
+                  label="Reden voor de behandeling"
+                  value="Beschrijf de situatie van de klant"
+                ></v-textarea>
+              </v-col>
             </div>
-            <div class="timeb">
-              <label for="endtime">Eindtijd: </label>
-              <span id="endtime">{{ endtime }}</span>
-            </div>
-          </div>
-          <br />
-          <!--          <label>Stylist:</label>-->
-          <!--          <v-select id="pickstylist" placeholder="Geen voorkeur" :items="stylists" outlined dense-->
-          <!--                    :menu-props="{ top: false, offsetY: true }"></v-select>-->
-          <label>Klant:</label>
-          <v-form>
-            <v-container>
-              <v-row>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    :counter="15"
-                    label="Voornaam"
-                    required
-                    dense
-                    v-model="firstname"
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    :counter="15"
-                    label="Achternaam"
-                    dense
-                    v-model="lastname"
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    label="E-mail"
-                    dense
-                    v-model="email"
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    label="Telefoonnummer"
-                    dense
-                    v-model="phone"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-form>
+            <v-btn type="submit" color="accent" elevation="2" block
+              >Voeg afspraak toe</v-btn
+            >
+          </form>
         </v-card-text>
-        <v-btn v-on:click="sendToBackEnd()" color="accent" elevation="2" block
-          >Voeg afspraak toe</v-btn
-        >
       </v-card>
     </v-dialog>
   </div>
@@ -260,13 +260,45 @@ export default {
     firstname: "",
     lastname: "",
     email: "",
-    phone: ""
+    phonenumber: "",
+    reason: "",
+    error: ""
   }),
 
   computed: {
     ...mapGetters({
       appointmentInfos: "dashboard/getAppointments"
-    })
+    }),
+    customer: function() {
+      let customerData = null;
+      if (this.appointmentInfos.length > 0) {
+        customerData = JSON.parse(this.appointmentInfos[0].customer)[0].fields;
+      }
+      return customerData;
+    },
+    appointment: function() {
+      let appointmentData = null;
+      if (this.appointmentInfos.length > 0) {
+        appointmentData = JSON.parse(this.appointmentInfos[0].appointment)[0]
+          .fields;
+      }
+      return appointmentData;
+    },
+    timeSlice: function() {
+      let tsData = null;
+      if (this.appointmentInfos.length > 0) {
+        tsData = JSON.parse(this.appointmentInfos[0].time_slice)[0].fields;
+      }
+      return tsData;
+    },
+    treatments: function() {
+      let treatmentData = null;
+      if (this.appointmentInfos.length > 0) {
+        treatmentData = JSON.parse(this.appointmentInfos[0].treatment)[0]
+          .fields;
+      }
+      return treatmentData;
+    }
   },
 
   created() {
@@ -274,7 +306,7 @@ export default {
   },
 
   mounted() {
-    this.$refs.calendar.checkChange();
+    // this.$refs.calendar.checkChange();
   },
 
   methods: {
@@ -282,15 +314,15 @@ export default {
       const start = this.parseDate(this.selectedEvent.start);
       const end = this.parseDate(this.selectedEvent.end);
       let body = {
-        customer_id: 0,
-        firstname: this.firstname,
+        date_booked_start: start,
+        date_booked_end: end,
+        // treatment: this.treatment,
+        treatment: ['Massage'],
+        reason: this.reason,
+        first_name: this.firstname,
         last_name: this.lastname,
         email: this.email,
-        phone_number: this.phone,
-        start: start,
-        end: end,
-        treatment: [],
-        employee_id: 0
+        phone_number: this.phonenumber
       };
       let self = this;
       axios
@@ -307,7 +339,8 @@ export default {
           //Perform Success Action
           console.log(res.data);
           this.createEventModal = false;
-          this.getAllEvents();
+          // this.getAllEvents();
+          window.location.reload();
         })
         .catch(error => {
           console.log(error);
@@ -321,7 +354,7 @@ export default {
       this.type = "day";
     },
     parseDate(date) {
-      return new Date(date).toLocaleString();
+        return new Date(date).toLocaleString('en-GB');
     },
     setToday() {
       this.focus = "";
@@ -332,8 +365,8 @@ export default {
     next() {
       this.$refs.calendar.next();
     },
-    getFreePlaces({start, end}) {
-      this.getAllEvents(start.date, end.date)
+    getFreePlaces({ start, end }) {
+      this.getAllEvents(start.date, end.date);
     },
     async getData() {
       let self = this;
@@ -360,9 +393,10 @@ export default {
     },
     async getAllEvents(start, end) {
       let self = this;
+      console.log(end);
       await axios
-        .get(`${self.$store.state.HOST}/api/appointments/get_free_places/`, {
-          body: {
+        .get(`${self.$store.state.HOST}/api/appointments/get_appointments/`, {
+          params: {
             beginweek: start,
             endweek: end
           },
@@ -378,11 +412,11 @@ export default {
           // console.log(res.data);
           res.data.forEach(times => {
             self.events.push({
-              name: times.taked ? "Bezet" : "Vrije Afspraak",
+              name: times.taken ? "Bezet" : "Vrije Afspraak",
               start: times.start,
               appointmentId: times.appointment_id,
               end: times.end,
-              color: times.taked ? self.eventColor[1] : self.eventColor[0],
+              color: times.taken ? self.eventColor[1] : self.eventColor[0],
               timed: true
             });
           });
@@ -404,7 +438,7 @@ export default {
           }
         )
         .then(res => {
-          console.log(res.data);
+          // console.log(res.data);
 
           self.$store.getters["dashboard/setAppointments"](res.data);
         })
@@ -412,7 +446,7 @@ export default {
           console.log(e);
         });
     },
-
+    cancelAppointment() {},
     showEvent({ nativeEvent, event }) {
       let self = this;
       this.selectedEvent = event;
@@ -449,22 +483,22 @@ export default {
     rnd(a, b) {
       return Math.floor((b - a + 1) * Math.random()) + a;
     },
-    calculateDuration(endtime) {
-      this.endtime = endtime;
-      let sum = 0;
-      for (let i = 0; i < this.select.length; i++) {
-        sum += parseFloat(this.select[i]);
-      }
-      let [hours, minutes] = this.starttime.split(":");
-      hours = parseInt(hours);
-      minutes = parseInt(minutes);
-      minutes += sum;
-      this.endtime = hours * 60 + minutes; // Convert hours and minutes to time in minutes
-      let rounded = Math.round(this.endtime / 15) * 15;
-      let rHr = "" + Math.floor(rounded / 60);
-      let rMin = "" + (rounded % 60);
-      this.endtime = rHr.padStart(2, "0") + ":" + rMin.padStart(2, "0");
-    },
+    // calculateDuration(endtime) {
+    //   this.endtime = endtime;
+    //   let sum = 0;
+    //   for (let i = 0; i < this.select.length; i++) {
+    //     sum += parseFloat(this.select[i]);
+    //   }
+    //   let [hours, minutes] = this.starttime.split(":");
+    //   hours = parseInt(hours);
+    //   minutes = parseInt(minutes);
+    //   minutes += sum;
+    //   this.endtime = hours * 60 + minutes; // Convert hours and minutes to time in minutes
+    //   let rounded = Math.round(this.endtime / 15) * 15;
+    //   let rHr = "" + Math.floor(rounded / 60);
+    //   let rMin = "" + (rounded % 60);
+    //   this.endtime = rHr.padStart(2, "0") + ":" + rMin.padStart(2, "0");
+    // },
     convertTime(date) {
       const days = [
         "zondag",
@@ -546,11 +580,18 @@ div.v-calendar-daily__head {
 }
 
 form .container {
-  padding: 0 !important;
+  flex-flow: row wrap;
+  display: flex;
+  padding: 10px 0;
+}
+form .container .nopadding {
+  flex-flow: row wrap;
+  display: flex;
+  padding: 10px 0;
 }
 
 .times {
-  width: 50%;
+  width: 100%;
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;

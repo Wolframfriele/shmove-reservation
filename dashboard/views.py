@@ -23,7 +23,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 # )
 
 from dashboard.serializers import DashboardSerializer
-from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices
+from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices, WeekDates
 from barber.serializers import AppointmentSerializer
 
 # Create your views here.
@@ -73,7 +73,7 @@ class DashboardView(viewsets.ModelViewSet):
     #         return Response({'msg': 'Gebruikersnaam en/of Email bestaat al', 'created': False})
 
     @csrf_exempt
-    @action(methods=['get'], detail=False)
+    @action(methods=['post'], detail=False)
     @permission_classes((AllowAny,))
     def signin(self, request):
         email = request.query_params.get('email')
@@ -141,6 +141,50 @@ class DashboardView(viewsets.ModelViewSet):
 
         return date
 
+    # get days name from date: day=date.strftime('%A')
+    @csrf_exempt
+    @action(methods=['post'], detail=False)
+    @permission_classes((AllowAny,))
+    def generate_week_dates(self, request):
+        """
+        take the begin, end current week dates and dates in between
+        and generate them in the StandardWeek and StandardWeek_slices many to many table
+
+        Args:
+            request ([request]): [request data]
+
+        Returns:
+            [Response]: [retrun confirmation]
+        """
+        week_dates = []
+        b_week = datetime.today() - timedelta(
+            days=datetime.today().weekday() % 7
+        )  # begin of week
+        e_week = b_week + timedelta(days=6)  # end of week
+        # get standard time slices
+        timeslices = TimeSlices.objects.all()
+        # generate current week dates
+        for i in range(7):
+            dates = b_week + timedelta(days=i)
+            week_dates.append(dates.date())
+        # check if Changes entity has already data in it
+        if WeekDates.objects.all().count() == 0:
+            for date in week_dates:
+                # create 7 date in Changes base on the current week
+                sd = WeekDates.objects.create(date=date)
+                # add the standart time slices to the changes
+                for ts in timeslices:
+                    sd.slices.add(ts)
+        else:
+            if WeekDates.objects.filter(date=b_week).count() == 0:
+                # delte all record in Changes table
+                WeekDates.objects.all().delete()
+                # delete all related many to many relationship record
+                # regenerate
+                self.generate_week_dates(request)
+
+        return Response('changes for {} to {} generated'.format(b_week, e_week))
+
     @csrf_exempt
     @action(methods=['post'], detail=False)
     @permission_classes((AllowAny,))
@@ -200,10 +244,10 @@ class DashboardView(viewsets.ModelViewSet):
         s_weeks = StandardWeek.objects.all().values()
         for i, s_week in enumerate(s_weeks):
             ts = TimeSlices.objects.filter(
-                standardweek__id=s_week['id']).values()
+                standardweek=s_week['id']).values()
             for tsl in ts:
-                print(
-                    {'bt': tsl['slice_start'], 'et': tsl['slice_end'], 'day': days_arr.index(days_arr[i])})
+                # print(
+                #     {'bt': tsl['slice_start'], 'et': tsl['slice_end'], 'day': days_arr.index(days_arr[i])})
                 slices_arr.append(
                     {
                         'start': tsl['slice_start'],
@@ -231,12 +275,12 @@ class DashboardView(viewsets.ModelViewSet):
         # get date from day index
         date = self.get_date_from_day(day_index)
         # get changes base on date
-        change = Changes.objects.filter(date=date).values()
+        week_date = WeekDates.objects.filter(date=date).values()
         # check if changes exists
-        if change.count() > 0:
+        if week_date.count() > 0:
             # filter and update slice
             TimeSlices.objects.filter(
-                Q(changes__id=change[0]['id'])
+                Q(changes__id=week_date[0]['id'])
                 & Q(id=slice_id)
             ).update(slice_start=b_time, slice_end=e_time)
 
@@ -253,8 +297,8 @@ class DashboardView(viewsets.ModelViewSet):
         # get date from day index
         date = self.get_date_from_day(day_index)
         # get changes base on date
-        change = Changes.objects.filter(date=date).values()
-        # filter and update slice
+        change = WeekDates.objects.filter(date=date).values()
+        # filter and delete slice
         TimeSlices.objects.filter(
             Q(changes__id=change[0]['id'])
             & Q(id=slice_id)

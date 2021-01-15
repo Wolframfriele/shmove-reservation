@@ -263,8 +263,8 @@ class AppointmentsView(viewsets.ModelViewSet):
         today_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f').split()
         # get today's date
         today_date = parse_date(today_datetime[0])
-        print(date_)
-        print(today_date)
+        # print(date_)
+        # print(today_date)
         current_time = parse_time(today_datetime[1])
         while date_ <= endweek:
             count = 0
@@ -310,11 +310,31 @@ class AppointmentsView(viewsets.ModelViewSet):
                                         "available": available})
             date_ += delta
             weekday += 1
-            print("date = ", date_)
+            # print("date = ", date_)
             if weekday == 8:
                 weekday = 1
-            print("weekday = ", weekday)
+            # print("weekday = ", weekday)
         return Response(date_timeslices)
+
+    @csrf_exempt
+    @action(methods=['get'], detail=False)
+    def get_appointment_data(self, request):
+        appointment_id = request.query_params.get('appointment_id')
+        result = []
+
+        appointment = Appointments.objects.get(id=appointment_id)
+        time_slice = TimeSlices.objects.get(id=appointment.time_slice_id)
+        treatment = Treatments.objects.get(id=appointment.treatment_id)
+        credential = Credentials.objects.get(id=appointment.credentials_id)
+
+        result.append({
+            'customer': serializers.serialize('json', [credential, ]),
+            'appointment': serializers.serialize('json', [appointment, ]),
+            'time_slice': serializers.serialize('json', [time_slice, ]),
+            'treatment': serializers.serialize('json', [treatment, ]),
+        })
+
+        return Response(result)
 
     # @csrf_exempt
     # @action(methods=['get'], detail=False)
@@ -400,3 +420,29 @@ class AppointmentsView(viewsets.ModelViewSet):
 #
 #
 # new_appointment()
+
+# in case we implement a user login and register system
+ # check if customer have an account or not
+        # if appointment_info.customer_id == 0 and appointment_info.employee_id == 0:
+        #     result.append({
+        #         'customer': self.get_unregister_customer_data(appointment_id).data,
+        #         'appointment': self.get_serializer(appointment_info),
+        #         'employee': None
+        #     })
+        # elif appointment_info.customer_id == 0 and appointment_info.employee_id != 0:
+        #     employee_name = self.get_employee(appointment_info.employee_id)
+
+        #     result.append({
+        #         'appointment': self.get_serializer(appointment_info),
+        #         'employee': employee_name,
+        #         'customer': self.get_unregister_customer_data(appointment_id.data),
+        #     })
+        # elif appointment_info.customer_id != 0 and appointment_info.employee_id == 0:
+        #     customer_data = self.get_register_customer_data(
+        #         appointment_info.customer_id)
+
+        #     result.append({
+        #         'appointment': self.get_serializer(appointment_info).data,
+        #         'customer': customer_data,
+        #         'employee': 'Geen'
+        #     })
