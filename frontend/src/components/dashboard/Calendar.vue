@@ -119,6 +119,8 @@
           v-model="vacationStartDate"
           no-title
           scrollable
+          :min="vacationStartDate"
+          :max="vacationEndDate"
         >
 
           <v-spacer></v-spacer>
@@ -164,6 +166,7 @@
           v-model="vacationEndDate"
           no-title
           scrollable
+          :min="vacationStartDate"
         >
 
           <v-spacer></v-spacer>
@@ -577,6 +580,8 @@ export default {
     },
     cancelAppointment() {},
     showVacationPlanner({date}){
+      this.vacationEndDate = "";
+      this.vacationStartDate =  "";
       this.vacationStartDate = date;
       this.planVacationModal = true;
     },
