@@ -50,7 +50,7 @@ export default {
       },
       {
         title: "Vakanties",
-        icon: "mdi-weather-sunset",
+        icon: "mdi-white-balance-sunny",
         content: "Holidays"
       },
       {
