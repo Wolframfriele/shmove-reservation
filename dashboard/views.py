@@ -16,14 +16,14 @@ from rest_framework.decorators import api_view, action, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
-# from rest_framework.status import (
-#     HTTP_400_BAD_REQUEST,
-#     HTTP_404_NOT_FOUND,
-#     HTTP_200_OK
-# )
+from rest_framework.status import (
+    HTTP_400_BAD_REQUEST,
+    HTTP_404_NOT_FOUND,
+    HTTP_200_OK
+)
 
 from dashboard.serializers import DashboardSerializer
-from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices, WeekDates
+from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices, WeekDates, Treatments
 from barber.serializers import AppointmentSerializer
 
 # Create your views here.
@@ -76,8 +76,8 @@ class DashboardView(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False)
     @permission_classes((AllowAny,))
     def signin(self, request):
-        email = request.query_params.get('email')
-        password = request.query_params.get('password')
+        email = request.data['body']['email']
+        password = request.data['body']['password']
         # get username and password count
         email_count = User.objects.filter(email=email).count()
         passsword_count = User.objects.filter(password=password).count()
@@ -103,6 +103,7 @@ class DashboardView(viewsets.ModelViewSet):
             else:
                 passwordContext = {
                     'authenticate': False,
+                    'ww': password,
                     'msg': 'Wachtwoord onjuist'
                 }
                 return Response(passwordContext)
@@ -118,6 +119,18 @@ class DashboardView(viewsets.ModelViewSet):
     def signout(self, request):
         logout(request)
         return Response({'logout': True})
+
+    @csrf_exempt
+    @action(methods=['get'], detail=False)
+    @permission_classes((AllowAny,))
+    def check_token(self, request):
+        token_key = request.query_params.get('token')
+
+        token = Token .objects.filter(key=token_key).count()
+        if token > 0:
+            return Response({'token': True})
+        else:
+            return Response({'token': False})
 
     def get_date_from_day(self, day_index):
         """get the date from a day index(0->monday, ... , 6->sunday)
@@ -140,6 +153,66 @@ class DashboardView(viewsets.ModelViewSet):
                 date = updated_day.date()
 
         return date
+
+    @csrf_exempt
+    @action(methods=['get'], detail=False)
+    @permission_classes((AllowAny,))
+    def get_treatments(self, request):
+        """
+        get all treatments from DB
+
+        Args:
+            request (request): [request data dict]
+        """
+        treatments = Treatments.objects.all().values()
+
+        return Response({
+            'id': treatments[0]['id'],
+            'treatment': treatments[0]['treatment'],
+            'price': treatments[0]['price']
+        })
+
+    @csrf_exempt
+    @action(methods=['put'], detail=False)
+    @permission_classes((AllowAny,))
+    def update_treatments(self, request):
+        """
+        update treatment if it exists otherwise add it to DB
+
+        Args:
+            request (request): [request data dict]
+        """
+        treatment_name = request.data['body']['name']
+        treatment_price = request.data['body']['price']
+
+        update, created = Treatments.objects.update_or_create(
+            treatment=treatment_name,
+            defaults={'treatment': treatment_name, 'price': treatment_price}
+        )
+
+        if created:
+            return Response({'msg': 'Behandeling {} aangemaakt'.format(treatment_name)})
+        else:
+            return Response({'msg': 'Behandeling {} aangepast'.format(treatment_name)})
+
+    @csrf_exempt
+    @action(methods=['delete'], detail=False)
+    @permission_classes((AllowAny,))
+    def delete_treatments(self, request):
+        """
+        remove a treatment from DB
+
+        Args:
+            request (request): [request data dict]
+        """
+        treatment_id = int(request.query_params.get('id'))
+
+        treatment = Treatments.objects.filter(id=treatment_id).delete()
+
+        if treatment:
+            return Response({'msg': 'Behandeling verwijderd'})
+        else:
+            return Response({'msg': 'Er is iets mis gegaan'})
 
     # get days name from date: day=date.strftime('%A')
     @csrf_exempt
