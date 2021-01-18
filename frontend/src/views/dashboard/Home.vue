@@ -5,7 +5,7 @@
         <v-tab v-for="item in items" :key="item.title">
           {{ item.title }} <v-icon class="icon"> {{ item.icon }} </v-icon>
         </v-tab>
-        <v-container class="signout" @click="signout()">
+        <v-container class="signout" @click="logOut">
           <div class="signoutbtn">
           Uitloggen<v-icon class="icon"> mdi-exit-to-app </v-icon>
           </div>
@@ -73,12 +73,17 @@ export default {
     Settings,
     Statistics
   },
+  beforeCreate: function () {
+    if (!this.$session.exists()) {
+      this.$router.push({name: "Login"})
+    }
+  },
   created() {},
   mounted() {},
   methods: {
-    signout(){
-      //Signout ??
-      this.$router.push('/dashboard');
+    logOut: function () {
+      this.$session.destroy()
+      this.$router.push({name: "Login"})
     }
   }
 };
