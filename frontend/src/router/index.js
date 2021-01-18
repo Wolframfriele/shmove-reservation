@@ -2,7 +2,6 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Dashboard from "../views/dashboard/Home.vue";
-import Login from "../views/dashboard/Login.vue";
 
 Vue.use(VueRouter);
 
@@ -15,7 +14,8 @@ const routes = [
   {
     path: "/login",
     name: "Login",
-    component: Login
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/Login.vue"),
   },
   {
     path: "/afspraak-maken",
@@ -50,10 +50,17 @@ const routes = [
   },
 
   // dashboard/therapeut routes
-    {
+  {
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard
+  },
+  {
+    path: "/safe",
+    name: "Safe",
+    component: () =>
+
+      import(/* webpackChunkName: "about" */ "../views/Safe.vue")
   },
 ];
 
