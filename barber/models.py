@@ -85,3 +85,9 @@ class Appointments(models.Model):
     #
     # def __str__(self):
     #     return "Date: " + str(self.date) + ". Treatment: " + str(self.treatment)
+
+
+class Vacations(models.Model):
+    name = models.CharField(max_length=200)
+    start_date = models.DateField()
+    end_date = models.DateField()
