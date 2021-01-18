@@ -68,134 +68,137 @@
             :weekdays="weekdays"
           >
             <!-- This piece of code adds the vacation button =) -->
-            <template v-slot:day-header="{date, day, present, past}">
+            <template v-slot:day-header="{ date, day, present, past }">
               <v-container v-if="!past" class="vacationContainer">
-                <v-btn icon depressed color="orange lighten-2" class="vacationButton" title="Start vakantie" @click="showVacationPlanner({date})"><v-icon>mdi-white-balance-sunny</v-icon></v-btn>
-                </v-container>
-          </template>
+                <v-btn
+                  icon
+                  depressed
+                  color="orange lighten-2"
+                  class="vacationButton"
+                  title="Start vakantie"
+                  @click="showVacationPlanner({ date })"
+                  ><v-icon>mdi-white-balance-sunny</v-icon></v-btn
+                >
+              </v-container>
+            </template>
             <!-- ############################################## -->
           </v-calendar>
         </v-sheet>
       </v-col>
     </v-row>
-     <v-dialog
+    <v-dialog
       v-model="planVacationModal"
       width="500"
       height="250"
       hide-overlay
       offset-x
     >
-      <v-card
-        color="grey lighten-4"
-        min-width="350px"
-        flat
-      >
+      <v-card color="grey lighten-4" min-width="350px" flat>
         <v-toolbar color="indigo lighten-1" dark>
           <v-toolbar-title>Plan een vakantie</v-toolbar-title>
           <v-spacer></v-spacer>
         </v-toolbar>
-        <div class="margin">
-        <v-menu
-        ref="menuOne"
-        v-model="menuOne"
-        :close-on-content-click="false"
-        :return-value.sync="vacationStartDate"
-        transition="scale-transition"
-        offset-y
-        min-width="auto"
-      >
-        <template v-slot:activator="{ on, attrs }">
-
-          <v-text-field
-            v-model="vacationStartDate"
-            label="Start dag"
-            prepend-icon="mdi-calendar"
-            readonly
-            v-bind="attrs"
-            v-on="on"
-          ></v-text-field>
-        </template>
-        <v-date-picker
-          v-model="vacationStartDate"
-          no-title
-          scrollable
-          :min="vacationStartDate"
-          :max="vacationEndDate"
-        >
-
-          <v-spacer></v-spacer>
-          <v-btn
-            text
-            color="primary"
-            @click="menuOne = false"
-          >
-            Cancel
-          </v-btn>
-          <v-btn
-            text
-            color="primary"
-            @click="$refs.menuOne.save(vacationStartDate)"
-          >
-            OK
-          </v-btn>
-        </v-date-picker>
-      </v-menu>
-      </div>
-        <div class="margin">
-        <v-menu
-        ref="menuTwo"
-        v-model="menuTwo"
-        :close-on-content-click="false"
-        :return-value.sync="vacationEndDate"
-        transition="scale-transition"
-        offset-y
-        min-width="auto"
-      >
-        <template v-slot:activator="{ on, attrs }">
-
-          <v-text-field
-            v-model="vacationEndDate"
-            label="Eind dag"
-            prepend-icon="mdi-calendar"
-            readonly
-            v-bind="attrs"
-            v-on="on"
-          ></v-text-field>
-        </template>
-        <v-date-picker
-          v-model="vacationEndDate"
-          no-title
-          scrollable
-          :min="vacationStartDate"
-        >
-
-          <v-spacer></v-spacer>
-          <v-btn
-            text
-            color="primary"
-            @click="menuTwo = false"
-          >
-            Cancel
-          </v-btn>
-          <v-btn
-            text
-            color="primary"
-            @click="$refs.menuTwo.save(vacationEndDate)"
-          >
-            OK
-          </v-btn>
-        </v-date-picker>
-      </v-menu>
-      </div>
-        <v-card-actions>
-          <v-btn text color="secondary" @click="planVacationModal = false">
-            Terug
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn text color="orange lighten-2" @click="addVacation(vacationStartDate,vacationEndDate)">
-            Plannen
-          </v-btn>
-        </v-card-actions>
+        <form @submit.prevent="addVacation">
+          <div class="margin top15">
+            <v-text-field
+              :counter="15"
+              label="Vakantie naam"
+              dense
+              v-model="vacationTitle"
+              prepend-icon="mdi-form-textbox"
+            ></v-text-field>
+          </div>
+          <div class="margin">
+            <v-menu
+              ref="menuOne"
+              v-model="menuOne"
+              :close-on-content-click="false"
+              :return-value.sync="vacationStartDate"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="vacationStartDate"
+                  label="Start dag"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="vacationStartDate"
+                no-title
+                scrollable
+                :min="vacationStartDate"
+                :max="vacationEndDate"
+              >
+                <v-spacer></v-spacer>
+                <v-btn text color="primary" @click="menuOne = false">
+                  Cancel
+                </v-btn>
+                <v-btn
+                  text
+                  color="primary"
+                  @click="$refs.menuOne.save(vacationStartDate)"
+                >
+                  OK
+                </v-btn>
+              </v-date-picker>
+            </v-menu>
+          </div>
+          <div class="margin">
+            <v-menu
+              ref="menuTwo"
+              v-model="menuTwo"
+              :close-on-content-click="false"
+              :return-value.sync="vacationEndDate"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="vacationEndDate"
+                  label="Eind dag"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="vacationEndDate"
+                no-title
+                scrollable
+                :min="vacationStartDate"
+              >
+                <v-spacer></v-spacer>
+                <v-btn text color="primary" @click="menuTwo = false">
+                  Cancel
+                </v-btn>
+                <v-btn
+                  text
+                  color="primary"
+                  @click="$refs.menuTwo.save(vacationEndDate)"
+                >
+                  OK
+                </v-btn>
+              </v-date-picker>
+            </v-menu>
+          </div>
+          <v-card-actions>
+            <v-btn text color="secondary" @click="planVacationModal = false">
+              Terug
+            </v-btn>
+            <v-spacer></v-spacer>
+            <v-btn text color="orange lighten-2" type="submit">
+              Plannen
+            </v-btn>
+          </v-card-actions>
+        </form>
       </v-card>
     </v-dialog>
     <v-dialog
@@ -274,7 +277,7 @@
           </v-card-title>
         </v-toolbar>
         <v-card-text>
-        <br />
+          <br />
           <form @submit.prevent="sendToBackEnd">
             <div class="times">
               <div class="timea">
@@ -290,8 +293,8 @@
                 }}</span>
               </div>
             </div>
-                      <br />
-          <label>Kies behandeling(en)</label>
+            <br />
+            <label>Kies behandeling(en)</label>
             <v-select
               id="picktreatments"
               v-model="select"
@@ -382,6 +385,7 @@ export default {
     createEventModal: false,
     showEventModal: false,
     planVacationModal: false,
+    vacationTitle: "",
     vacationStartDate: "",
     vacationEndDate: "",
     tms: "",
@@ -395,7 +399,7 @@ export default {
     reason: "",
     error: "",
     menuOne: "",
-    menuTwo: "",
+    menuTwo: ""
   }),
 
   computed: {
@@ -450,7 +454,7 @@ export default {
         date_booked_start: start,
         date_booked_end: end,
         // treatment: this.treatment,
-        treatment: ['Massage'],
+        treatment: ["Massage"],
         reason: this.reason,
         first_name: this.firstname,
         last_name: this.lastname,
@@ -487,7 +491,7 @@ export default {
       this.type = "day";
     },
     parseDate(date) {
-        return new Date(date).toLocaleString('en-GB');
+      return new Date(date).toLocaleString("en-GB");
     },
     setToday() {
       this.focus = "";
@@ -579,19 +583,20 @@ export default {
         });
     },
     cancelAppointment() {},
-    showVacationPlanner({date}){
+    showVacationPlanner({ date }) {
       this.vacationEndDate = "";
-      this.vacationStartDate =  "";
+      this.vacationStartDate = "";
       this.vacationStartDate = date;
       this.planVacationModal = true;
     },
-    addVacation(startday,endday){
+    addVacation(title, startday, endday) {
       const start = this.parseDate(startday);
       const end = this.parseDate(endday);
       let body = {
-        begin_day: start,
-        end_day: end
-      }
+        title: title,
+        start_date: start,
+        end_date: end
+      };
       axios
         .post(`$(self.$store.state.HOST}/api/appointments/set_vacation/`, {
           body: body,
@@ -758,6 +763,9 @@ form .container .nopadding {
 }
 .margin {
   margin: 15px;
+}
+.top15 {
+  margin-top: 30px;
 }
 
 .times {
