@@ -115,17 +115,26 @@ export default {
     },
     getFreePlaces(){
       let self = this;
-      axios.get(`${self.$store.state.HOST}/api/appointments/make_change/`,
+      axios.get(`${self.$store.state.HOST}/api/appointments/get_appointments/`,
       {params:{
-        date: "2021-01-11",
-        old_start_time: "10:10:00",
-        old_end_time: "12:10:00",
-        new_start_time: "10:20:00",
-        new_end_time: "12:20:00",
+        beginweek: "2021-01-18",
+        endweek: "2021-01-24"
       }}
+      // {params:{
+      //   name: "Test Vakantie",
+      //   start_date: "2021-01-18",
+      //   end_date: "2021-01-20"
+      // }}
+      // {params:{
+      //   date: "2021-01-11",
+      //   old_start_time: "10:10:00",
+      //   old_end_time: "12:10:00",
+      //   new_start_time: "10:20:00",
+      //   new_end_time: "12:20:00",
+      // }}
       // {body:{
-      //   date_booked_start: '2021-01-08 15:00:00',
-      //   date_booked_end: '2021-01-08 17:00:00',
+      //   date_booked_start: '2021-01-11 15:00:00',
+      //   date_booked_end: '2021-01-11 17:00:00',
       //   treatment: 1,
       //   reason: 'Test',
       //   first_name: 'Tijmen',
