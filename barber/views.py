@@ -145,14 +145,38 @@ class AppointmentsView(viewsets.ModelViewSet):
                                 U heeft gekozen voor {}.
                                 Met de reden '{}'.
                             """.format(first_name, real_date, time_start, treatment_, reason)
-                            html = """\
-                            <html><body><p>
-                                Bedankt voor het maken van een afspraak bij IN-KI Shiatsu Delft, {}.<br><br>
-                                De afspraak is op {} om {}.<br>
-                                U heeft gekozen voor {}.<br>
-                                Met de reden '{}'.
-                            </p></body></html>
-                            """.format(first_name, real_date, time_start, treatment_, reason)
+                            html = """<html><body>
+<p>Beste heer/mevrouw {} {}, </p>
+<br>
+<p>Hartelijk bedankt voor uw online boeking bij IN-KI Shiatsu Delft!</p>
+<p>We hebben uw boeking met de volgende details mogen ontvangen:</p>
+<br>
+<b><ul><li>Afspraak voor: {}</li>
+<li>Datum: {}</li>
+<li>Tijd: {}</li>
+<li>Opmerkingen/reden van bezoek: {}</li></ul></b>
+<p>Een aantal dagen voor de behandeling ontvangt u nog een mail met uitgebreide informatie.</p>
+<p>Annuleren is kosteloos tot 48 uur van tevoren, daarna wordt de gereserveerde tijd in principe in rekening gebracht.</p>
+<p>IN-KI Shiatsu Delft werkt in Corona tijd volgens de richtlijnen van het RIVM.</p>
+<p>Heeft u nog vragen, laat het me weten!</p>
+<br>
+<br>
+<br>
+<p>Hartelijke groet,</p>
+<p>Inge Oostenbrink</p>
+<br>
+<br>
+<p>
+IN-KI Shiatsu Delft<br>
+Doelenstraat 16<br>
+2611 NT Delft<br>
+</p>
+
+<a href="https://www.shiatsu-delft.nl">www.shiatsu-delft.nl</a><br>
+<a href="mailto:inge@shiatsu-delft.nl">inge@shiatsu-delft.nl</a><br>
+<a href="tel:0640702497">06 4070 2497</a><br>
+                            </body></html>
+                            """.format(first_name, last_name, treatment_.treatment, real_date, time_start, reason)
 
                             text_t = """\
                                 {} {} heeft een afspraak gemaakt op {} om {}.
