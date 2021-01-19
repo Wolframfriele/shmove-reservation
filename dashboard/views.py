@@ -164,13 +164,19 @@ class DashboardView(viewsets.ModelViewSet):
         Args:
             request (request): [request data dict]
         """
+        treatments_arr = []
         treatments = Treatments.objects.all().values()
 
-        return Response({
-            'id': treatments[0]['id'],
-            'treatment': treatments[0]['treatment'],
-            'price': treatments[0]['price']
-        })
+        for t in treatments:
+            treatments_arr.append(
+                {
+                    'id': t['id'],
+                    'treatment': t['treatment'],
+                    'price': t['price']
+                }
+            )
+
+        return Response(treatments_arr)
 
     @csrf_exempt
     @action(methods=['put'], detail=False)
