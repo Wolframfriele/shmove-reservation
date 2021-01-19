@@ -82,6 +82,12 @@
               </v-container>
             </template>
             <!-- ############################################## -->
+            <template v-slot:event="{event, eventParsed}">
+   <p class="event-text">{{ event.name }}</p>
+   <p class="event-text">
+       {{ eventParsed.start.time }} tot {{ eventParsed.end.time }}
+   </p>
+</template>
           </v-calendar>
         </v-sheet>
       </v-col>
@@ -785,5 +791,9 @@ form .container .nopadding {
   position: absolute;
   right: 5px;
   top: 5px;
+}
+.event-text {
+  padding: 5px;
+  margin-bottom: 0px !important;
 }
 </style>
