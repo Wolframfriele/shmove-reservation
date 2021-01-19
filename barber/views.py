@@ -386,24 +386,53 @@ Doelenstraat 16<br>
     @csrf_exempt
     @action(methods=['get'], detail=False)
     def get_appointments_customer(self, request):
-        # get variables
+        # get and set variables
         date_ = parse_date(getpost(request, 'beginweek'))
         endweek = parse_date(getpost(request, 'endweek'))
         delta = timedelta(days=1)
-
         date_timeslices = []
         # get the day of the week
-        weekday = datetime.now().weekday() + 1
         today_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f').split()
         # get today's date
         today_date = parse_date(today_datetime[0])
         # check if the received date is earlier than today
-        if date_ < today_date:
-            date_ = today_date
+        if date_ <= today_date:
+            date_ = today_date + delta
+        # get the weekday (monday, tuesday, etc (+1 because of the ID's in the database))
+        weekday = datetime.strptime('{} 01:00:00'.format(date_), '%Y-%m-%d %H:%M:%S').weekday() + 1
         # loop through all days between the 2 received dates
         while date_ <= endweek:
-            slice_array = []
-
+            # check for a vacation
+            try:
+                vacations = Vacations.objects.filter(start_date__lte=date_, end_date__gte=date_).values()
+                if vacations[0]:
+                    pass
+            except:
+                # get the all the timeslices within the range of the date's
+                # check for changes
+                try:
+                    if_changes = Changes.objects.get(date=date_).slice_count
+                    slice_count = int(if_changes)
+                    slices = TimeSlices.objects.filter(changes__date=date_).values()
+                except:
+                    slices = TimeSlices.objects.filter(standardweek__pk=weekday).values()
+                    slice_count = StandardWeek.objects.get(pk=weekday).slice_count
+                count = 0
+                slice_array = []
+                # check per slice if there is an appointment connected to it
+                for i in slices:
+                    appointment_slices = Appointments.objects.filter(time_slice_id=i['id'], date=date_)
+                    if appointment_slices:
+                        count += 1
+                    else:
+                        slice_array.append(i['id'])
+                # check of there is still space left for a new appointment
+                if count < slice_count:
+                    # add all results to the final array
+                    for i in slice_array:
+                        slice_data = TimeSlices.objects.get(pk=i)
+                        date_timeslices.append({"start": "{} {}".format(date_, slice_data.slice_start),
+                                                "end": "{} {}".format(date_, slice_data.slice_end)})
             date_ += delta
             weekday += 1
         return Response(date_timeslices)

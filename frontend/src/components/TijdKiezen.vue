@@ -115,11 +115,11 @@ export default {
     },
     getFreePlaces(){
       let self = this;
-      axios.post(`${self.$store.state.HOST}/api/appointments/new_appointment/`,
-      // {params:{
-      //   beginweek: "2021-01-18",
-      //   endweek: "2021-01-24"
-      // }}
+      axios.get(`${self.$store.state.HOST}/api/appointments/get_appointments_customer/`,
+      {params:{
+        beginweek: "2021-01-18",
+        endweek: "2021-01-24"
+      }}
       // {params:{
       //   name: "Test Vakantie",
       //   start_date: "2021-01-18",
@@ -132,16 +132,16 @@ export default {
       //   new_start_time: "10:20:00",
       //   new_end_time: "12:20:00",
       // }}
-      {body:{
-        date_booked_start: '22/01/2021, 10:00:00',
-        date_booked_end: '22/01/2021, 12:00:00',
-        treatment: 1,
-        reason: 'Test',
-        first_name: 'Tijmen',
-        last_name: 'Simons',
-        email: 'tijmen.simons@gmail.com',
-        phone_number: '0612312398',
-      }}
+      // {body:{
+      //   date_booked_start: '22/01/2021, 10:00:00',
+      //   date_booked_end: '22/01/2021, 12:00:00',
+      //   treatment: 1,
+      //   reason: 'Test',
+      //   first_name: 'Tijmen',
+      //   last_name: 'Simons',
+      //   email: 'tijmen.simons@gmail.com',
+      //   phone_number: '0612312398',
+      // }}
       ).then(res => {
         console.log(res.data);
         // res.data.forEach(times => {

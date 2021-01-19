@@ -1,3 +1,4 @@
 /frontend/node_modules
 /shmove_reservations/__pycache__
 /.idea
+db.sqlite3
