@@ -126,7 +126,7 @@ export default {
       ).then(res => {
         self.events = []
         res.data.forEach(times => {
-          if (times.taken == false) {
+          if (times.taken == false && times.available == true ) {
             self.events.push({
             name: times.taken ? "Bezet" : "Vrij",
             start: times.start,
