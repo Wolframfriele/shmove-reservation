@@ -71,7 +71,7 @@ class Appointments(models.Model):
     date = models.DateField(default=datetime.now().date())
     time_slice = models.ForeignKey(TimeSlices, on_delete=models.DO_NOTHING)
     treatment = models.ForeignKey(Treatments, on_delete=models.DO_NOTHING)
-    reason = models.TextField()
+    reason = models.TextField(null=True)
     done = models.BooleanField(default=False)
     credentials = models.ForeignKey(Credentials, on_delete=models.DO_NOTHING)
     #
