@@ -58,10 +58,10 @@ class AppointmentsView(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False)
     def new_appointment(self, request):
         dbs_string = getpost(request, 'date_booked_start')
-        dbs_strings = dbs_string.split()
-        date_ = dbs_strings[0]
+        dbs_strings = dbs_string.split(', ')
+        date_ = datetime.strptime(dbs_strings[0], '%d/%m/%Y')
         dbe_string = getpost(request, 'date_booked_end')
-        dbe_strings = dbe_string.split()
+        dbe_strings = dbe_string.split(', ')
         time_start = dbs_strings[1]
         time_end = dbe_strings[1]
 
@@ -119,7 +119,7 @@ class AppointmentsView(viewsets.ModelViewSet):
                             test_appointment = Appointments.objects.get(Q(treatment=treatment_) & Q(reason=reason) &
                                                                         Q(credentials=test_credentials) &
                                                                         Q(date=date_) & Q(time_slice_id=get_slice))
-                            real_date = datetime.strptime(dbs_string, '%Y-%m-%d %H:%M:%S').strftime("%d %b, %Y")
+                            real_date = datetime.strptime(dbs_string, '%d/%m/%Y, %H:%M:%S').strftime("%d %b, %Y")
                             # sending a confirmation mail
                             port = 465
                             password = config('MAIL_PWD')
@@ -229,7 +229,7 @@ Doelenstraat 16<br>
             return Response({"error": "Empty_Field"})
 
     @csrf_exempt
-    @action(methods=['get'], detail=False)
+    @action(methods=['post'], detail=False)
     def set_vacation(self, request):
         name = getpost(request, 'name')
         start_date = parse_date(getpost(request, 'start_date'))
@@ -350,10 +350,8 @@ Doelenstraat 16<br>
                 county_boi += 1
                 slice_data = TimeSlices.objects.filter(pk=county_boi).values()
 
-                if count < slice_count and date_ >= today_date:
+                if count < slice_count and date_ > today_date:
                     available = 1
-                    if date_ == today_date and current_time > slice_data[0]['slice_start']:
-                        available = 0
                     try:
                         vacations = Vacations.objects.filter(start_date__lte=date_, end_date__gte=date_).values()
                         if vacations:
@@ -385,6 +383,30 @@ Doelenstraat 16<br>
             print("------------------------------------------------------")
         return Response(date_timeslices)
 
+    @csrf_exempt
+    @action(methods=['get'], detail=False)
+    def get_appointments_customer(self, request):
+        # get variables
+        date_ = parse_date(getpost(request, 'beginweek'))
+        endweek = parse_date(getpost(request, 'endweek'))
+        delta = timedelta(days=1)
+
+        date_timeslices = []
+        # get the day of the week
+        weekday = datetime.now().weekday() + 1
+        today_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f').split()
+        # get today's date
+        today_date = parse_date(today_datetime[0])
+        # check if the received date is earlier than today
+        if date_ < today_date:
+            date_ = today_date
+        # loop through all days between the 2 received dates
+        while date_ <= endweek:
+            slice_array = []
+
+            date_ += delta
+            weekday += 1
+        return Response(date_timeslices)
 
     # @csrf_exempt
     # @action(methods=['get'], detail=False)
