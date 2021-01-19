@@ -45,7 +45,7 @@
           <!-- Modified Calendar Header -->
           <template v-slot:day-label-header="{date, day, present, past, weekday}">
             <v-avatar v-if="past" color="white">{{ day }}</v-avatar>
-            <v-btn v-else-if="present" fab depressed color="primary" :aria-label="dateToString(date)" :href="returnID(weekday)">{{ day }}</v-btn>
+            <v-avatar v-else-if="present" color="primary">{{ day }}</v-avatar>
             <v-btn v-else fab depressed color="white" :aria-label="dateToString(date)" :href="returnID(weekday)">{{ day }} </v-btn>
           </template>
           <!-- Modified Calendar Events -->
