@@ -73,6 +73,7 @@ export default {
     Settings,
     Statistics
   },
+  // Session check
   beforeCreate: function () {
     if (!this.$session.exists()) {
       this.$router.push({name: "Login"})
