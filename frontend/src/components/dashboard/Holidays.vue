@@ -6,26 +6,84 @@
       <div v-for="days in planneddays" :key="days.id">
         <div class="plannedHolidayContainer">
         <h4>{{days.title}}</h4>
-        <v-date-picker
-        v-model="days.dates"
-        range
-      ></v-date-picker>
+        <v-menu
+              ref="menuOne"
+              v-model="menuOne"
+              :close-on-content-click="false"
+              :return-value.sync="days.start_date"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="days.start_date"
+                  label="Eind dag"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="days.start_date"
+                no-title
+                scrollable
+                :max="days.end_date"
+              >
+                <v-spacer></v-spacer>
+                <v-btn text color="primary" @click="menuOne = false">
+                  Cancel
+                </v-btn>
+                <v-btn
+                  text
+                  color="primary"
+                  @click="$refs.menuOne.save(days.start_date)"
+                >
+                  OK
+                </v-btn>
+              </v-date-picker>
+            </v-menu>
+          <v-menu
+              ref="menuTwo"
+              v-model="menuTwo"
+              :close-on-content-click="false"
+              :return-value.sync="days.end_date"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="days.end_date"
+                  label="Eind dag"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="days.end_date"
+                no-title
+                scrollable
+                :min="days.start_date"
+              >
+                <v-spacer></v-spacer>
+                <v-btn text color="primary" @click="menuTwo = false">
+                  Cancel
+                </v-btn>
+                <v-btn
+                  text
+                  color="primary"
+                  @click="$refs.menuTwo.save(days.end_date)"
+                >
+                  OK
+                </v-btn>
+              </v-date-picker>
+            </v-menu>
       </div>
         </div>
-    </v-container>
-    <h2>Nieuwe vakantie inplannen</h2>
-    <v-container class="newHoliday">
-      <v-text-field value="Titel"></v-text-field>
-      <v-date-picker
-        range
-      ></v-date-picker>
-      <v-btn
-              color="green"
-              dark
-              large
-            >
-              Inplannen
-            </v-btn>
     </v-container>
   </v-container>
 </template>
@@ -34,21 +92,26 @@
 export default {
   data: () => ({
     currency: "€",
+    menuOne: "",
+    menuTwo: "",
     planneddays: [
       {
         id: "1",
         title: "Vakantie Bali",
-        dates: ['2021-01-10', '2021-01-20']
+        start_date: "2021-02-02",
+        end_date: "2021-04-04",
       },
       {
         id: "2",
-        title: "Vakantie Spanje",
-        dates: ['2021-01-10', '2021-01-20']
+        title: "Vakantie Bali",
+        start_date: "2021-02-02",
+        end_date: "2021-04-04",
       },
       {
         id: "3",
-        title: "Vakantie Drenthe",
-        dates: ['2021-01-10', '2021-01-20']
+        title: "Vakantie Bali",
+        start_date: "2021-02-02",
+        end_date: "2021-04-04",
       }
     ]
   }),

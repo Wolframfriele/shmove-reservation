@@ -17,12 +17,6 @@
           :value="treatment.title"
         ></v-text-field>
         <v-text-field
-          class="textfield duration"
-          label="Tijdsduur"
-          :value="treatment.duration"
-          suffix=" Minuten"
-        ></v-text-field>
-        <v-text-field
           class="textfield price"
           label="Prijs"
           :value="treatment.price"
@@ -60,13 +54,11 @@ export default {
       {
         title: "Massage",
         icon: "mdi-calendar",
-        duration: "120",
         price: "100.00"
       },
       {
         title: "Voedingscoaching",
         icon: "mdi-calendar",
-        duration: "120",
         price: "50.00"
       }
     ]
