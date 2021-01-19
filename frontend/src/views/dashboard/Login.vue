@@ -21,9 +21,9 @@
                 rules="required"
               >
                 <v-text-field
-                  v-model="email"
+                  v-model="username"
                   :error-messages="errors"
-                  label="Email"
+                  label="Gebruikersnaam"
                   required
                   outlined
                 ></v-text-field>
@@ -81,7 +81,6 @@ export default {
         show4: false,
         username: "",
         password: "",
-        email: '',
         rules: {
           required: value => !!value || 'Required.',
           emailMatch: () => (`The email and password you entered don't match`),
@@ -96,12 +95,11 @@ export default {
   mounted() {},
   methods: {
     submit() {
-      // this.$refs.observer.validate();
-      let self = this
-      axios.post(`${self.$store.state.HOST}/api/dashboard/signin/`,
+      this.$refs.observer.validate();
+      axios.get(`${self.$store.state.HOST}/api/dashboard/signin/`,
       {
-        body: {
-          email: this.email,
+        params: {
+          username: this.username,
           password: this.password,
         }
       }
