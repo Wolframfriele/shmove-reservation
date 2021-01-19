@@ -13,17 +13,17 @@
           ></v-img>
           </v-system-bar>
           <v-card-title>Inloggen Dashboard</v-card-title>
-          <validation-observer>
+          <validation-observer ref="observer" v-slot="{ invalid }">
             <form @submit.prevent="submit" class="login">
               <validation-provider
                 v-slot="{ errors }"
-                name="Gebruikersnaam"
+                name="Email"
                 rules="required"
               >
                 <v-text-field
-                  v-model="username"
+                  v-model="email"
                   :error-messages="errors"
-                  label="Gebruikersnaam"
+                  label="Email"
                   required
                   outlined
                 ></v-text-field>
@@ -76,11 +76,9 @@ export default {
   data () {
       return {
         show1: false,
-        show2: true,
-        show3: false,
-        show4: false,
-        username: "",
+        email: "",
         password: "",
+        token: "",
         rules: {
           required: value => !!value || 'Required.',
           emailMatch: () => (`The email and password you entered don't match`),
@@ -91,22 +89,24 @@ export default {
     ValidationProvider,
     ValidationObserver
   },
-  created() {},
-  mounted() {},
   methods: {
     submit() {
-      this.$refs.observer.validate();
-      axios.get(`${self.$store.state.HOST}/api/dashboard/signin/`,
+      // this.$refs.observer.validate();
+      axios.post(`${this.$store.state.HOST}/api/dashboard/signin/`,
       {
-        params: {
-          username: this.username,
-          password: this.password,
+        body: {
+        email: this.email,
+        password: this.password
         }
       }
       ).then(res => {
-        console.log(res.data);
+          if(res.data.authenticate ==  true) {
+            this.$session.start()
+            this.$session.set('token', res.data.token)
+            this.$router.push({name: "Dashboard"})
+          }
         }).catch(e => {
-        console.log(e)
+          console.log(e)
       })
     }
   }
