@@ -19,13 +19,11 @@ from django.db.models import Q
 from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices, Treatments, Vacations
 from barber.serializers import TestSerializer, AppointmentSerializer
 
-import smtplib
-import ssl
+import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # Create your views here.
-
 
 class TestView(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -96,10 +94,8 @@ class AppointmentsView(viewsets.ModelViewSet):
             if dbe_string:
                 valid += 1
             if valid == 8:
-                get_slice = TimeSlices.objects.get(
-                    slice_start=time_start, slice_end=time_end).pk
-                find_appointment = Appointments.objects.filter(
-                    date=date_, time_slice_id=get_slice).values()
+                get_slice = TimeSlices.objects.get(slice_start=time_start, slice_end=time_end).pk
+                find_appointment = Appointments.objects.filter(date=date_, time_slice_id=get_slice).values()
                 if find_appointment:
                     return Response({"error": "Appointment_Taken"})
                 else:
@@ -123,16 +119,14 @@ class AppointmentsView(viewsets.ModelViewSet):
                             test_appointment = Appointments.objects.get(Q(treatment=treatment_) & Q(reason=reason) &
                                                                         Q(credentials=test_credentials) &
                                                                         Q(date=date_) & Q(time_slice_id=get_slice))
-                            real_date = datetime.strptime(
-                                dbs_string, '%Y-%m-%d %H:%M:%S').strftime("%d %b, %Y")
+                            real_date = datetime.strptime(dbs_string, '%Y-%m-%d %H:%M:%S').strftime("%d %b, %Y")
                             # sending a confirmation mail
                             port = 465
                             password = config('MAIL_PWD')
                             smtp_server = 'smtp.gmail.com'
                             sender_email = 'trojo.mailtesting@gmail.com'
                             receiver_email = email
-                            # AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA (change me)
-                            therapist_email = 'tijmen.simons@gmail.com'
+                            therapist_email = 'tijmen.simons@gmail.com'  # AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA (change me)
 
                             message = MIMEMultipart("alternative")
                             message["Subject"] = "Bevestiging Afspraak - IN-KI Shiatsu Delft"
@@ -140,8 +134,7 @@ class AppointmentsView(viewsets.ModelViewSet):
                             message["To"] = receiver_email
 
                             message_t = MIMEMultipart("alternative")
-                            message_t["Subject"] = "Nieuwe Afspraak - {} {}".format(
-                                first_name, last_name)
+                            message_t["Subject"] = "Nieuwe Afspraak - {} {}".format(first_name, last_name)
                             message_t["From"] = sender_email
                             message_t["To"] = receiver_email
 
@@ -216,10 +209,8 @@ Doelenstraat 16<br>
 
                             with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
                                 server.login(sender_email, password)
-                                server.sendmail(
-                                    sender_email, receiver_email, message.as_string())
-                                server.sendmail(
-                                    sender_email, therapist_email, message_t.as_string())
+                                server.sendmail(sender_email, receiver_email, message.as_string())
+                                server.sendmail(sender_email, therapist_email, message_t.as_string())
 
                             return Response({"error": "None",
                                              "first_name": first_name,
@@ -236,26 +227,6 @@ Doelenstraat 16<br>
                 return Response({"error": "Empty_Internal_Field"})
         else:
             return Response({"error": "Empty_Field"})
-
-    @csrf_exempt
-    @action(methods=['get'], detail=False)
-    def get_appointment_data(self, request):
-        appointment_id = request.query_params.get('appointment_id')
-        result = []
-
-        appointment = Appointments.objects.get(id=appointment_id)
-        time_slice = TimeSlices.objects.get(id=appointment.time_slice_id)
-        treatment = Treatments.objects.get(id=appointment.treatment_id)
-        credential = Credentials.objects.get(id=appointment.credentials_id)
-
-        result.append({
-            'customer': serializers.serialize('json', [credential, ]),
-            'appointment': serializers.serialize('json', [appointment, ]),
-            'time_slice': serializers.serialize('json', [time_slice, ]),
-            'treatment': serializers.serialize('json', [treatment, ]),
-        })
-
-        return Response(result)
 
     @csrf_exempt
     @action(methods=['get'], detail=False)
@@ -276,8 +247,7 @@ Doelenstraat 16<br>
             Vacations.objects.get(start_date=start_date, end_date=end_date)
             return Response("Error_Vacation")
         except:
-            Vacations.objects.create(
-                name=name, start_date=start_date, end_date=end_date)
+            Vacations.objects.create(name=name, start_date=start_date, end_date=end_date)
         return Response("Success")
 
     @csrf_exempt
@@ -291,16 +261,14 @@ Doelenstraat 16<br>
         new_end_time = parse_time(getpost(request, 'new_end_time'))
 
         # get the day of the week (+1 because of the ID's in the table)
-        weekday = datetime.strptime("{} {}".format(
-            date_, old_start_time), '%Y-%m-%d %H:%M:%S').weekday() + 1
+        weekday = datetime.strptime("{} {}".format(date_, old_start_time), '%Y-%m-%d %H:%M:%S').weekday() + 1
         standart_week = StandardWeek.objects.get(pk=weekday)
         # see if there were changes made previously
         try:
             change = Changes.objects.get(date=date_)
         except:
             # if there were no changes, just make them
-            change = Changes.objects.create(
-                date=date_, slice_count=standart_week.slice_count)
+            change = Changes.objects.create(date=date_, slice_count=standart_week.slice_count)
             slices = TimeSlices.objects.filter(standardweek__pk=weekday)
             for i in slices:
                 change.slices.add(i)
@@ -313,11 +281,9 @@ Doelenstraat 16<br>
             return Response("ERROR: No old slice found!")
         # find or make the new timeslice
         try:
-            new_slice = TimeSlices.objects.get(
-                slice_start=new_start_time, slice_end=new_end_time)
+            new_slice = TimeSlices.objects.get(slice_start=new_start_time, slice_end=new_end_time)
         except:
-            new_slice = TimeSlices.objects.create(
-                slice_start=new_start_time, slice_end=new_end_time)
+            new_slice = TimeSlices.objects.create(slice_start=new_start_time, slice_end=new_end_time)
         # apply the changes
         try:
             change.slices.remove(old_slice)
@@ -331,15 +297,13 @@ Doelenstraat 16<br>
     def make_day_change(self, request):
         date_ = parse_date(getpost(request, 'date'))
         slice_count = getpost(request, 'slice_count')
-        weekday = datetime.strptime("{} 01:00:00".format(
-            date_), '%Y-%m-%d %H:%M:%S').weekday() + 1
+        weekday = datetime.strptime("{} 01:00:00".format(date_), '%Y-%m-%d %H:%M:%S').weekday() + 1
         try:
             changes = Changes.objects.get(date=date_)
             changes.slice_count = slice_count
             changes.save()
         except:
-            changes = Changes.objects.create(
-                date=date_, slice_count=slice_count)
+            changes = Changes.objects.create(date=date_, slice_count=slice_count)
             slices = TimeSlices.objects.filter(standardweek__pk=weekday)
             for i in slices:
                 changes.slices.add(i)
@@ -369,19 +333,16 @@ Doelenstraat 16<br>
             try:
                 if_changes = Changes.objects.get(date=date_).slice_count
                 slice_count = int(if_changes)
-                slices = TimeSlices.objects.filter(
-                    changes__date=date_).values()
+                slices = TimeSlices.objects.filter(changes__date=date_).values()
                 print("There were changes")
             except:
                 # get the timeslices from the standardweek using the day value
                 slice_count = StandardWeek.objects.get(pk=weekday).slice_count
-                slices = TimeSlices.objects.filter(
-                    standardweek__pk=weekday).values()
+                slices = TimeSlices.objects.filter(standardweek__pk=weekday).values()
                 print("There were no changes")
             # test if there is still enough room for more appointments
             for i in slices:
-                appointment_slices = Appointments.objects.filter(
-                    time_slice_id=i['id'], date=date_)
+                appointment_slices = Appointments.objects.filter(time_slice_id=i['id'], date=date_)
                 if appointment_slices:
                     count += 1
             county_boi = 0
@@ -394,8 +355,7 @@ Doelenstraat 16<br>
                     if date_ == today_date and current_time > slice_data[0]['slice_start']:
                         available = 0
                     try:
-                        vacations = Vacations.objects.filter(
-                            start_date__lte=date_, end_date__gte=date_).values()
+                        vacations = Vacations.objects.filter(start_date__lte=date_, end_date__gte=date_).values()
                         if vacations:
                             available = 0
                         print('There is a vacation')
@@ -405,8 +365,7 @@ Doelenstraat 16<br>
                     available = 0
 
                 try:
-                    appointment_slices = Appointments.objects.get(
-                        time_slice_id=i['id'], date=date_).pk
+                    appointment_slices = Appointments.objects.get(time_slice_id=i['id'], date=date_).pk
                 except:
                     appointment_slices = 0
 
@@ -425,6 +384,7 @@ Doelenstraat 16<br>
                 weekday -= 7
             print("------------------------------------------------------")
         return Response(date_timeslices)
+
 
     # @csrf_exempt
     # @action(methods=['get'], detail=False)
