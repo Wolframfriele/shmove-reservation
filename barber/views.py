@@ -350,10 +350,8 @@ Doelenstraat 16<br>
                 county_boi += 1
                 slice_data = TimeSlices.objects.filter(pk=county_boi).values()
 
-                if count < slice_count and date_ >= today_date:
+                if count < slice_count and date_ > today_date:
                     available = 1
-                    if date_ == today_date and current_time > slice_data[0]['slice_start']:
-                        available = 0
                     try:
                         vacations = Vacations.objects.filter(start_date__lte=date_, end_date__gte=date_).values()
                         if vacations:
