@@ -384,7 +384,7 @@ export default {
     events: [],
     select: [{ text: "Massage", value: "120" }],
     allTreatments: [],
-    eventColor: ["primary", "red"],
+    eventColor: ["primary", "red lighten-2"],
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
@@ -555,12 +555,13 @@ export default {
           // console.log(res.data);
           res.data.forEach(times => {
             self.events.push({
-              name: times.taken ? "Bezet" : "Vrije Afspraak",
+              name: times.taken ? "Bezet" : "Vrije afspraak",
               start: times.start,
               appointmentId: times.appointment_id,
               end: times.end,
-              color: times.taken ? self.eventColor[1] : self.eventColor[0],
-              timed: true
+              color: times.taken ? self.eventColor[0] : self.eventColor[1],
+              timed: true,
+              available: times.available
             });
           });
         })
@@ -595,16 +596,18 @@ export default {
       this.vacationStartDate = date;
       this.planVacationModal = true;
     },
-    addVacation(title, startday, endday) {
-      const start = this.parseDate(startday);
-      const end = this.parseDate(endday);
+    addVacation() {
+      const start = this.vacationStartDate;
+      const end = this.vacationEndDate;
+      const title = this.vacationTitle;
+      let self = this;
       let body = {
-        title: title,
+        name: title,
         start_date: start,
         end_date: end
       };
       axios
-        .post(`$(self.$store.state.HOST}/api/appointments/set_vacation/`, {
+        .post(`${self.$store.state.HOST}/api/appointments/set_vacation/`, {
           body: body,
           headers: {
             Accept: "application/json",
@@ -616,7 +619,7 @@ export default {
         .then(res => {
           //Perform Success Action
           console.log(res.data);
-          window.location.reload();
+          // window.location.reload();
         })
         .catch(error => {
           console.log(error);
