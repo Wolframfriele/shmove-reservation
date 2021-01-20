@@ -469,13 +469,13 @@ export default {
       };
       let self = this;
       axios
-        .post(`${self.$store.state.HOST}/api/appointments/new_appointment/`, {
+        .post(`${self.$store.state.HOST}/api/dash_appointments/new_appointment/`, {
           body: body,
           headers: {
             Accept: "application/json",
-            "Content-type": "application/json"
-            //"Authorization: token ${payload.auth},
-            //"X-CSRFToken": payload.csrftoken,
+            "Content-type": "application/json",
+            "X-CSRFToken": self.$session.get('token'),
+            Authorization: `Token ${self.$session.get('token')}`,
           }
         })
         .then(res => {
@@ -519,9 +519,9 @@ export default {
           {
             headers: {
               Accept: "application/json",
-              "Content-type": "application/json"
-              //"Authorization: token ${payload.auth},
-              //"X-CSRFToken": payload.csrftoken,
+              "Content-type": "application/json",
+              "X-CSRFToken": self.$session.get('token'),
+              Authorization: `Token ${self.$session.get('token')}`,
             }
           }
         )
@@ -538,16 +538,16 @@ export default {
       let self = this;
       console.log(end);
       await axios
-        .get(`${self.$store.state.HOST}/api/appointments/get_appointments/`, {
+        .get(`${self.$store.state.HOST}/api/dash_appointments/get_appointments/`, {
           params: {
             beginweek: start,
             endweek: end
           },
           headers: {
             Accept: "application/json",
-            "Content-type": "application/json"
-            //"Authorization: token ${payload.auth},
-            //"X-CSRFToken": payload.csrftoken,
+            "Content-type": "application/json",
+            "X-CSRFToken": self.$session.get('token'),
+            Authorization: `Token ${self.$session.get('token')}`,
           }
         })
         .then(res => {
@@ -592,11 +592,17 @@ export default {
       let self = this;
       await axios
         .get(
-          `${self.$store.state.HOST}/api/appointments/get_appointment_data/`,
+          `${self.$store.state.HOST}/api/dash_appointments/get_appointment_data/`,
           {
+            headers: {
+              Accept: "application/json",
+              "Content-type": "application/json",
+              "X-CSRFToken": self.$session.get('token'),
+              Authorization: `Token ${self.$session.get('token')}`,
+            },
             params: {
               appointment_id: appointmentID
-            }
+            },
           }
         )
         .then(res => {
@@ -626,13 +632,13 @@ export default {
         end_date: end
       };
       axios
-        .post(`${self.$store.state.HOST}/api/appointments/set_vacation/`, {
+        .post(`${self.$store.state.HOST}/api/dash_appointments/set_vacation/`, {
           body: body,
           headers: {
             Accept: "application/json",
-            "Content-type": "application/json"
-            //"Authorization: token ${payload.auth},
-            //"X-CSRFToken": payload.csrftoken,
+            "Content-type": "application/json",
+            "X-CSRFToken": self.$session.get('token'),
+            Authorization: `Token ${self.$session.get('token')}`,
           }
         })
         .then(res => {

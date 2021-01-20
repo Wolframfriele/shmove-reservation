@@ -16,7 +16,7 @@ export default {
     //
   }),
   created(){
-    this.generateWeekDates()
+    // this.generateWeekDates()
   },
   methods: {
     scrollTopAnimation() {
@@ -33,10 +33,10 @@ export default {
           `${self.$store.state.HOST}/api/dashboard/generate_week_dates/`,
           {
             headers: {
-              Accept: "application/json",
-              "Content-type": "application/json"
-              //"Authorization: token ${payload.auth},
-              //"X-CSRFToken": payload.csrftoken,
+             Accept: "application/json",
+              "Content-type": "application/json",
+              "X-CSRFToken": self.$session.get('token'),
+              Authorization: `Token ${self.$session.get('token')}`,
             }
           }
         )
