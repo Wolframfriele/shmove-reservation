@@ -75,7 +75,6 @@ export default {
   },
   // Session check
   beforeCreate: function () {
-    console.log(this.$session.exists());
     if (!this.$session.exists()) {
       this.$router.push({name: "Login"})
     }
