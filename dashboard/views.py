@@ -11,7 +11,7 @@ import json
 from datetime import datetime, timedelta
 # from django.contrib.auth.hashers import make_password
 ################################## DRF IMPORTS #######################################
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
 from rest_framework.decorators import api_view, action, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
@@ -29,10 +29,53 @@ from barber.serializers import AppointmentSerializer
 # Create your views here.
 
 
+@csrf_exempt
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def signin(request):
+    email = request.data['body']['email']
+    password = request.data['body']['password']
+    # get username and password count
+    email_count = User.objects.filter(email=email).count()
+    passsword_count = User.objects.filter(password=password).count()
+    # check if user given email ans password exist in DB
+    if email_count != 0:
+        # verify if the user given password is correct
+        currentUser = User.objects.get(email=email)
+        if currentUser.check_password(password):
+            # get username
+            username = User.objects.get(email=email).username
+            user = authenticate(username=username, password=password)
+            # userToken(request, user)
+            if user:
+                login(request, user)
+                token, _ = Token.objects.get_or_create(user=user)
+                return Response({'token': token.key,
+                                 'id': token.user_id,
+                                 'is_superuser': request.user.is_superuser,
+                                 'authenticate': True},
+                                status=HTTP_200_OK)
+            else:
+                print('Gebruiker bestaat niet')
+        else:
+            passwordContext = {
+                'authenticate': False,
+                'ww': password,
+                'msg': 'Wachtwoord onjuist'
+            }
+            return Response(passwordContext)
+    else:
+        emailContext = {
+            'authenticate': False,
+            'msg': 'Email onjuist'
+        }
+        return Response(emailContext)
+
+
 class DashboardView(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = DashboardSerializer
-    # permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     # @csrf_exempt
     # @action(methods=['post'], detail=False)
@@ -72,57 +115,14 @@ class DashboardView(viewsets.ModelViewSet):
     #     else:
     #         return Response({'msg': 'Gebruikersnaam en/of Email bestaat al', 'created': False})
 
-    @csrf_exempt
-    @action(methods=['post'], detail=False)
-    @permission_classes((AllowAny,))
-    def signin(self, request):
-        email = request.data['body']['email']
-        password = request.data['body']['password']
-        # get username and password count
-        email_count = User.objects.filter(email=email).count()
-        passsword_count = User.objects.filter(password=password).count()
-        # check if user given email ans password exist in DB
-        if email_count != 0:
-            # verify if the user given password is correct
-            currentUser = User.objects.get(email=email)
-            if currentUser.check_password(password):
-                # get username
-                username = User.objects.get(email=email).username
-                user = authenticate(username=username, password=password)
-                # userToken(request, user)
-                if user:
-                    login(request, user)
-                    token, _ = Token.objects.get_or_create(user=user)
-                    return Response({'token': token.key,
-                                     'id': token.user_id,
-                                     'is_superuser': request.user.is_superuser,
-                                     'authenticate': True},
-                                    status=HTTP_200_OK)
-                else:
-                    print('Gebruiker bestaat niet')
-            else:
-                passwordContext = {
-                    'authenticate': False,
-                    'ww': password,
-                    'msg': 'Wachtwoord onjuist'
-                }
-                return Response(passwordContext)
-        else:
-            emailContext = {
-                'authenticate': False,
-                'msg': 'Email onjuist'
-            }
-            return Response(emailContext)
-
     @action(methods=['get'], detail=False)
-    @permission_classes((IsAuthenticated,))
+    # @permission_classes((IsAuthenticated,))
     def signout(self, request):
         logout(request)
         return Response({'logout': True})
 
     @csrf_exempt
     @action(methods=['get'], detail=False)
-    @permission_classes((AllowAny,))
     def check_token(self, request):
         token_key = request.query_params.get('token')
 
@@ -156,7 +156,6 @@ class DashboardView(viewsets.ModelViewSet):
 
     @csrf_exempt
     @action(methods=['get'], detail=False)
-    @permission_classes((AllowAny,))
     def get_treatments(self, request):
         """
         get all treatments from DB
@@ -180,7 +179,6 @@ class DashboardView(viewsets.ModelViewSet):
 
     @csrf_exempt
     @action(methods=['put'], detail=False)
-    @permission_classes((AllowAny,))
     def update_treatments(self, request):
         """
         update treatment if it exists otherwise add it to DB
@@ -203,7 +201,6 @@ class DashboardView(viewsets.ModelViewSet):
 
     @csrf_exempt
     @action(methods=['delete'], detail=False)
-    @permission_classes((AllowAny,))
     def delete_treatments(self, request):
         """
         remove a treatment from DB
@@ -223,7 +220,6 @@ class DashboardView(viewsets.ModelViewSet):
     # get days name from date: day=date.strftime('%A')
     @csrf_exempt
     @action(methods=['post'], detail=False)
-    @permission_classes((AllowAny,))
     def generate_week_dates(self, request):
         """
         take the begin, end current week dates and dates in between
@@ -266,7 +262,6 @@ class DashboardView(viewsets.ModelViewSet):
 
     @csrf_exempt
     @action(methods=['post'], detail=False)
-    @permission_classes((AllowAny,))
     def add_time_slices(self, request):
         params = request.data['body']
 
@@ -314,7 +309,6 @@ class DashboardView(viewsets.ModelViewSet):
 
     @csrf_exempt
     @action(methods=['get'], detail=False)
-    @permission_classes((AllowAny,))
     def get_timeslices(self, request):
         days_arr = ['monday', 'tuesday', 'wednesday',
                     'thursday', 'friday', 'saturday', 'sunday']
@@ -340,7 +334,6 @@ class DashboardView(viewsets.ModelViewSet):
 
     @csrf_exempt
     @action(methods=['put'], detail=False)
-    @permission_classes((AllowAny,))
     def update_timeslices(self, request):
         # params = QueryDict(request.body)
         params = request.data['body']
@@ -367,7 +360,7 @@ class DashboardView(viewsets.ModelViewSet):
 
     @csrf_exempt
     @action(methods=['delete'], detail=False)
-    @permission_classes((AllowAny,))
+    # @permission_classes((AllowAny,))
     def remove_timeslices(self, request):
         params = request.query_params
 

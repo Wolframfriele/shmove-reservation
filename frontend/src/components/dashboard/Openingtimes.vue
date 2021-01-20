@@ -130,9 +130,9 @@ export default {
         .get(`${self.$store.state.HOST}/api/dashboard/get_timeslices/`, {
           headers: {
             Accept: "application/json",
-            "Content-type": "application/json"
-            //"Authorization: token ${payload.auth},
-            //"X-CSRFToken": payload.csrftoken,
+            "Content-type": "application/json",
+            "X-CSRFToken": self.$session.get('token'),
+            Authorization: `Token ${self.$session.get('token')}`,
           }
         })
         .then(slices => {
@@ -181,9 +181,9 @@ export default {
           body: body,
           headers: {
             Accept: "application/json",
-            "Content-type": "application/json"
-            //"Authorization: token ${payload.auth},
-            //"X-CSRFToken": payload.csrftoken,
+            "Content-type": "application/json",
+            "X-CSRFToken": self.$session.get('token'),
+            Authorization: `Token ${self.$session.get('token')}`,
           }
         })
         .then(res => {
@@ -215,9 +215,9 @@ export default {
           },
           headers: {
             Accept: "application/json",
-            "Content-type": "application/json"
-            //"Authorization: token ${payload.auth},
-            //"X-CSRFToken": payload.csrftoken,
+            "Content-type": "application/json",
+            "X-CSRFToken": self.$session.get('token'),
+            Authorization: `Token ${self.$session.get('token')}`,
           }
         })
         .then(res => {

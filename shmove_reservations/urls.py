@@ -22,11 +22,13 @@ from .router import router
 from shmove_reservations import views
 from django.conf.urls import url
 from django.views.generic import TemplateView
+from dashboard import views as dash_view
 
 urlpatterns = [
 
     path('admin/', admin.site.urls),  # load admin urls
     path('api/', include(router.urls)),  # api base route
+    path('api/signin/', dash_view.signin),
     # embeded static frontend files
     url(r'^$', TemplateView.as_view(template_name='index.html')),
     # frontend urls
