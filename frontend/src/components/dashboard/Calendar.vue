@@ -472,11 +472,9 @@ export default {
         .post(`${self.$store.state.HOST}/api/appointments/new_appointment/`, {
           body: body,
           headers: {
-            Accept: "application/json",
-            "Content-type": "application/json"
-            //"Authorization: token ${payload.auth},
-            //"X-CSRFToken": payload.csrftoken,
-          }
+            "X-CSRFToken": self.$session.get('token'),
+            Authorization: `Token ${self.$session.get('token')}`,
+          },
         })
         .then(res => {
           //Perform Success Action

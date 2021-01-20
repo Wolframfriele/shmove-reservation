@@ -31,6 +31,14 @@ class TimeSlices(models.Model):
         return str(self.slice_start) + ' to ' + str(self.slice_end)
 
 
+class WeekDates(models.Model):
+    date = models.DateField(default=datetime.now().date())
+    slices = models.ManyToManyField(TimeSlices)
+
+    def __str__(self):
+        return str(self.date)
+
+
 class StandardWeek(models.Model):
     day = models.CharField(max_length=10)
     slice_count = models.IntegerField(default=3)
