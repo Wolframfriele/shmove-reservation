@@ -327,60 +327,65 @@ Doelenstraat 16<br>
         current_time = parse_time(today_datetime[1])
         while date_ <= end_date:
             count = 0
-            print("date = ", date_)
-            print("weekday = ", weekday)
-            # test for vacations
+            # check for changes
             try:
                 if_changes = Changes.objects.get(date=date_).slice_count
                 slice_count = int(if_changes)
                 slices = TimeSlices.objects.filter(changes__date=date_).values()
-                print("There were changes")
             except:
                 # get the timeslices from the standardweek using the day value
                 slice_count = StandardWeek.objects.get(pk=weekday).slice_count
                 slices = TimeSlices.objects.filter(standardweek__pk=weekday).values()
-                print("There were no changes")
-            # test if there is still enough room for more appointments
+            # get the amount of appointments made for today to check if there is is still room left
             for i in slices:
                 appointment_slices = Appointments.objects.filter(time_slice_id=i['id'], date=date_)
                 if appointment_slices:
                     count += 1
-            county_boi = 0
             for i in slices:
-                county_boi += 1
-                slice_data = TimeSlices.objects.filter(pk=county_boi).values()
-
+                slice_data = TimeSlices.objects.filter(pk=i['id']).values()
+                # the check if there is still room left
                 if count < slice_count and date_ > today_date:
                     available = 1
+                    # check to see if there is a vacation
                     try:
                         vacations = Vacations.objects.filter(start_date__lte=date_, end_date__gte=date_).values()
-                        if vacations:
+                        if vacations[0]:
                             available = 0
-                        print('There is a vacation')
                     except:
                         pass
                 else:
                     available = 0
-
+                first_name = ""
+                last_name = ""
+                treatment = ""
+                # get the appointment, if there is one, and get the name and treatment
                 try:
-                    appointment_slices = Appointments.objects.get(time_slice_id=i['id'], date=date_).pk
+                    appointment_slices = Appointments.objects.get(time_slice_id=i['id'], date=date_)
+                    appointment_slices_id = appointment_slices.credentials.pk
+                    credentials = Credentials.objects.get(pk=appointment_slices_id)
+                    first_name = credentials.first_name
+                    last_name = credentials.last_name
                 except:
-                    appointment_slices = 0
+                    appointment_slices_id = 0
 
                 taken = appointment_id = 0
-                if appointment_slices > 0:
+                if appointment_slices_id > 0:
                     taken = 1
-                    appointment_id = appointment_slices
+                    appointment_id = appointment_slices_id
+                    treatment = Treatments.objects.get(pk=appointment_slices.treatment).treatment
+
                 date_timeslices.append({"start": "{} {}".format(date_, slice_data[0]["slice_start"]),
                                         "end": "{} {}".format(date_, slice_data[0]["slice_end"]),
                                         "taken": taken,
                                         "available": available,
-                                        "appointment_id": appointment_id})
+                                        "appointment_id": appointment_id,
+                                        "first_name": first_name,
+                                        "last_name": last_name,
+                                        "treatment": treatment})
             date_ += delta
             weekday += 1
             if weekday > 7:
                 weekday -= 7
-            print("------------------------------------------------------")
         return Response(date_timeslices)
 
     @csrf_exempt
