@@ -115,26 +115,23 @@ export default {
       this.$router.push({name: "AfspraakBevestigen", params: {start: event.start, end: event.end, treatment: this.treatment}});
     },
     getFreePlaces(beginweek, endweek){
-      let self = this;
       this.events = []
-      axios.get(`${self.$store.state.HOST}/api/appointments/get_appointments/`,
+      axios.get(`${this.$store.state.HOST}/api/appointments/get_appointments_customer/`,
       {
       params: {
         beginweek: beginweek,
         endweek: endweek
       }}
       ).then(res => {
-        self.events = []
+        this.events = []
         res.data.forEach(times => {
-          if (times.taken == false && times.available == true ) {
-            self.events.push({
+            this.events.push({
             name: times.taken ? "Bezet" : "Vrij",
             start: times.start,
             end: times.end,
-            color: times.taken ? self.eventColor[1] : self.eventColor[0],
+            color: times.taken ? this.eventColor[1] : this.eventColor[0],
             timed: true
           })
-          }
         });
       }).catch(e => {
         console.log(e)
