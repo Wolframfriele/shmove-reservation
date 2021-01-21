@@ -1,12 +1,22 @@
 <template>
   <v-container>
-    <v-checkbox 
+    <!-- <v-checkbox 
       v-for="single_treatment in treatment_options" :key="single_treatment" 
       :label="single_treatment" 
       v-model="treatment" 
       :value="single_treatment" 
       @click="changeBehandeling"
-      :aria-label="returnAria(single_treatment)"></v-checkbox>
+      :aria-label="returnAria(single_treatment)"></v-checkbox> -->
+    
+    <v-radio-group v-model="treatment" mandatory>
+      <v-radio
+        v-for="single_treatment in treatment_options"
+        :key="single_treatment"
+        :label="single_treatment"
+        :value="single_treatment"
+        :aria-label="returnAria(single_treatment)"
+      ></v-radio>
+    </v-radio-group>
   </v-container>
 </template>
 
@@ -18,13 +28,13 @@ export default {
   data() {
     return {
       treatment_options:[],
-      treatment: []
+      treatment: ""
     };
   },
   created () {
     axios.get(`${this.$store.state.HOST}/api/get_treatments/`)
     .then(res=>{
-      this.treatment.push(res.data[0].treatment)
+      this.treatment = res.data[0].treatment
       res.data.forEach(element => {
         this.treatment_options.push(element.treatment)
       })

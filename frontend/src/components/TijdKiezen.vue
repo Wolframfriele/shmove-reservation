@@ -74,7 +74,7 @@ export default {
     intervalcount: "11",
     locale: "nl",
     eventColor:  ['primary', 'red'],
-    treatment: [],
+    treatment: "",
     events: []
   }),
   created() {
