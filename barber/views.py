@@ -17,7 +17,7 @@ from rest_framework.response import Response
 from django.db.models import Q
 
 from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices, Treatments, Vacations
-from barber.serializers import TestSerializer, AppointmentSerializer
+from barber.serializers import AppointmentSerializer
 
 import smtplib
 import ssl
@@ -294,7 +294,8 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
                 if appointment_slices_id > 0:
                     taken = 1
                     appointment_id = appointment_slices_id
-                    treatment = Treatments.objects.get(pk=appointment_slices.treatment.pk).treatment
+                    treatment = Treatments.objects.get(
+                        pk=appointment_slices.treatment.pk).treatment
                     available = 0
                 date_timeslices.append({"start": "{} {}".format(date_, slice_data[0]["slice_start"]),
                                         "end": "{} {}".format(date_, slice_data[0]["slice_end"]),

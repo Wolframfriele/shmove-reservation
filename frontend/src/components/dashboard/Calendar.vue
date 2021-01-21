@@ -658,19 +658,20 @@ export default {
       const title = this.vacationTitle;
       let self = this;
       let body = {
-        name: title,
-        start_date: start,
-        end_date: end
+        body: {
+          name: title,
+          start_date: start,
+          end_date: end
+        }
       };
       axios
-        .post(`${self.$store.state.HOST}/api/dash_appointments/set_vacation/`, {
+        .post(`${self.$store.state.HOST}/api/dash_appointments/set_vacation/`,body, {
           headers: {
             Accept: "application/json",
             "Content-type": "application/json",
             "X-CSRFToken": self.$session.get("token"),
             Authorization: `Token ${self.$session.get("token")}`
           },
-          body: body,
         })
         .then(res => {
           //Perform Success Action
