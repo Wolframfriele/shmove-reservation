@@ -24,7 +24,7 @@ export default {
     };
   },
   created () {
-    axios.get(`${this.$store.state.HOST}/api/dashboard/get_treatments/`)
+    axios.get(`${this.$store.state.HOST}/api/get_treatments/`)
     .then(res=>{
       this.treatment.push(res.data[0].treatment)
       res.data.forEach(element => {
