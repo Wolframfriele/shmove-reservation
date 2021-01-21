@@ -92,7 +92,7 @@ export default {
   methods: {
     submit() {
       // this.$refs.observer.validate();
-      axios.post(`${this.$store.state.HOST}/api/dashboard/signin/`,
+      axios.post(`${this.$store.state.HOST}/api/signin/`,
       {
         body: {
         email: this.email,

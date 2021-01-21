@@ -128,11 +128,11 @@ export default {
       let self = this;
       await axios
         .get(`${self.$store.state.HOST}/api/dashboard/get_timeslices/`, {
-          headers: {
+headers: {
             Accept: "application/json",
-            "Content-type": "application/json"
-            //"Authorization: token ${payload.auth},
-            //"X-CSRFToken": payload.csrftoken,
+            "Content-type": "application/json",
+            "X-CSRFToken": self.$session.get('token'),
+             Authorization: `Token ${self.$session.get('token')}`,
           }
         })
         .then(slices => {
@@ -179,11 +179,11 @@ export default {
       axios
         .put(`${self.$store.state.HOST}/api/dashboard/update_timeslices/`, {
           body: body,
-          headers: {
+headers: {
             Accept: "application/json",
-            "Content-type": "application/json"
-            //"Authorization: token ${payload.auth},
-            //"X-CSRFToken": payload.csrftoken,
+            "Content-type": "application/json",
+            "X-CSRFToken": self.$session.get('token'),
+             Authorization: `Token ${self.$session.get('token')}`,
           }
         })
         .then(res => {
@@ -213,11 +213,11 @@ export default {
             slice_id: slice_id,
             day_id: day_id
           },
-          headers: {
+headers: {
             Accept: "application/json",
-            "Content-type": "application/json"
-            //"Authorization: token ${payload.auth},
-            //"X-CSRFToken": payload.csrftoken,
+            "Content-type": "application/json",
+            "X-CSRFToken": self.$session.get('token'),
+             Authorization: `Token ${self.$session.get('token')}`,
           }
         })
         .then(res => {

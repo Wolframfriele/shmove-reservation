@@ -66,7 +66,14 @@ export default {
     behandeling: ""
   }),
   created() {
-    axios.get(`${this.$store.state.HOST}/api/dashboard/get_treatments/`)
+    let self = this;
+    axios.get(`${this.$store.state.HOST}/api/dashboard/get_treatments/`, {
+    headers: {
+            Accept: "application/json",
+            "Content-type": "application/json",
+            "X-CSRFToken": self.$session.get('token'),
+             Authorization: `Token ${self.$session.get('token')}`,
+    }})
     .then(res=>{
       res.data.forEach(element => {
         this.treatments.push(element)
@@ -81,16 +88,17 @@ export default {
       });
     },
     deleteTreatment(id) {
+      let self = this;
       axios
         .delete(`${this.$store.state.HOST}/api/dashboard/delete_treatments/`, {
           params: {
             id: id
           },
-          headers: {
+headers: {
             Accept: "application/json",
-            "Content-type": "application/json"
-            //"Authorization: token ${payload.auth},
-            //"X-CSRFToken": payload.csrftoken,
+            "Content-type": "application/json",
+            "X-CSRFToken": self.$session.get('token'),
+             Authorization: `Token ${self.$session.get('token')}`,
           }
         })
         .then(res => {
@@ -112,11 +120,11 @@ export default {
       axios
         .put(`${self.$store.state.HOST}/api/dashboard/update_treatments/`, {
           body: body,
-          headers: {
+headers: {
             Accept: "application/json",
-            "Content-type": "application/json"
-            //"Authorization: token ${payload.auth},
-            //"X-CSRFToken": payload.csrftoken,
+            "Content-type": "application/json",
+            "X-CSRFToken": self.$session.get('token'),
+             Authorization: `Token ${self.$session.get('token')}`,
           }
         })
         .then(res => {

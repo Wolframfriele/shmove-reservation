@@ -77,17 +77,18 @@
                   class="vacationButton"
                   title="Start vakantie"
                   @click="showVacationPlanner({ date })"
-                  ><v-icon>mdi-white-balance-sunny</v-icon></v-btn
                 >
+                  <v-icon>mdi-white-balance-sunny</v-icon>
+                </v-btn>
               </v-container>
             </template>
             <!-- ############################################## -->
-            <template v-slot:event="{event, eventParsed}">
-   <p class="event-text">{{ event.name }}</p>
-   <p class="event-text">
-       {{ eventParsed.start.time }} tot {{ eventParsed.end.time }}
-   </p>
-</template>
+            <template v-slot:event="{ event, eventParsed }">
+              <p class="event-text">{{ event.name }}</p>
+              <p class="event-text">
+                {{ eventParsed.start.time }} tot {{ eventParsed.end.time }}
+              </p>
+            </template>
           </v-calendar>
         </v-sheet>
       </v-col>
@@ -232,61 +233,68 @@
           <label for="cendtime">Eindtijd: </label>
           <span id="cendtime">{{ convertTime(selectedEvent.end) }}</span
           ><br />
-        <br/>
+          <br />
           <div v-if="customer.first_name" class="appointmentInfo">
             <div class="box1">
-            <label for="firstname">Voornaam: </label>
-              </div>
+              <label for="firstname">Voornaam: </label>
+            </div>
             <div class="box2">
-            <span id="firstname">{{ customer.first_name }}</span
-            ></div><br />
+              <span id="firstname">{{ customer.first_name }}</span>
+            </div>
+            <br />
           </div>
           <div v-if="customer.last_name" class="appointmentInfo">
-                        <div class="box1">
-            <label for="lastname">Achternaam: </label>
-                        </div>
-                        <div class="box2">
-            <span id="lastname">{{ customer.last_name }}</span
-            ></div><br />
+            <div class="box1">
+              <label for="lastname">Achternaam: </label>
+            </div>
+            <div class="box2">
+              <span id="lastname">{{ customer.last_name }}</span>
+            </div>
+            <br />
           </div>
           <div v-if="customer.email" class="appointmentInfo">
-                        <div class="box1">
-            <label for="email">Email: </label>
-                        </div>
-                        <div class="box2">
-            <span id="email">{{ customer.email }}</span
-            ></div><br />
+            <div class="box1">
+              <label for="email">Email: </label>
+            </div>
+            <div class="box2">
+              <span id="email">{{ customer.email }}</span>
+            </div>
+            <br />
           </div>
           <div v-if="customer.phone_number" class="appointmentInfo">
-                        <div class="box1">
-            <label for="phone">Telefoon: </label>
-                        </div>
-                        <div class="box2">
-            <span id="phone">{{ customer.phone_number }}</span
-            ></div><br />
+            <div class="box1">
+              <label for="phone">Telefoon: </label>
+            </div>
+            <div class="box2">
+              <span id="phone">{{ customer.phone_number }}</span>
+            </div>
+            <br />
           </div>
           <div v-if="treatments.treatment" class="appointmentInfo">
-                        <div class="box1">
-          <label for="treatments">Behandelingen: </label>
-                        </div>
-                        <div class="box2">
-          <span id="treatments">{{ treatments.treatment }}</span
-          ></div><br />
+            <div class="box1">
+              <label for="treatments">Behandelingen: </label>
+            </div>
+            <div class="box2">
+              <span id="treatments">{{ treatments.treatment }}</span>
+            </div>
+            <br />
           </div>
           <div v-if="appointment.reason" class="appointmentInfo">
-                        <div class="box1">
-          <label for="comments">Opmerkingen: </label>
-                        </div>
-                        <div class="box2">
-                          <span id="comments">{{ appointment.reason }} </span></div><br />
+            <div class="box1">
+              <label for="comments">Opmerkingen: </label>
             </div>
+            <div class="box2">
+              <span id="comments">{{ appointment.reason }} </span>
+            </div>
+            <br />
+          </div>
         </v-card-text>
         <v-card-actions>
           <v-btn text color="secondary" @click="showEventModal = false">
             Terug
           </v-btn>
           <v-spacer></v-spacer>
-          <v-btn text color="red" @click="cancelAppointment">
+          <v-btn text color="red" @click="cancelAppointment(appointment.id)">
             Annuleren
           </v-btn>
         </v-card-actions>
@@ -377,8 +385,8 @@
               </v-col>
             </div>
             <v-btn type="submit" color="accent" elevation="2" block
-              >Voeg afspraak toe</v-btn
-            >
+              >Voeg afspraak toe
+            </v-btn>
           </form>
         </v-card-text>
       </v-card>
@@ -405,6 +413,7 @@ export default {
     intervalcount: "13",
     locale: "nl",
     events: [],
+    select: "Massage",
     allTreatments: [],
     eventColor: ["primary", "red lighten-1", "grey lighten-1"],
     selectedEvent: {},
@@ -491,15 +500,18 @@ export default {
       };
       let self = this;
       axios
-        .post(`${self.$store.state.HOST}/api/appointments/new_appointment/`, {
-          body: body,
-          headers: {
-            Accept: "application/json",
-            "Content-type": "application/json"
-            //"Authorization: token ${payload.auth},
-            //"X-CSRFToken": payload.csrftoken,
+        .post(
+          `${self.$store.state.HOST}/api/dash_appointments/new_appointment/`,
+          {
+            body: body,
+            headers: {
+              Accept: "application/json",
+              "Content-type": "application/json",
+              "X-CSRFToken": self.$session.get("token"),
+              Authorization: `Token ${self.$session.get("token")}`
+            }
           }
-        })
+        )
         .then(res => {
           //Perform Success Action
           console.log(res.data);
@@ -536,39 +548,39 @@ export default {
     async getData() {
       let self = this;
       await axios
-        .get(
-          `${self.$store.state.HOST}/api/dashboard/get_treatments/`,
-          {
-            headers: {
-              Accept: "application/json",
-              "Content-type": "application/json"
-              //"Authorization: token ${payload.auth},
-              //"X-CSRFToken": payload.csrftoken,
-            }
+        .get(`${self.$store.state.HOST}/api/dashboard/get_treatments/`, {
+          headers: {
+            Accept: "application/json",
+            "Content-type": "application/json",
+            "X-CSRFToken": self.$session.get("token"),
+            Authorization: `Token ${self.$session.get("token")}`
           }
-        )
-    .then(res=>{
-      res.data.forEach(element => {
-        this.allTreatments.push(element)
-      })
-    })
+        })
+        .then(res => {
+          res.data.forEach(element => {
+            this.allTreatments.push(element);
+          });
+        });
     },
     async getAllEvents(start, end) {
       let self = this;
       console.log(end);
       await axios
-        .get(`${self.$store.state.HOST}/api/appointments/get_appointments/`, {
-          params: {
-            beginweek: start,
-            endweek: end
-          },
-          headers: {
-            Accept: "application/json",
-            "Content-type": "application/json"
-            //"Authorization: token ${payload.auth},
-            //"X-CSRFToken": payload.csrftoken,
+        .get(
+          `${self.$store.state.HOST}/api/dash_appointments/get_appointments/`,
+          {
+            params: {
+              beginweek: start,
+              endweek: end
+            },
+            headers: {
+              Accept: "application/json",
+              "Content-type": "application/json",
+              "X-CSRFToken": self.$session.get("token"),
+              Authorization: `Token ${self.$session.get("token")}`
+            }
           }
-        })
+        )
         .then(res => {
           this.events = [];
           // console.log(res.data);
@@ -580,7 +592,7 @@ export default {
                 appointmentId: times.appointment_id,
                 end: times.end,
                 color: self.eventColor[0],
-                timed: true,
+                timed: true
               });
             } else if (!times.available && !times.taken) {
               self.events.push({
@@ -588,7 +600,7 @@ export default {
                 start: times.start,
                 appointmentId: times.appointment_id,
                 end: times.end,
-                color: self.eventColor[2],
+                color: self.eventColor[2]
                 // timed: true,
               });
             } else {
@@ -598,10 +610,10 @@ export default {
                 appointmentId: times.appointment_id,
                 end: times.end,
                 color: self.eventColor[1],
-                timed: true,
+                timed: true
               });
             }
-          })
+          });
         })
         .catch(e => {
           console.log(e);
@@ -611,10 +623,16 @@ export default {
       let self = this;
       await axios
         .get(
-          `${self.$store.state.HOST}/api/appointments/get_appointment_data/`,
+          `${self.$store.state.HOST}/api/dash_appointments/get_appointment_data/`,
           {
             params: {
               appointment_id: appointmentID
+            },
+            headers: {
+              Accept: "application/json",
+              "Content-type": "application/json",
+              "X-CSRFToken": self.$session.get("token"),
+              Authorization: `Token ${self.$session.get("token")}`
             }
           }
         )
@@ -645,14 +663,14 @@ export default {
         end_date: end
       };
       axios
-        .post(`${self.$store.state.HOST}/api/appointments/set_vacation/`, {
-          body: body,
+        .post(`${self.$store.state.HOST}/api/dash_appointments/set_vacation/`, {
           headers: {
             Accept: "application/json",
-            "Content-type": "application/json"
-            //"Authorization: token ${payload.auth},
-            //"X-CSRFToken": payload.csrftoken,
-          }
+            "Content-type": "application/json",
+            "X-CSRFToken": self.$session.get("token"),
+            Authorization: `Token ${self.$session.get("token")}`
+          },
+          body: body,
         })
         .then(res => {
           //Perform Success Action
@@ -796,6 +814,7 @@ export default {
   position: absolute;
   bottom: 15px;
 }
+
 div.v-calendar-daily__head {
   margin-right: 0;
 }
@@ -805,14 +824,17 @@ form .container {
   display: flex;
   padding: 10px 0;
 }
+
 form .container .nopadding {
   flex-flow: row wrap;
   display: flex;
   padding: 10px 0;
 }
+
 .margin {
   margin: 15px;
 }
+
 .top15 {
   margin-top: 30px;
 }
@@ -823,6 +845,7 @@ form .container .nopadding {
   flex-flow: row wrap;
   justify-content: space-between;
 }
+
 /** Stuff for vacation planning **/
 .vacationContainer {
   position: absolute;
@@ -830,20 +853,25 @@ form .container .nopadding {
   height: 100%;
   top: 0;
 }
+
 .vacationButton {
   position: absolute;
   right: 5px;
   top: 5px;
 }
+
 .event-text {
   padding: 5px;
   margin-bottom: 0px !important;
 }
+
 .appointmentInfo {
   display: flex;
   justify-content: space-between;
 }
-.box1,.box2 {
+
+.box1,
+.box2 {
   width: 50%;
 }
 </style>
