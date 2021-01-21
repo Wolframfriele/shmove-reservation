@@ -17,7 +17,7 @@ from rest_framework.response import Response
 from django.db.models import Q
 
 from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices, Treatments, Vacations
-from barber.serializers import DashAppointmentSerializer, AppointmentSerializer
+from barber.serializers import TestSerializer, AppointmentSerializer
 
 import smtplib
 import ssl
@@ -88,7 +88,7 @@ def create_appointment(request):
                     make_credentials = Credentials.objects.create(first_name=first_name, last_name=last_name,
                                                                   email=email, phone_number=phone_number)
 
-                treatment_ = Treatments.objects.get(pk=treatment)
+                treatment_ = Treatments.objects.get(treatment=treatment)
                 make_appointment = Appointments.objects.create(time_slice_id=get_slice, treatment=treatment_,
                                                                reason=reason, credentials=make_credentials,
                                                                date=date_)
@@ -216,8 +216,8 @@ def create_appointment(request):
 
 
 class DashboardAppointmentView(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = DashAppointmentSerializer
+    queryset = Appointments.objects.all()
+    serializer_class = AppointmentSerializer
     permission_classes = [IsAuthenticated]
 
     @csrf_exempt
@@ -294,9 +294,8 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
                 if appointment_slices_id > 0:
                     taken = 1
                     appointment_id = appointment_slices_id
-                    treatment = Treatments.objects.get(
-                        pk=appointment_slices.treatment).treatment
-
+                    treatment = Treatments.objects.get(pk=appointment_slices.treatment.pk).treatment
+                    available = 0
                 date_timeslices.append({"start": "{} {}".format(date_, slice_data[0]["slice_start"]),
                                         "end": "{} {}".format(date_, slice_data[0]["slice_end"]),
                                         "taken": taken,
