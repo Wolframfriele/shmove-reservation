@@ -261,7 +261,7 @@ h2 {
 .dayrow {
   justify-content: center;
   width: 30%;
-  max-width: 30%;
+  min-width: 400px;
   background-color: #f3f3f399;
   border: 1px solid #ececec;
   border-radius: 15px;
