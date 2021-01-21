@@ -446,6 +446,35 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
                 name=name, start_date=start_date, end_date=end_date)
         return Response("Success")
 
+    @csrf_exempt
+    @action(methods=['get'], detail=False)
+    def get_vacations(self, request):
+        vacations = []
+        all_vacations = Vacations.objects.filter().values()
+        for i in all_vacations:
+            vacations.append({"id": i['id'],
+                              "name": i['name'],
+                              "start_date": i['start_date'],
+                              "end_date": i['end_date']})
+        return Response(vacations)
+
+    @csrf_exempt
+    @action(methods=['post'], detail=False)
+    def change_vacation(self, request):
+        vacation_id = getpost(request, 'id')
+        name = getpost(request, 'name')
+        start_date = parse_date(getpost(request, 'start_date'))
+        end_date = parse_date(getpost(request, 'end_date'))
+        try:
+            vacation = Vacations.objects.get(pk=vacation_id)
+            vacation.name = name
+            vacation.start_date = start_date
+            vacation.end_date = end_date
+            vacation.save()
+        except:
+            return Response('Fail')
+        return Response('Success')
+
 
 class AppointmentsView(viewsets.ModelViewSet):
     queryset = Appointments.objects.all()
@@ -456,19 +485,6 @@ class AppointmentsView(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False)
     def new_appointment(self, request):
         return create_appointment(request)
-
-    @csrf_exempt
-    @action(methods=['get'], detail=False)
-    def get_vacations(self, request):
-        vacations = []
-        all = Vacations.objects.filter().values()
-        print(all)
-        for i in all:
-            vacations.append({"id": i['id'],
-                              "name": i['name'],
-                              "start_date": i['start_date'],
-                              "end_date": i['end_date']})
-        return Response(vacations)
 
     @csrf_exempt
     @action(methods=['get'], detail=False)
