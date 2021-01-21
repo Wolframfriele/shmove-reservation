@@ -232,37 +232,60 @@
           <label for="cendtime">Eindtijd: </label>
           <span id="cendtime">{{ convertTime(selectedEvent.end) }}</span
           ><br />
-          <div v-if="customer.first_name">
+        <br/>
+          <div v-if="customer.first_name" class="appointmentInfo">
+            <div class="box1">
             <label for="firstname">Voornaam: </label>
+              </div>
+            <div class="box2">
             <span id="firstname">{{ customer.first_name }}</span
-            ><br />
+            ></div><br />
           </div>
-          <div v-if="customer.last_name">
+          <div v-if="customer.last_name" class="appointmentInfo">
+                        <div class="box1">
             <label for="lastname">Achternaam: </label>
+                        </div>
+                        <div class="box2">
             <span id="lastname">{{ customer.last_name }}</span
-            ><br />
+            ></div><br />
           </div>
-          <div v-if="customer.email">
+          <div v-if="customer.email" class="appointmentInfo">
+                        <div class="box1">
             <label for="email">Email: </label>
+                        </div>
+                        <div class="box2">
             <span id="email">{{ customer.email }}</span
-            ><br />
+            ></div><br />
           </div>
-          <div v-if="customer.phone_number">
+          <div v-if="customer.phone_number" class="appointmentInfo">
+                        <div class="box1">
             <label for="phone">Telefoon: </label>
+                        </div>
+                        <div class="box2">
             <span id="phone">{{ customer.phone_number }}</span
-            ><br />
+            ></div><br />
           </div>
+          <div v-if="treatments.treatment" class="appointmentInfo">
+                        <div class="box1">
           <label for="treatments">Behandelingen: </label>
+                        </div>
+                        <div class="box2">
           <span id="treatments">{{ treatments.treatment }}</span
-          ><br />
+          ></div><br />
+          </div>
+          <div v-if="appointment.reason" class="appointmentInfo">
+                        <div class="box1">
           <label for="comments">Opmerkingen: </label>
-          <span id="comments">{{ appointment.reason }} </span><br />
+                        </div>
+                        <div class="box2">
+                          <span id="comments">{{ appointment.reason }} </span></div><br />
+            </div>
         </v-card-text>
         <v-card-actions>
           <v-btn text color="secondary" @click="showEventModal = false">
             Terug
           </v-btn>
-          <v-spacer></v-spacer>I se
+          <v-spacer></v-spacer>
           <v-btn text color="red" @click="cancelAppointment">
             Annuleren
           </v-btn>
@@ -819,5 +842,12 @@ form .container .nopadding {
 .event-text {
   padding: 5px;
   margin-bottom: 0px !important;
+}
+.appointmentInfo {
+  display: flex;
+  justify-content: space-between;
+}
+.box1,.box2 {
+  width: 50%;
 }
 </style>
