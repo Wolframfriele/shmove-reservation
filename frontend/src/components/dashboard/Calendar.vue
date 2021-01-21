@@ -488,22 +488,23 @@ export default {
       const start = this.parseDate(this.selectedEvent.start);
       const end = this.parseDate(this.selectedEvent.end);
       let body = {
-        date_booked_start: start,
-        date_booked_end: end,
-        // treatment: this.treatment,
-        treatment: ["Massage"],
-        reason: this.reason,
-        first_name: this.firstname,
-        last_name: this.lastname,
-        email: this.email,
-        phone_number: this.phonenumber
+        body: {
+          date_booked_start: start,
+          date_booked_end: end,
+          // treatment: this.treatment,
+          treatment: ["Massage"],
+          reason: this.reason,
+          first_name: this.firstname,
+          last_name: this.lastname,
+          email: this.email,
+          phone_number: this.phonenumber
+        }
       };
       let self = this;
       axios
         .post(
-          `${self.$store.state.HOST}/api/dash_appointments/new_appointment/`,
+          `${self.$store.state.HOST}/api/dash_appointments/new_appointment/`, body ,
           {
-            body: body,
             headers: {
               Accept: "application/json",
               "Content-type": "application/json",
@@ -645,7 +646,25 @@ export default {
           console.log(e);
         });
     },
-    cancelAppointment() {},
+    cancelAppointment(appointmentID) {
+      let self = this;
+      let body = {
+        body: {
+        appointmentID : appointmentID
+        }
+      }
+      axios.post(
+        `${self.$store.state.HOST}/api/dash_appointments/cancel_appointment/`, body,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-type": "application/json",
+            "X-CSRFToken": self.$session.get("token"),
+            Authorization: `Token ${self.$session.get("token")}`
+          }
+        }
+      );
+    },
     showVacationPlanner({ date }) {
       this.vacationEndDate = "";
       this.vacationStartDate = "";
@@ -658,19 +677,20 @@ export default {
       const title = this.vacationTitle;
       let self = this;
       let body = {
-        name: title,
-        start_date: start,
-        end_date: end
+        body: {
+          name: title,
+          start_date: start,
+          end_date: end
+        }
       };
       axios
-        .post(`${self.$store.state.HOST}/api/dash_appointments/set_vacation/`, {
+        .post(`${self.$store.state.HOST}/api/dash_appointments/set_vacation/`, body ,{
           headers: {
             Accept: "application/json",
             "Content-type": "application/json",
             "X-CSRFToken": self.$session.get("token"),
             Authorization: `Token ${self.$session.get("token")}`
           },
-          body: body,
         })
         .then(res => {
           //Perform Success Action

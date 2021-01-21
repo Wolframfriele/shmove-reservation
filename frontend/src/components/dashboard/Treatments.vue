@@ -114,12 +114,13 @@ headers: {
     saveTreatment(treatment, price){
       let self = this;
       let body = {
-        name: treatment,
-        price: price
+        body: {
+          name: treatment,
+          price: price
+        }
       };
       axios
-        .put(`${self.$store.state.HOST}/api/dashboard/update_treatments/`, {
-          body: body,
+        .put(`${self.$store.state.HOST}/api/dashboard/update_treatments/`, body,{
 headers: {
             Accept: "application/json",
             "Content-type": "application/json",
