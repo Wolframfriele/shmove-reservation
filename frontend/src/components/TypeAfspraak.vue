@@ -7,8 +7,6 @@
       :value="single_treatment" 
       @click="changeBehandeling"
       :aria-label="returnAria(single_treatment)"></v-checkbox>
-    <!-- <v-checkbox input-value="true" value="shiatsu" label="Shiatsu Therapie" v-model="treatment" @click="changeBehandeling" aria-label="Selecteer Type Afspraak: Shiatsu Therapie"></v-checkbox>
-    <v-checkbox input-value="false" value="voeding" label="Voedingsadvies" v-model="treatment" @click="changeBehandeling" aria-label="Selecteer Type Afspraak: Voedingsadvies"></v-checkbox> -->
   </v-container>
 </template>
 
@@ -30,6 +28,7 @@ export default {
       res.data.forEach(element => {
         this.treatment_options.push(element.treatment)
       })
+      bus.$emit('treatmentArray', this.treatment)
     })
   },
   methods: {

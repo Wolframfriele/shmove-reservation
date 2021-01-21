@@ -74,7 +74,7 @@ export default {
     intervalcount: "11",
     locale: "nl",
     eventColor:  ['primary', 'red'],
-    treatment: ["shiatsu"],
+    treatment: [],
     events: []
   }),
   created() {
@@ -112,6 +112,9 @@ export default {
       return interval.time;
     },
     bevestigAfspraak({ event }) {
+      bus.$on('treatmentArray', (data) => {
+      this.treatment = data;
+      })
       this.$router.push({name: "AfspraakBevestigen", params: {start: event.start, end: event.end, treatment: this.treatment}});
     },
     getFreePlaces(beginweek, endweek){
