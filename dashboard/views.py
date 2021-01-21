@@ -23,7 +23,7 @@ from rest_framework.status import (
 )
 
 from dashboard.serializers import DashboardSerializer
-from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices, WeekDates, Treatments
+from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices, Treatments
 from barber.serializers import AppointmentSerializer
 
 # Create your views here.
@@ -218,47 +218,47 @@ class DashboardView(viewsets.ModelViewSet):
             return Response({'msg': 'Er is iets mis gegaan'})
 
     # get days name from date: day=date.strftime('%A')
-    @csrf_exempt
-    @action(methods=['post'], detail=False)
-    def generate_week_dates(self, request):
-        """
-        take the begin, end current week dates and dates in between
-        and generate them in the StandardWeek and StandardWeek_slices many to many table
-
-        Args:
-            request ([request]): [request data]
-
-        Returns:
-            [Response]: [retrun confirmation]
-        """
-        week_dates = []
-        b_week = datetime.today() - timedelta(
-            days=datetime.today().weekday() % 7
-        )  # begin of week
-        e_week = b_week + timedelta(days=6)  # end of week
-        # get standard time slices
-        timeslices = TimeSlices.objects.all()
-        # generate current week dates
-        for i in range(7):
-            dates = b_week + timedelta(days=i)
-            week_dates.append(dates.date())
-        # check if Changes entity has already data in it
-        if WeekDates.objects.all().count() == 0:
-            for date in week_dates:
-                # create 7 date in Changes base on the current week
-                sd = WeekDates.objects.create(date=date)
-                # add the standart time slices to the changes
-                for ts in timeslices:
-                    sd.slices.add(ts)
-        else:
-            if WeekDates.objects.filter(date=b_week).count() == 0:
-                # delte all record in Changes table
-                WeekDates.objects.all().delete()
-                # delete all related many to many relationship record
-                # regenerate
-                self.generate_week_dates(request)
-
-        return Response('changes for {} to {} generated'.format(b_week, e_week))
+    # @csrf_exempt
+    # @action(methods=['post'], detail=False)
+    # def generate_week_dates(self, request):
+    #     """
+    #     take the begin, end current week dates and dates in between
+    #     and generate them in the StandardWeek and StandardWeek_slices many to many table
+    #
+    #     Args:
+    #         request ([request]): [request data]
+    #
+    #     Returns:
+    #         [Response]: [retrun confirmation]
+    #     """
+    #     week_dates = []
+    #     b_week = datetime.today() - timedelta(
+    #         days=datetime.today().weekday() % 7
+    #     )  # begin of week
+    #     e_week = b_week + timedelta(days=6)  # end of week
+    #     # get standard time slices
+    #     timeslices = TimeSlices.objects.all()
+    #     # generate current week dates
+    #     for i in range(7):
+    #         dates = b_week + timedelta(days=i)
+    #         week_dates.append(dates.date())
+    #     # check if Changes entity has already data in it
+    #     if WeekDates.objects.all().count() == 0:
+    #         for date in week_dates:
+    #             # create 7 date in Changes base on the current week
+    #             sd = WeekDates.objects.create(date=date)
+    #             # add the standart time slices to the changes
+    #             for ts in timeslices:
+    #                 sd.slices.add(ts)
+    #     else:
+    #         if WeekDates.objects.filter(date=b_week).count() == 0:
+    #             # delte all record in Changes table
+    #             WeekDates.objects.all().delete()
+    #             # delete all related many to many relationship record
+    #             # regenerate
+    #             self.generate_week_dates(request)
+    #
+    #     return Response('changes for {} to {} generated'.format(b_week, e_week))
 
     @csrf_exempt
     @action(methods=['post'], detail=False)

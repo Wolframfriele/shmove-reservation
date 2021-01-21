@@ -88,7 +88,7 @@ def create_appointment(request):
                     make_credentials = Credentials.objects.create(first_name=first_name, last_name=last_name,
                                                                   email=email, phone_number=phone_number)
 
-                treatment_ = Treatments.objects.get(pk=treatment)
+                treatment_ = Treatments.objects.get(treatment=treatment)
                 make_appointment = Appointments.objects.create(time_slice_id=get_slice, treatment=treatment_,
                                                                reason=reason, credentials=make_credentials,
                                                                date=date_)
@@ -223,7 +223,7 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
     @csrf_exempt
     @action(methods=['post'], detail=False)
     def new_appointment(self, request):
-        create_appointment(request)
+        return create_appointment(request)
 
     @csrf_exempt
     @action(methods=['get'], detail=False)
@@ -294,9 +294,8 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
                 if appointment_slices_id > 0:
                     taken = 1
                     appointment_id = appointment_slices_id
-                    treatment = Treatments.objects.get(
-                        pk=appointment_slices.treatment).treatment
-
+                    treatment = Treatments.objects.get(pk=appointment_slices.treatment.pk).treatment
+                    available = 0
                 date_timeslices.append({"start": "{} {}".format(date_, slice_data[0]["slice_start"]),
                                         "end": "{} {}".format(date_, slice_data[0]["slice_end"]),
                                         "taken": taken,
@@ -428,7 +427,7 @@ class AppointmentsView(viewsets.ModelViewSet):
     @csrf_exempt
     @action(methods=['post'], detail=False)
     def new_appointment(self, request):
-        create_appointment(request)
+        return create_appointment(request)
 
     @csrf_exempt
     @action(methods=['get'], detail=False)
