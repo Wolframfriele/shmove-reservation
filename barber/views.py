@@ -291,11 +291,9 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
                 treatment = ""
                 # get the appointment, if there is one, and get the name and treatment
                 try:
-                    appointment_slices = Appointments.objects.get(
-                        time_slice_id=i['id'], date=date_)
-                    appointment_slices_id = appointment_slices.credentials.pk
-                    credentials = Credentials.objects.get(
-                        pk=appointment_slices_id)
+                    appointment_slices = Appointments.objects.get(time_slice_id=i['id'], date=date_)
+                    appointment_slices_id = appointment_slices.pk
+                    credentials = Credentials.objects.get(pk=appointment_slices.credentials.pk)
                     first_name = credentials.first_name
                     last_name = credentials.last_name
                 except:
