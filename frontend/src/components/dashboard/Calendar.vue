@@ -405,7 +405,6 @@ export default {
     intervalcount: "13",
     locale: "nl",
     events: [],
-    select: [{ text: "Massage", value: "120" }],
     allTreatments: [],
     eventColor: ["primary", "red lighten-1", "grey lighten-1"],
     selectedEvent: {},
@@ -538,7 +537,7 @@ export default {
       let self = this;
       await axios
         .get(
-          "https://my-json-server.typicode.com/liambenschop/school/treatments/",
+          `${self.$store.state.HOST}/api/dashboard/get_treatments/`,
           {
             headers: {
               Accept: "application/json",
@@ -548,14 +547,11 @@ export default {
             }
           }
         )
-        .then(response => {
-          response.data.forEach(item => {
-            self.allTreatments.push({
-              text: item.title,
-              value: item.duration
-            });
-          });
-        });
+    .then(res=>{
+      res.data.forEach(element => {
+        this.allTreatments.push(element)
+      })
+    })
     },
     async getAllEvents(start, end) {
       let self = this;
