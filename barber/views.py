@@ -226,6 +226,17 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
         return create_appointment(request)
 
     @csrf_exempt
+    @action(methods=['post'], detail=False)
+    def cancel_appointment(self, request):
+        appointment = getpost(request, 'appointment_id')
+        try:
+            Appointments.objects.get(pk=appointment).delete()
+            msg = 'Success'
+        except:
+            msg = 'Fail'
+        return Response(msg)
+
+    @csrf_exempt
     @action(methods=['get'], detail=False)
     def get_appointments(self, request):
         # get variables
@@ -280,11 +291,9 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
                 treatment = ""
                 # get the appointment, if there is one, and get the name and treatment
                 try:
-                    appointment_slices = Appointments.objects.get(
-                        time_slice_id=i['id'], date=date_)
-                    appointment_slices_id = appointment_slices.credentials.pk
-                    credentials = Credentials.objects.get(
-                        pk=appointment_slices_id)
+                    appointment_slices = Appointments.objects.get(time_slice_id=i['id'], date=date_)
+                    appointment_slices_id = appointment_slices.pk
+                    credentials = Credentials.objects.get(pk=appointment_slices.credentials.pk)
                     first_name = credentials.first_name
                     last_name = credentials.last_name
                 except:
@@ -294,8 +303,7 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
                 if appointment_slices_id > 0:
                     taken = 1
                     appointment_id = appointment_slices_id
-                    treatment = Treatments.objects.get(
-                        pk=appointment_slices.treatment.pk).treatment
+                    treatment = Treatments.objects.get(pk=appointment_slices.treatment.pk).treatment
                     available = 0
                 date_timeslices.append({"start": "{} {}".format(date_, slice_data[0]["slice_start"]),
                                         "end": "{} {}".format(date_, slice_data[0]["slice_end"]),
@@ -362,15 +370,13 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
     def make_day_change(self, request):
         date_ = parse_date(getpost(request, 'date'))
         slice_count = getpost(request, 'slice_count')
-        weekday = datetime.strptime("{} 01:00:00".format(
-            date_), '%Y-%m-%d %H:%M:%S').weekday() + 1
+        weekday = datetime.strptime("{} 01:00:00".format(date_), '%Y-%m-%d %H:%M:%S').weekday() + 1
         try:
             changes = Changes.objects.get(date=date_)
             changes.slice_count = slice_count
             changes.save()
         except:
-            changes = Changes.objects.create(
-                date=date_, slice_count=slice_count)
+            changes = Changes.objects.create(date=date_, slice_count=slice_count)
             slices = TimeSlices.objects.filter(standardweek__pk=weekday)
             for i in slices:
                 changes.slices.add(i)
