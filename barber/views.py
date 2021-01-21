@@ -87,7 +87,6 @@ def create_appointment(request):
                     # credentials were not found
                     make_credentials = Credentials.objects.create(first_name=first_name, last_name=last_name,
                                                                   email=email, phone_number=phone_number)
-
                 treatment_ = Treatments.objects.get(treatment=treatment)
                 make_appointment = Appointments.objects.create(time_slice_id=get_slice, treatment=treatment_,
                                                                reason=reason, credentials=make_credentials,
@@ -123,11 +122,33 @@ def create_appointment(request):
 
                         # Create the plain-text and HTML version of your message
                         text = """\
-                            Bedankt voor het maken van een afspraak bij IN-KI Shiatsu Delft, {}.
-                            De afspraak is op {} om {}.
-                            U heeft gekozen voor {}.
-                            Met de reden '{}'.
-                        """.format(first_name, real_date, time_start, treatment_, reason)
+                            Beste heer/mevrouw {} {},\n
+                        \n
+                        Hartelijk bedankt voor uw online boeking bij IN-KI Shiatsu Delft!\n
+                        We hebben uw boeking met de volgende details mogen ontvangen:\n
+                        Afspraak voor: {}\n
+                        Datum: {}\n
+                        Tijd: {}\n
+                        Opmerkingen/reden van bezoek: {}\n
+                        Een aantal dagen voor de behandeling ontvangt u nog een mail met uitgebreide informatie.\n
+                        Annuleren is kosteloos tot 48 uur van tevoren, daarna wordt de gereserveerde tijd in principe in rekening gebracht.\n
+                        IN-KI Shiatsu Delft werkt in Corona tijd volgens de richtlijnen van het RIVM.\n
+                        Heeft u nog vragen, laat het me weten!\n
+                        \n
+                        \n
+                        \n
+                        Hartelijke groet,\n
+                        Inge Oostenbrink\n
+                        \n
+                        \n
+                        IN-KI Shiatsu Delft\n
+                        Doelenstraat 16\n
+                        2611 NT Delft\n
+                        \n
+                        www.shiatsu-delft.nl\n
+                        inge@shiatsu-delft.nl\n
+                        06 4070 2497\n
+                        """.format(first_name, last_name, treatment_.treatment, real_date, time_start, reason)
                         html = """
                         <html><body>
                             <p>Beste heer/mevrouw {} {}, </p>
@@ -435,6 +456,19 @@ class AppointmentsView(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False)
     def new_appointment(self, request):
         return create_appointment(request)
+
+    @csrf_exempt
+    @action(methods=['get'], detail=False)
+    def get_vacations(self, request):
+        vacations = []
+        all = Vacations.objects.filter().values()
+        print(all)
+        for i in all:
+            vacations.append({"id": i['id'],
+                              "name": i['name'],
+                              "start_date": i['start_date'],
+                              "end_date": i['end_date']})
+        return Response(vacations)
 
     @csrf_exempt
     @action(methods=['get'], detail=False)

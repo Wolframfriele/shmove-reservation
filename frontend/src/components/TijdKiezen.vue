@@ -115,10 +115,10 @@ export default {
     },
     getFreePlaces(){
       let self = this;
-      axios.post(`${self.$store.state.HOST}/api/appointments/cancel_appointment/`,
-      {body:{
-        appointment_id: 31
-      }}
+      axios.get(`${self.$store.state.HOST}/api/appointments/get_vacations/`,
+      // {body:{
+      //   appointment_id: 31
+      // }}
       // {params:{
       //   name: "Test Vakantie",
       //   start_date: "2021-01-18",
@@ -132,10 +132,10 @@ export default {
       //   new_end_time: "12:20:00",
       // }}
       // {body:{
-      //   date_booked_start: '22/01/2021, 10:00:00',
-      //   date_booked_end: '22/01/2021, 12:00:00',
-      //   treatment: 1,
-      //   reason: 'Test',
+      //   date_booked_start: '22/01/2021, 15:00:00',
+      //   date_booked_end: '22/01/2021, 17:00:00',
+      //   treatment: 'Massage',
+      //   reason: "Le Pain in Le Head",
       //   first_name: 'Tijmen',
       //   last_name: 'Simons',
       //   email: 'tijmen.simons@gmail.com',
