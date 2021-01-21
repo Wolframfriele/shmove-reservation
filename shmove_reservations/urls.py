@@ -29,6 +29,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),  # load admin urls
     path('api/', include(router.urls)),  # api base route
     path('api/signin/', dash_view.signin),
+    path('api/get_treatments/', dash_view.get_treatments),
     # embeded static frontend files
     url(r'^$', TemplateView.as_view(template_name='index.html')),
     # frontend urls

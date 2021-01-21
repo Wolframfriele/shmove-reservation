@@ -17,7 +17,7 @@ from rest_framework.response import Response
 from django.db.models import Q
 
 from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices, Treatments, Vacations
-from barber.serializers import TestSerializer, AppointmentSerializer
+from barber.serializers import DashAppointmentSerializer, AppointmentSerializer
 
 import smtplib
 import ssl
@@ -216,14 +216,14 @@ def create_appointment(request):
 
 
 class DashboardAppointmentView(viewsets.ModelViewSet):
-    queryset = Appointments.objects.all()
-    serializer_class = AppointmentSerializer
+    queryset = User.objects.all()
+    serializer_class = DashAppointmentSerializer
     permission_classes = [IsAuthenticated]
 
     @csrf_exempt
     @action(methods=['post'], detail=False)
     def new_appointment(self, request):
-        create_appointment(request)
+        return create_appointment(request)
 
     @csrf_exempt
     @action(methods=['get'], detail=False)
@@ -428,7 +428,7 @@ class AppointmentsView(viewsets.ModelViewSet):
     @csrf_exempt
     @action(methods=['post'], detail=False)
     def new_appointment(self, request):
-        create_appointment(request)
+        return create_appointment(request)
 
     @csrf_exempt
     @action(methods=['get'], detail=False)

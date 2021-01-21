@@ -276,3 +276,4 @@ yarn-error.log
 /.idea
 /.vscode
 /barber/migrations/__pycache__
+/frontend/vue.config.js

@@ -72,6 +72,31 @@ def signin(request):
         return Response(emailContext)
 
 
+@csrf_exempt
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_treatments(request):
+    """
+    get all treatments from DB
+
+    Args:
+        request (request): [request data dict]
+    """
+    treatments_arr = []
+    treatments = Treatments.objects.all().values()
+
+    for t in treatments:
+        treatments_arr.append(
+            {
+                'id': t['id'],
+                'treatment': t['treatment'],
+                'price': t['price']
+            }
+        )
+
+    return Response(treatments_arr)
+
+
 class DashboardView(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = DashboardSerializer
