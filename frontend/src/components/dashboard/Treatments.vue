@@ -67,15 +67,13 @@ export default {
   }),
   created() {
     let self = this;
-    console.log(self.$session.get('token'))
-    axios.get(`${this.$store.state.HOST}/api/dashboard/get_treatments/`,{
+    axios.get(`${this.$store.state.HOST}/api/dashboard/get_treatments/`, {
     headers: {
             Accept: "application/json",
             "Content-type": "application/json",
             "X-CSRFToken": self.$session.get('token'),
-            Authorization: `Token ${self.$session.get('token')}`,
-          },
-    })
+             Authorization: `Token ${self.$session.get('token')}`,
+    }})
     .then(res=>{
       res.data.forEach(element => {
         this.treatments.push(element)
@@ -96,11 +94,11 @@ export default {
           params: {
             id: id
           },
-          headers: {
+headers: {
             Accept: "application/json",
             "Content-type": "application/json",
             "X-CSRFToken": self.$session.get('token'),
-            Authorization: `Token ${self.$session.get('token')}`,
+             Authorization: `Token ${self.$session.get('token')}`,
           }
         })
         .then(res => {
@@ -122,11 +120,11 @@ export default {
       axios
         .put(`${self.$store.state.HOST}/api/dashboard/update_treatments/`, {
           body: body,
-          headers: {
+headers: {
             Accept: "application/json",
             "Content-type": "application/json",
             "X-CSRFToken": self.$session.get('token'),
-            Authorization: `Token ${self.$session.get('token')}`,
+             Authorization: `Token ${self.$session.get('token')}`,
           }
         })
         .then(res => {

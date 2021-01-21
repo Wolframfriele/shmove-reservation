@@ -128,11 +128,11 @@ export default {
       let self = this;
       await axios
         .get(`${self.$store.state.HOST}/api/dashboard/get_timeslices/`, {
-          headers: {
+headers: {
             Accept: "application/json",
             "Content-type": "application/json",
             "X-CSRFToken": self.$session.get('token'),
-            Authorization: `Token ${self.$session.get('token')}`,
+             Authorization: `Token ${self.$session.get('token')}`,
           }
         })
         .then(slices => {
@@ -179,11 +179,11 @@ export default {
       axios
         .put(`${self.$store.state.HOST}/api/dashboard/update_timeslices/`, {
           body: body,
-          headers: {
+headers: {
             Accept: "application/json",
             "Content-type": "application/json",
             "X-CSRFToken": self.$session.get('token'),
-            Authorization: `Token ${self.$session.get('token')}`,
+             Authorization: `Token ${self.$session.get('token')}`,
           }
         })
         .then(res => {
@@ -213,11 +213,11 @@ export default {
             slice_id: slice_id,
             day_id: day_id
           },
-          headers: {
+headers: {
             Accept: "application/json",
             "Content-type": "application/json",
             "X-CSRFToken": self.$session.get('token'),
-            Authorization: `Token ${self.$session.get('token')}`,
+             Authorization: `Token ${self.$session.get('token')}`,
           }
         })
         .then(res => {
@@ -261,7 +261,7 @@ h2 {
 .dayrow {
   justify-content: center;
   width: 30%;
-  max-width: 30%;
+  min-width: 400px;
   background-color: #f3f3f399;
   border: 1px solid #ececec;
   border-radius: 15px;
