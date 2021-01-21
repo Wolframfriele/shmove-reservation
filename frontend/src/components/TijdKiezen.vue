@@ -115,10 +115,9 @@ export default {
     },
     getFreePlaces(){
       let self = this;
-      axios.get(`${self.$store.state.HOST}/api/appointments/get_appointments/`,
-      {params:{
-        beginweek: "2021-01-25",
-        endweek: "2021-01-31"
+      axios.post(`${self.$store.state.HOST}/api/appointments/cancel_appointment/`,
+      {body:{
+        appointment_id: 31
       }}
       // {params:{
       //   name: "Test Vakantie",

@@ -17,7 +17,7 @@ from rest_framework.response import Response
 from django.db.models import Q
 
 from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices, Treatments, Vacations
-from barber.serializers import TestSerializer, AppointmentSerializer
+from barber.serializers import AppointmentSerializer
 
 import smtplib
 import ssl
@@ -226,6 +226,17 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
         return create_appointment(request)
 
     @csrf_exempt
+    @action(methods=['post'], detail=False)
+    def cancel_appointment(self, request):
+        appointment = getpost(request, 'appointment_id')
+        try:
+            Appointments.objects.get(pk=appointment).delete()
+            msg = 'Success'
+        except:
+            msg = 'Fail'
+        return Response(msg)
+
+    @csrf_exempt
     @action(methods=['get'], detail=False)
     def get_appointments(self, request):
         # get variables
@@ -361,15 +372,13 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
     def make_day_change(self, request):
         date_ = parse_date(getpost(request, 'date'))
         slice_count = getpost(request, 'slice_count')
-        weekday = datetime.strptime("{} 01:00:00".format(
-            date_), '%Y-%m-%d %H:%M:%S').weekday() + 1
+        weekday = datetime.strptime("{} 01:00:00".format(date_), '%Y-%m-%d %H:%M:%S').weekday() + 1
         try:
             changes = Changes.objects.get(date=date_)
             changes.slice_count = slice_count
             changes.save()
         except:
-            changes = Changes.objects.create(
-                date=date_, slice_count=slice_count)
+            changes = Changes.objects.create(date=date_, slice_count=slice_count)
             slices = TimeSlices.objects.filter(standardweek__pk=weekday)
             for i in slices:
                 changes.slices.add(i)
