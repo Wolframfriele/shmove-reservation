@@ -1,43 +1,48 @@
 <template>
   <v-container class="holidayContainer">
-    <h1>Vakantiedagen inplannen</h1>
-    <h2>Geplande vakantie's</h2>
+    <h1>Geplande vakanties</h1>
     <v-container class="plannedHolidays">
       <div v-for="(days, i) in planneddays" :key="i">
         <div class="plannedHolidayContainer">
-          <v-text-field class="margin"
-          label="Vakantie naam"
-          :value="days.name"
-          required
-        ></v-text-field>
-          <v-text-field class="margin"
-          label="Begin datum (YYYY-mm-dd)"
-          :value="days.start_date"
-          required
-        ></v-text-field>
-        <v-text-field class="margin"
-          label="Eind datum (YYYY-mm-dd)"
-          :value="days.end_date"
-          required
-        ></v-text-field>
-    <v-btn
-      class="ma-2"
-      outlined
-      color="indigo lighten-2"
-      @click="updateVacation(days.id)"
-    >
-      Aanpassen
-    </v-btn>
-    <v-btn
-      class="ma-2"
-      outlined
-      color="red lighten-2"
-      @click="deleteVacation(days.id)"
-    >
-      Verwijderen
-    </v-btn>
-      </div>
+          <v-text-field
+            class="margin"
+            label="Vakantie naam"
+            :value="days.name"
+            v-model="days.name"
+            required
+          ></v-text-field>
+          <v-text-field
+            class="margin"
+            label="Begin datum (YYYY-mm-dd)"
+            :value="days.start_date"
+            v-model="days.start_date"
+            required
+          ></v-text-field>
+          <v-text-field
+            class="margin"
+            label="Eind datum (YYYY-mm-dd)"
+            :value="days.end_date"
+            v-model="days.end_date"
+            required
+          ></v-text-field>
+          <v-btn
+            class="ma-2"
+            outlined
+            color="indigo lighten-2"
+            @click="updateVacation(days.id, days.name, days.start_date, days.end_date)"
+          >
+            Aanpassen
+          </v-btn>
+          <v-btn
+            class="ma-2"
+            outlined
+            color="red lighten-2"
+            @click="deleteVacation(days.id)"
+          >
+            Verwijderen
+          </v-btn>
         </div>
+      </div>
     </v-container>
   </v-container>
 </template>
@@ -47,6 +52,9 @@ import axios from "axios";
 
 export default {
   data: () => ({
+    updatedName: "",
+    updatedStartDate: "",
+    updatedEndDate: "",
     currency: "€",
     menuOne: "",
     menuTwo: "",
@@ -73,25 +81,29 @@ export default {
           });
         });
     },
-    updateVacation(id,name,start_date,end_date){
+    updateVacation(id, name, startdate, enddate) {
       let self = this;
       let body = {
         body: {
           id: id,
           name: name,
-          start_date: start_date,
-          end_date
+          start_date: startdate,
+          end_date: enddate
         }
       };
       axios
-        .put(`${self.$store.state.HOST}/api/dash_appointments/change_vacation/`, body,{
-          headers: {
-            Accept: "application/json",
-            "Content-type": "application/json",
-            "X-CSRFToken": self.$session.get('token'),
-             Authorization: `Token ${self.$session.get('token')}`,
+        .post(
+          `${self.$store.state.HOST}/api/dash_appointments/change_vacation/`,
+          body,
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-type": "application/json",
+              "X-CSRFToken": self.$session.get("token"),
+              Authorization: `Token ${self.$session.get("token")}`
+            }
           }
-        })
+        )
         .then(res => {
           //Perform Success Action
           console.log(res.data);
@@ -99,20 +111,23 @@ export default {
         })
         .catch(error => {
           console.log(error);
-        })
+        });
     },
-    deleteVacation(id){ //Not yet pushed to Yanickhost it seems :(
+    deleteVacation(id) {
+      //Not yet pushed to Yanickhost it seems :(
       let self = this;
+      let body = {
+        body: {
+          id: id
+        }
+      }
       axios
-        .delete(`${this.$store.state.HOST}/api/dashboard/delete_vacation/`, {
-          params: {
-            id: id
-          },
+        .post(`${this.$store.state.HOST}/api/dash_appointments/delete_vacation/`, body, {
           headers: {
             Accept: "application/json",
             "Content-type": "application/json",
-            "X-CSRFToken": self.$session.get('token'),
-             Authorization: `Token ${self.$session.get('token')}`,
+            "X-CSRFToken": self.$session.get("token"),
+            Authorization: `Token ${self.$session.get("token")}`
           }
         })
         .then(res => {
@@ -128,7 +143,8 @@ export default {
 };
 </script>
 <style scoped>
-.holidayContainer h1, .holidayContainer h2 {
+.holidayContainer h1,
+.holidayContainer h2 {
   margin-left: 12px;
 }
 .plannedHolidays {
@@ -146,13 +162,14 @@ export default {
 .margin {
   margin: 8px;
 }
-.plannedHolidayContainer p, .plannedHolidayContainer h4{
+.plannedHolidayContainer p,
+.plannedHolidayContainer h4 {
   margin: 8px;
   text-transform: Capitalize;
 }
 .newHoliday {
   margin: 0;
-  display:flex;
+  display: flex;
   flex-flow: column;
   max-width: 290px;
 }
@@ -162,5 +179,4 @@ h1 {
 .holidayContainer.container {
   margin-bottom: 80px;
 }
-
 </style>
