@@ -487,6 +487,17 @@ class AppointmentsView(viewsets.ModelViewSet):
         return create_appointment(request)
 
     @csrf_exempt
+    @action(methods=['post'], detail=False)
+    def delete_vacation(self, request):
+        vacation_id = getpost(request, 'id')
+        try:
+            Vacations.objects.filter(pk=vacation_id).delete()
+        except:
+            return Response('Fail')
+        return Response('Success')
+
+
+    @csrf_exempt
     @action(methods=['get'], detail=False)
     def get_appointments_customer(self, request):
         # get and set variables

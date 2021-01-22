@@ -115,12 +115,9 @@ export default {
     },
     getFreePlaces(){
       let self = this;
-      axios.post(`${self.$store.state.HOST}/api/appointments/change_vacation/`,
+      axios.post(`${self.$store.state.HOST}/api/appointments/delete_vacation/`,
       {body:{
         id: 1,
-        name: "Rust",
-        start_date: "2021-01-21",
-        end_date: "2021-01-31"
       }}
       // {body:{
       //   appointment_id: 31
