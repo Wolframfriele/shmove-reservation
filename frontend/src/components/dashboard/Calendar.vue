@@ -108,7 +108,7 @@
         <form @submit.prevent="addVacation">
           <div class="margin top15">
             <v-text-field
-              :counter="15"
+              :counter="150"
               label="Vakantie naam"
               dense
               v-model="vacationTitle"
@@ -332,18 +332,27 @@
             </div>
             <br />
             <label>Kies behandeling(en)</label>
-            <v-select
-              id="picktreatments"
-              v-model="select"
-              :items="allTreatments"
-              outlined
-              dense
-              :menu-props="{ top: false, offsetY: true }"
-            ></v-select>
+<!--            <v-select-->
+<!--              id="picktreatments"-->
+<!--              v-model="select"-->
+<!--              :items="allTreatments"-->
+<!--              outlined-->
+<!--              dense-->
+<!--              :menu-props="{ top: false, offsetY: true }"-->
+<!--            >-->
+<!--            </v-select>-->
+            <v-radio-group
+            v-model="select"
+            row
+          >
+            <v-radio v-for="a in allTreatments" :key="a.id"
+              :label="a.treatment"
+              :value="a.treatment"
+            ></v-radio>
+          </v-radio-group>
             <div class="container">
               <v-col cols="12" md="12" class="nopadding">
                 <v-text-field
-                  :counter="15"
                   label="Voornaam"
                   required
                   dense
@@ -353,7 +362,6 @@
 
               <v-col cols="12" md="12" class="nopadding">
                 <v-text-field
-                  :counter="15"
                   label="Achternaam"
                   dense
                   v-model="lastname"
@@ -413,7 +421,7 @@ export default {
     intervalcount: "13",
     locale: "nl",
     events: [],
-    select: "Massage",
+    select: "",
     allTreatments: [],
     eventColor: ["primary", "red lighten-1", "grey lighten-1"],
     selectedEvent: {},
@@ -492,7 +500,7 @@ export default {
           date_booked_start: start,
           date_booked_end: end,
           // treatment: this.treatment,
-          treatment: ["Massage"],
+          treatment: this.select,
           reason: this.reason,
           first_name: this.firstname,
           last_name: this.lastname,
@@ -559,7 +567,9 @@ export default {
         })
         .then(res => {
           res.data.forEach(element => {
-            this.allTreatments.push(element);
+            self.allTreatments.push({
+              treatment: element.treatment
+            })
           });
         });
     },
