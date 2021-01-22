@@ -22,6 +22,7 @@
               >
                 <v-text-field
                   v-model="email"
+                  :value='email'
                   :error-messages="errors"
                   label="Email"
                   required
@@ -89,7 +90,11 @@ export default {
     ValidationProvider,
     ValidationObserver
   },
+  created(){
+    console.log(this.mail);
+  },
   methods: {
+    
     submit() {
       // this.$refs.observer.validate();
       axios.post(`${this.$store.state.HOST}/api/signin/`,
