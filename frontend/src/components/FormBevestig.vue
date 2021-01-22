@@ -1,6 +1,5 @@
 <template>
-  <v-main>
-    <validation-observer ref="observer" v-slot="{ invalid }">
+    <validation-observer ref="observer" v-slot="{ }">
       <form @submit.prevent="submit">
         <validation-provider v-slot="{ errors }" name="Voornaam">
           <v-text-field
@@ -35,7 +34,7 @@
         </validation-provider>
         <validation-provider
         v-slot="{ errors }"
-        name="phoneNumber"
+        name="Telefoon Nummer"
         :rules="{
           required: true,
         }"
@@ -48,12 +47,20 @@
           required
         ></v-text-field>
       </validation-provider>
+      <v-textarea
+          outlined
+          v-model="reason"
+          name="reden"
+          label="Reden voor de behandeling"
+          value="Omschrijf wat voor klachten u heeft, of wat voor andere reden."
+        ></v-textarea>
         <p>
-          Uw afspraak staat gepland voor <strong>{{ convertDate }}</strong>. De afspraak duurt ongeveer 2 uur.
+          Uw selectie is <strong>{{ dateToString() }}</strong>. De afspraak duurt ongeveer 2 uur.
         </p>
         <p class="caption">
           Annuleren is kosteloos tot 48 uur van tevoren, daarna wordt de gereserveerde tijd in principe in rekening gebracht. 
         </p>
+        
         <validation-provider
           v-slot="{ errors }"
           rules="required"
@@ -62,23 +69,21 @@
           <v-checkbox
             v-model="accepted"
             :error-messages="errors"
-            value="1"
+            input-value="false"
             label="Ja, ik ga akkoord met de algemene voorwaarden."
             type="checkbox"
-            required
           ></v-checkbox>
         </validation-provider>
-
+        <span id="error-message">Er is iets mis gegaan met het bevestigen van de afspraak, probeert U het nog eens of neem contact op met de beheerder.</span>
         <v-btn @click="back">
           Terug
         </v-btn>
 
-        <v-btn class="mr-4" color="primary" type="submit" :disabled="invalid">
+        <v-btn class="mr-4" color="primary" type="submit" :disabled="!accepted">
           Bevestig
         </v-btn>
       </form>
     </validation-observer>
-  </v-main>
 </template>
 
 <script>
@@ -95,12 +100,12 @@ setInteractionMode("lazy");
 
 extend("digits", {
   ...digits,
-  message: "{_field_} needs to be {length} digits. ({_value_})"
+  message: "{_field_} moet minstens {length} characters lang zijn. ({_value_})"
 });
 
 extend("required", {
   ...required,
-  message: "{_field_} kan niet leeg zijn"
+  message: "{_field_} is verplicht"
 });
 
 extend("max", {
@@ -130,7 +135,9 @@ export default {
     lastname: "",
     email: "",
     phonenumber: '',
-    accepted: null,
+    accepted: false,
+    reason: '',
+    error: "",
   }),
 
   created(){
@@ -138,39 +145,7 @@ export default {
   },
 
   methods: {
-    submit() {
-      let self = this;
-      this.$refs.observer.validate()
-      axios.post(`${self.$store.state.HOST}/api/appointments/new_appointment/`,{
-          body: {
-            customer_id: 0,
-            firstname: this.firstname,
-            lastname: this.lastname,
-            email: this.email,
-            phone_number: this.phonenumber,
-            start: this.$route.params.start,
-            end: this.$route.params.end,
-            // treatment: this.$route.params.treatment,
-            treatment: ['knippen', 'verven', 'masseren'],
-            employee_id: 0,
-          }
-        } 
-      ).then(response => {
-        console.log(response.data);
-        if(response.data.created){
-          this.$router.push("afspraak-geboekt")
-        }
-      }).catch(e => {
-        console.log(e);
-      });
-    },
-
-    back() {
-      this.$router.push("afspraak-maken")
-    }
-  },
-  computed: {
-    convertDate: function () {
+    dateToString: function () {
       const days = [
         'zondag',
         'maandag',
@@ -196,16 +171,52 @@ export default {
       ];
       const reserverings_tijd = new Date(this.$route.params.start);
 
-      console.log(reserverings_tijd)
       const dayIndex = reserverings_tijd.getDay();
       const day = days[dayIndex];
       const date = reserverings_tijd.getDate();
       const monthIndex = reserverings_tijd.getMonth();
       const month = months[monthIndex];
       const hours = reserverings_tijd.getHours();
-      const minutes = reserverings_tijd.getMinutes();
+      const minutes = reserverings_tijd.getMinutes().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
 
       return `${ day } ${ date } ${ month } om ${ hours }:${ minutes }`;
+    },
+    parseDate(date){
+      // parse date time to dd/mm/yyy, h:m:s
+      return new Date(date).toLocaleString('en-GB', { timeZone: 'CET' });
+    },
+    submit() {
+      this.$refs.observer.validate()
+      let self = this
+      axios.post(`${self.$store.state.HOST}/api/appointments/new_appointment/`,
+        {
+          body: {
+            date_booked_start: this.parseDate(this.$route.params.start),
+            date_booked_end: this.parseDate(this.$route.params.end),
+            treatment: this.$route.params.treatment,
+            reason: this.reason,
+            first_name: this.firstname,
+            last_name: this.lastname,
+            email: this.email,
+            phone_number: this.phonenumber,
+          }
+        }
+      ).then(res => {
+        const error = res.data.error
+        if (error == "None") {
+          this.$router.push({name: "AfspraakGeboekt", params: { time: this.dateToString()}})
+        } else {
+          document.getElementById("error-message").style.display = "inline-block"
+        }
+    }).catch(e => {
+      console.log(e)
+      if (e != "") {
+        document.getElementById("error-message").style.display = "inline-block"
+      }
+    })      
+    },
+    back() {
+      this.$router.push("afspraak-maken")
     }
   }
 };
@@ -214,5 +225,11 @@ export default {
 <style scoped>
 .mr-4 {
   margin-left: 3em;
+}
+
+#error-message {
+  color: red;
+  display: none;
+  padding: 5px;
 }
 </style>

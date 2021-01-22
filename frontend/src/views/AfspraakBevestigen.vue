@@ -1,13 +1,13 @@
 <template>
-  <v-main>
+  <div class="form">
     <h1 class="display-1">Afspraak Bevestigen:</h1>
-    <div class="text-center">
+    <FormBevestig />
+    <!-- <div class="text-center">
       <v-icon color="primary">mdi-circle</v-icon>
       <v-icon color="primary">mdi-circle</v-icon>
       <v-icon color="grey">mdi-circle-slice-8</v-icon>
-    </div>
-    <FormBevestig class="form" />
-  </v-main>
+    </div> -->
+  </div>
 </template>
 
 <script>
@@ -22,7 +22,11 @@ export default {
 <style scoped>
 h1 {
   text-align: center;
-  margin: 1em 1em 2em 1em;
+  margin: 0em 1em 1em 0;
+  color: #c49760;
+  font-size: .5em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .form {
@@ -31,6 +35,6 @@ h1 {
 }
 
 .text-center {
-  margin: 1em 1em 1em 1em;
+  margin: 0em 1em 1em 0em;
 }
 </style>

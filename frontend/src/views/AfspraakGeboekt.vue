@@ -1,13 +1,13 @@
 <template>
-  <v-main>
+  <div>
     <h1 class="display-1">Afspraak is geboekt!</h1>
-    <div class="text-center">
-      <v-icon color="primary">mdi-circle</v-icon>
-      <v-icon color="primary">mdi-circle</v-icon>
-      <v-icon color="primary">mdi-circle</v-icon>
-    </div>
     <BevestigDetails class="form" />
-  </v-main>
+    <!-- <div class="text-center">
+      <v-icon color="primary">mdi-circle</v-icon>
+      <v-icon color="primary">mdi-circle</v-icon>
+      <v-icon color="primary">mdi-circle</v-icon>
+    </div> -->
+  </div>
 </template>
 
 <script>
@@ -22,7 +22,11 @@ export default {
 <style scoped>
 h1 {
   text-align: center;
-  margin: 1em 1em 3em 1em;
+  margin: 2em 1em 0em 0em;
+  color: #c49760;
+  font-size: .5em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .form {
