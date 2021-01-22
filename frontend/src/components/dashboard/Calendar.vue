@@ -224,80 +224,101 @@
         <v-toolbar :color="selectedEvent.color" dark>
           <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
           <v-spacer></v-spacer>
+          <v-btn v-if="showBewerkEventModal != true" @click="bewerkAfspraak">Bewerken</v-btn>
         </v-toolbar>
-        <v-card-text v-if="$store.state.dashboard.appointmentDataArr != 0">
-          <br />
-          <label for="cstartTime">Begintijd: </label>
-          <span id="cstartTime">{{ convertTime(selectedEvent.start) }}</span
-          ><br />
-          <label for="cendtime">Eindtijd: </label>
-          <span id="cendtime">{{ convertTime(selectedEvent.end) }}</span
-          ><br />
-          <br />
-          <div v-if="customer.first_name" class="appointmentInfo">
-            <div class="box1">
-              <label for="firstname">Voornaam: </label>
-            </div>
-            <div class="box2">
-              <span id="firstname">{{ customer.first_name }}</span>
-            </div>
+        <div v-if="showBewerkEventModal != true">
+          <v-card-text v-if="$store.state.dashboard.appointmentDataArr != 0">
             <br />
-          </div>
-          <div v-if="customer.last_name" class="appointmentInfo">
-            <div class="box1">
-              <label for="lastname">Achternaam: </label>
-            </div>
-            <div class="box2">
-              <span id="lastname">{{ customer.last_name }}</span>
-            </div>
+            <label for="cstartTime">Begintijd: </label>
+            <span id="cstartTime">{{ convertTime(selectedEvent.start) }}</span
+            ><br />
+            <label for="cendtime">Eindtijd: </label>
+            <span id="cendtime">{{ convertTime(selectedEvent.end) }}</span
+            ><br />
             <br />
-          </div>
-          <div v-if="customer.email" class="appointmentInfo">
-            <div class="box1">
-              <label for="email">Email: </label>
+            <div v-if="customer.first_name" class="appointmentInfo">
+              <div class="box1">
+                <label for="firstname">Voornaam: </label>
+              </div>
+              <div class="box2">
+                <span id="firstname">{{ customer.first_name }}</span>
+              </div>
+              <br />
             </div>
-            <div class="box2">
-              <span id="email">{{ customer.email }}</span>
+            <div v-if="customer.last_name" class="appointmentInfo">
+              <div class="box1">
+                <label for="lastname">Achternaam: </label>
+              </div>
+              <div class="box2">
+                <span id="lastname">{{ customer.last_name }}</span>
+              </div>
+              <br />
             </div>
-            <br />
-          </div>
-          <div v-if="customer.phone_number" class="appointmentInfo">
-            <div class="box1">
-              <label for="phone">Telefoon: </label>
+            <div v-if="customer.email" class="appointmentInfo">
+              <div class="box1">
+                <label for="email">Email: </label>
+              </div>
+              <div class="box2">
+                <span id="email">{{ customer.email }}</span>
+              </div>
+              <br />
             </div>
-            <div class="box2">
-              <span id="phone">{{ customer.phone_number }}</span>
+            <div v-if="customer.phone_number" class="appointmentInfo">
+              <div class="box1">
+                <label for="phone">Telefoon: </label>
+              </div>
+              <div class="box2">
+                <span id="phone">{{ customer.phone_number }}</span>
+              </div>
+              <br />
             </div>
-            <br />
-          </div>
-          <div v-if="treatments.treatment" class="appointmentInfo">
-            <div class="box1">
-              <label for="treatments">Behandelingen: </label>
+            <div v-if="treatments.treatment" class="appointmentInfo">
+              <div class="box1">
+                <label for="treatments">Behandelingen: </label>
+              </div>
+              <div class="box2">
+                <span id="treatments">{{ treatments.treatment }}</span>
+              </div>
+              <br />
             </div>
-            <div class="box2">
-              <span id="treatments">{{ treatments.treatment }}</span>
+            <div v-if="appointment.reason" class="appointmentInfo">
+              <div class="box1">
+                <label for="comments">Opmerkingen: </label>
+              </div>
+              <div class="box2">
+                <span id="comments">{{ appointment.reason }} </span>
+              </div>
+              <br />
             </div>
-            <br />
-          </div>
-          <div v-if="appointment.reason" class="appointmentInfo">
-            <div class="box1">
-              <label for="comments">Opmerkingen: </label>
-            </div>
-            <div class="box2">
-              <span id="comments">{{ appointment.reason }} </span>
-            </div>
-            <br />
-          </div>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn text color="secondary" @click="showEventModal = false">
-            Terug
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn text color="red" @click="cancelAppointment(appointment.id)">
-            Annuleren
-          </v-btn>
-        </v-card-actions>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn text color="secondary" @click="showEventModal = false">
+              Terug
+            </v-btn>
+            <v-spacer></v-spacer>
+            <v-btn text color="red" @click="cancelAppointment(appointment.id)">
+              Annuleren
+            </v-btn>
+          </v-card-actions>
+        </div>
+        <div v-if="showBewerkEventModal == true">
+          <v-card-text>
+            <label>Kies behandeling(en)</label>
+            <v-select
+              id="picktreatments"
+              v-model="select"
+              :items="allTreatments"
+              outlined
+              dense
+              :menu-props="{ top: false, offsetY: true }"
+              ></v-select>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn text color="secondary" @click="showEventModal = false">Terug</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn @click="saveEvent">Opslaan</v-btn>
+          </v-card-actions>
+        </div>
       </v-card>
     </v-dialog>
     <v-dialog
@@ -339,7 +360,7 @@
               outlined
               dense
               :menu-props="{ top: false, offsetY: true }"
-            ></v-select>
+              Welk     ></v-select>
             <div class="container">
               <v-col cols="12" md="12" class="nopadding">
                 <v-text-field
@@ -421,6 +442,7 @@ export default {
     selectedOpen: false,
     createEventModal: false,
     showEventModal: false,
+    showBewerkEventModal: false,
     planVacationModal: false,
     vacationTitle: "",
     vacationStartDate: "",
@@ -704,6 +726,13 @@ export default {
           //Perform action in always
         });
     },
+    bewerkAfspraak() {
+      this.showBewerkEventModal = !this.showBewerkEventModal
+    },
+    saveEvent() {
+      console.log(this.allTreatments)
+      this.showBewerkEventModal = !this.showBewerkEventModal
+    },
     showEvent({ nativeEvent, event }) {
       let self = this;
       this.selectedEvent = event;
@@ -893,5 +922,11 @@ form .container .nopadding {
 .box1,
 .box2 {
   width: 50%;
+}
+
+/* Bewerk Afspraak */
+
+.hidden {
+  display: none;
 }
 </style>
