@@ -475,6 +475,16 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
             return Response('Fail')
         return Response('Success')
 
+    @csrf_exempt
+    @action(methods=['post'], detail=False)
+    def delete_vacation(self, request):
+        vacation_id = getpost(request, 'id')
+        try:
+            Vacations.objects.filter(pk=vacation_id).delete()
+        except:
+            return Response('Fail')
+        return Response('Success')
+
 
 class AppointmentsView(viewsets.ModelViewSet):
     queryset = Appointments.objects.all()
@@ -485,16 +495,6 @@ class AppointmentsView(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False)
     def new_appointment(self, request):
         return create_appointment(request)
-
-    @csrf_exempt
-    @action(methods=['post'], detail=False)
-    def delete_vacation(self, request):
-        vacation_id = getpost(request, 'id')
-        try:
-            Vacations.objects.filter(pk=vacation_id).delete()
-        except:
-            return Response('Fail')
-        return Response('Success')
 
 
     @csrf_exempt
