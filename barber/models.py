@@ -52,7 +52,7 @@ class Changes(models.Model):
     date = models.DateField(auto_now_add=False)
     slice_count = models.IntegerField(default=3)
     slices = models.ManyToManyField(TimeSlices)
-    action = models.CharField(max_length=100, blank=True)
+    # action = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return str(self.date)
