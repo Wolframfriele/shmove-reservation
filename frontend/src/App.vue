@@ -7,7 +7,6 @@
 </template>
 
 <script>
-import axios from "axios";
 export default {
   name: "App",
   components: {
@@ -15,35 +14,14 @@ export default {
   data: () => ({
     //
   }),
-  created(){
-    // this.generateWeekDates()
-  },
+  created() {},
   methods: {
     scrollTopAnimation() {
       let scrollValue = document.documentElement.scrollTop;
       while (scrollValue > 0) {
         document.documentElement.scrollTop--;
       }
-    },
-
-    async generateWeekDates() {
-      let self = this;
-      await axios
-        .post(
-          `${self.$store.state.HOST}/api/dashboard/generate_week_dates/`,
-          {
-            headers: {
-             Accept: "application/json",
-              "Content-type": "application/json",
-              "X-CSRFToken": self.$session.get('token'),
-              Authorization: `Token ${self.$session.get('token')}`,
-            }
-          }
-        )
-        .then(res => {
-          console.log(res.data);
-        });
-    },
+    }
   }
 };
 </script>
@@ -53,6 +31,8 @@ export default {
 html,
 body {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  overflow-y: hidden;
   width: 100%;
   margin: 0px;
   padding: 0px;

@@ -23,14 +23,6 @@
           <v-spacer> </v-spacer>
         </v-toolbar>
       </v-sheet>
-      <div class='loader' v-if='!appointmentsLoaded'>
-        <v-progress-circular
-          :size="50"
-          color="primary"
-          indeterminate
-        ></v-progress-circular>
-        <p style="color:#895638" class='mt-5'>Vrije plaatsen worden geladen</p>
-      </div>
       <v-sheet>
         <v-calendar
           ref="calendar"
@@ -53,7 +45,7 @@
           <!-- Modified Calendar Header -->
           <template v-slot:day-label-header="{date, day, present, past, weekday}">
             <v-avatar v-if="past" color="white">{{ day }}</v-avatar>
-            <v-btn v-else-if="present" fab depressed color="primary" :aria-label="dateToString(date)" :href="returnID(weekday)">{{ day }}</v-btn>
+            <v-avatar v-else-if="present" color="primary">{{ day }}</v-avatar>
             <v-btn v-else fab depressed color="white" :aria-label="dateToString(date)" :href="returnID(weekday)">{{ day }} </v-btn>
           </template>
           <!-- Modified Calendar Events -->
@@ -82,9 +74,8 @@ export default {
     intervalcount: "11",
     locale: "nl",
     eventColor:  ['primary', 'red'],
-    treatment: ["shiatsu"],
-    events: [],
-    appointmentsLoaded: false,
+    treatment: "",
+    events: []
   }),
   created() {
     // Receive Data from treatments
@@ -121,34 +112,29 @@ export default {
       return interval.time;
     },
     bevestigAfspraak({ event }) {
+      bus.$on('treatmentArray', (data) => {
+      this.treatment = data;
+      })
       this.$router.push({name: "AfspraakBevestigen", params: {start: event.start, end: event.end, treatment: this.treatment}});
     },
     getFreePlaces(beginweek, endweek){
-      let self = this;
       this.events = []
-      axios.get(`${self.$store.state.HOST}/api/appointments/get_appointments/`,
+      axios.get(`${this.$store.state.HOST}/api/appointments/get_appointments_customer/`,
       {
       params: {
         beginweek: beginweek,
         endweek: endweek
       }}
       ).then(res => {
-        if(res.data){
-          self.appointmentsLoaded = true
-        }else{
-          self.appointmentsLoaded = false
-        }
-        self.events = []
+        this.events = []
         res.data.forEach(times => {
-          if (times.taken == false) {
-            self.events.push({
+            this.events.push({
             name: times.taken ? "Bezet" : "Vrij",
             start: times.start,
             end: times.end,
-            color: times.taken ? self.eventColor[1] : self.eventColor[0],
+            color: times.taken ? this.eventColor[1] : this.eventColor[0],
             timed: true
           })
-          }
         });
       }).catch(e => {
         console.log(e)
@@ -215,17 +201,5 @@ html::-webkit-scrollbar {
 .event-text {
   padding: 5px;
   margin-bottom: 0px !important;
-}
-.loader{
-  width: 100%;
-  height:auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  margin-bottom: -50px;
-  position: relative;
-  top: 45%;
-  z-index: 10;
 }
 </style>

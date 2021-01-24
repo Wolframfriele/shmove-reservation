@@ -1,6 +1,6 @@
 <template>
     <validation-observer ref="observer" v-slot="{ }">
-      <form>
+      <form @submit.prevent="submit">
         <validation-provider v-slot="{ errors }" name="Voornaam">
           <v-text-field
             v-model="firstname"
@@ -79,7 +79,7 @@
           Terug
         </v-btn>
 
-        <v-btn class="mr-4" color="primary" type="submit" :disabled="!accepted" @click.prevent='submit()'>
+        <v-btn class="mr-4" color="primary" type="submit" :disabled="!accepted">
           Bevestig
         </v-btn>
       </form>
@@ -202,12 +202,12 @@ export default {
         } else {
           document.getElementById("error-message").style.display = "inline-block"
         }
-      }).catch(e => {
-        console.log(e)
-        if (e != "") {
-          document.getElementById("error-message").style.display = "inline-block"
-        }
-      })      
+    }).catch(e => {
+      console.log(e)
+      if (e != "") {
+        document.getElementById("error-message").style.display = "inline-block"
+      }
+    })      
     },
     back() {
       this.$router.push("afspraak-maken")

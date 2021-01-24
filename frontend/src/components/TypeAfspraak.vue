@@ -1,21 +1,52 @@
 <template>
   <v-container>
-    <v-checkbox input-value="true" value="shiatsu" label="Shiatsu Therapie" v-model="treatment" @click="changeBehandeling" aria-label="Selecteer Type Afspraak: Shiatsu Therapie"></v-checkbox>
-    <v-checkbox input-value="false" value="voeding" label="Voedingsadvies" v-model="treatment" @click="changeBehandeling" aria-label="Selecteer Type Afspraak: Voedingsadvies"></v-checkbox>
+    <!-- <v-checkbox 
+      v-for="single_treatment in treatment_options" :key="single_treatment" 
+      :label="single_treatment" 
+      v-model="treatment" 
+      :value="single_treatment" 
+      @click="changeBehandeling"
+      :aria-label="returnAria(single_treatment)"></v-checkbox> -->
+    
+    <v-radio-group v-model="treatment" mandatory>
+      <v-radio
+        v-for="single_treatment in treatment_options"
+        :key="single_treatment"
+        :label="single_treatment"
+        :value="single_treatment"
+        :aria-label="returnAria(single_treatment)"
+      ></v-radio>
+    </v-radio-group>
   </v-container>
 </template>
 
 <script>
 import { bus } from '../main'
+import axios from "axios"
+
 export default {
   data() {
     return {
-      treatment: ["shiatsu"]
+      treatment_options:[],
+      treatment: ""
     };
+  },
+  created () {
+    axios.get(`${this.$store.state.HOST}/api/get_treatments/`)
+    .then(res=>{
+      this.treatment = res.data[0].treatment
+      res.data.forEach(element => {
+        this.treatment_options.push(element.treatment)
+      })
+      bus.$emit('treatmentArray', this.treatment)
+    })
   },
   methods: {
     changeBehandeling () {
       bus.$emit('treatmentArray', this.treatment);
+    },
+    returnAria (input_treatment) {
+      return `Selecteer Type Afspraak: ${input_treatment}`
     }
   }
 };

@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-import dashboard from "./modules/dashboard";  // store file from modules map import example
+// import work from "./modules/work";  // store file from modules map import example
 
 import axios from "axios";
 
@@ -13,8 +13,7 @@ export default new Vuex.Store({
       // window.location.port != ""
         // ? " http://127.0.0.1:8000"
         // : "django.yanickhost.ga:8085",
-      //  "http://django.yanickhost.ga:8085",
-       "http://127.0.0.1:8000",
+       "http://django.yanickhost.ga:8085",
     AUTHENTICATED: undefined,
     usertoken: undefined
   },
@@ -83,7 +82,5 @@ export default new Vuex.Store({
 
   actions: {},
 
-  modules: {
-    dashboard: dashboard
-  }
+  modules: {}
 });
