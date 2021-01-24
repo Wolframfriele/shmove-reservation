@@ -13,12 +13,12 @@ import Axios from "axios";
 import AOS from "aos";
 import "aos/dist/aos.css";
 // vue session
-// import VueSession from 'vue-session'
+import VueSession from 'vue-session'
 
 Vue.config.productionTip = false;
 Vue.use(VAnimateCss);
 Vue.use(Vuex);
-// Vue.use(VueSession,{persist: true})
+Vue.use(VueSession,{persist: true})
 
 Axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 Axios.defaults.xsrfCookieName = "XCSRF-TOKEN";

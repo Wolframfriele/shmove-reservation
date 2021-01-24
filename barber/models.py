@@ -31,12 +31,12 @@ class TimeSlices(models.Model):
         return str(self.slice_start) + ' to ' + str(self.slice_end)
 
 
-class WeekDates(models.Model):
-    date = models.DateField(default=datetime.now().date())
-    slices = models.ManyToManyField(TimeSlices)
+# class WeekDates(models.Model):
+#     date = models.DateField(default=datetime.now().date())
+#     slices = models.ManyToManyField(TimeSlices)
 
-    def __str__(self):
-        return str(self.date)
+#     def __str__(self):
+#         return str(self.date)
 
 
 class StandardWeek(models.Model):
@@ -52,6 +52,7 @@ class Changes(models.Model):
     date = models.DateField(auto_now_add=False)
     slice_count = models.IntegerField(default=3)
     slices = models.ManyToManyField(TimeSlices)
+    action = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return str(self.date)

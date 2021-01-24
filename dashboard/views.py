@@ -23,7 +23,7 @@ from rest_framework.status import (
 )
 
 from dashboard.serializers import DashboardSerializer
-from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices, WeekDates, Treatments
+from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices, Treatments
 from barber.serializers import AppointmentSerializer
 
 # Create your views here.
@@ -243,52 +243,54 @@ class DashboardView(viewsets.ModelViewSet):
             return Response({'msg': 'Er is iets mis gegaan'})
 
     # get days name from date: day=date.strftime('%A')
-    @csrf_exempt
-    @action(methods=['post'], detail=False)
-    def generate_week_dates(self, request):
-        """
-        take the begin, end current week dates and dates in between
-        and generate them in the StandardWeek and StandardWeek_slices many to many table
+    # @csrf_exempt
+    # @action(methods=['post'], detail=False)
+    # def generate_week_dates(self, request):
+    #     """
+    #     take the begin, end current week dates and dates in between
+    #     and generate them in the StandardWeek and StandardWeek_slices many to many table
 
-        Args:
-            request ([request]): [request data]
+    #     Args:
+    #         request ([request]): [request data]
 
-        Returns:
-            [Response]: [retrun confirmation]
-        """
-        week_dates = []
-        b_week = datetime.today() - timedelta(
-            days=datetime.today().weekday() % 7
-        )  # begin of week
-        e_week = b_week + timedelta(days=6)  # end of week
-        # get standard time slices
-        timeslices = TimeSlices.objects.all()
-        # generate current week dates
-        for i in range(7):
-            dates = b_week + timedelta(days=i)
-            week_dates.append(dates.date())
-        # check if Changes entity has already data in it
-        if WeekDates.objects.all().count() == 0:
-            for date in week_dates:
-                # create 7 date in Changes base on the current week
-                sd = WeekDates.objects.create(date=date)
-                # add the standart time slices to the changes
-                for ts in timeslices:
-                    sd.slices.add(ts)
-        else:
-            if WeekDates.objects.filter(date=b_week).count() == 0:
-                # delte all record in Changes table
-                WeekDates.objects.all().delete()
-                # delete all related many to many relationship record
-                # regenerate
-                self.generate_week_dates(request)
+    #     Returns:
+    #         [Response]: [retrun confirmation]
+    #     """
+    #     week_dates = []
+    #     b_week = datetime.today() - timedelta(
+    #         days=datetime.today().weekday() % 7
+    #     )  # begin of week
+    #     e_week = b_week + timedelta(days=6)  # end of week
+    #     # get standard time slices
+    #     timeslices = TimeSlices.objects.all()
+    #     # generate current week dates
+    #     for i in range(7):
+    #         dates = b_week + timedelta(days=i)
+    #         week_dates.append(dates.date())
+    #     # check if Changes entity has already data in it
+    #     if WeekDates.objects.all().count() == 0:
+    #         for date in week_dates:
+    #             # create 7 date in Changes base on the current week
+    #             sd = WeekDates.objects.create(date=date)
+    #             # add the standart time slices to the changes
+    #             for ts in timeslices:
+    #                 sd.slices.add(ts)
+    #     else:
+    #         if WeekDates.objects.filter(date=b_week).count() == 0:
+    #             # delte all record in Changes table
+    #             WeekDates.objects.all().delete()
+    #             # delete all related many to many relationship record
+    #             # regenerate
+    #             self.generate_week_dates(request)
 
-        return Response('changes for {} to {} generated'.format(b_week, e_week))
+    #     return Response('changes for {} to {} generated'.format(b_week, e_week))
 
     @csrf_exempt
     @action(methods=['post'], detail=False)
     def add_time_slices(self, request):
         params = request.data['body']
+        days_arr = ['monday', 'tuesday', 'wednesday',
+                    'thursday', 'friday', 'saturday', 'sunday']
 
         b_time = datetime.strptime(
             params['begin_time'], '%H:%M:%S').time()
@@ -298,39 +300,27 @@ class DashboardView(viewsets.ModelViewSet):
         # get begin and end week date
         b_week = datetime.today() - timedelta(days=datetime.today().weekday() %
                                               7)  # begin of week
-        # e_week = b_week + timedelta(days=6)  # end of week
+        e_week = b_week + timedelta(days=6).date()  # end of week
 
-        # store the date base on the sended day
-        current_date = self.get_date_from_day(day_index)
-
-        # create new Changes
-        # changes = Changes.objects.get_or_create(date=current_date)
-        # changes.save()
-        try:
-            changes = Changes.objects.get(date=current_date)
-            # check if time slice exists
-            ts = TimeSlices.objects.filter(
-                Q(slice_start=b_time) & Q(slice_end=e_time))
-            if ts.count() == 0:
-                # add time slice
-                new_slice = TimeSlices(slice_start=b_time, slice_end=e_time)
-                new_slice.save()
-                # add slice to changes
-                changes.slices.add(new_slice)
-
-                return Response({'added': True, 'msg': 'tijdslot toegevoegd'})
-            else:
-                return Response({'added': False, 'msg': 'tijdslot {} - {} bestaat al'.format(b_time, e_time)})
-        except Changes.DoesNotExist:
-            changes = Changes.objects.create(date=current_date)
+        # get standard week by day name
+        s_week = StandardWeek.objects.get(day=days_arr[day_index])
+        # check if begin and end slice times already exists
+        slice_counts = TimeSlices.objects.filter(
+            Q(slice_start=b_time) & Q(slice_end=e_time)).count()
+        if slice_counts == 0:
+            changes = Changes.objects.create(date=e_week, action='add')
             changes.save()
             # add time slice
             new_slice = TimeSlices(slice_start=b_time, slice_end=e_time)
             new_slice.save()
             # add slice to changes
             changes.slices.add(new_slice)
+            # add slice to standard week
+            s_week.add(new_slice)
 
             return Response({'added': True, 'msg': 'tijdslot toegevoegd'})
+        else:
+            return Response({'added': False, 'msg': 'tijdslot {} - {} bestaat al'.format(b_time, e_time)})
 
     @csrf_exempt
     @action(methods=['get'], detail=False)
@@ -344,8 +334,6 @@ class DashboardView(viewsets.ModelViewSet):
             ts = TimeSlices.objects.filter(
                 standardweek=s_week['id']).values()
             for tsl in ts:
-                # print(
-                #     {'bt': tsl['slice_start'], 'et': tsl['slice_end'], 'day': days_arr.index(days_arr[i])})
                 slices_arr.append(
                     {
                         'start': tsl['slice_start'],
@@ -369,17 +357,20 @@ class DashboardView(viewsets.ModelViewSet):
             params['end_time'], '%H:%M:%S').time()
         slice_id = int(params['slice_id'])
         day_index = int(params['day_id'])
-        # get date from day index
-        date = self.get_date_from_day(day_index)
+
         # get changes base on date
-        week_date = WeekDates.objects.filter(date=date).values()
-        # check if changes exists
-        if week_date.count() > 0:
-            # filter and update slice
-            TimeSlices.objects.filter(
-                Q(changes__id=week_date[0]['id'])
-                & Q(id=slice_id)
-            ).update(slice_start=b_time, slice_end=e_time)
+        b_week = datetime.today() - timedelta(days=datetime.today().weekday() %
+                                              7)  # begin of week
+        e_week = b_week + timedelta(days=6).date()  # end of week
+        # get time slice
+        time_slice = TimeSlices.objects.get(id=slice_id)
+        # create change
+        changes = Changes.objects.create(date=e_week, action='update')
+        changes.save()
+        # update time slice
+        time_slice.update(slice_start=b_time, slice_end=e_time)
+        # add slice to changes
+        changes.slices.add(time_slice)
 
         return Response({'changed': True})
 
@@ -388,17 +379,54 @@ class DashboardView(viewsets.ModelViewSet):
     # @permission_classes((AllowAny,))
     def remove_timeslices(self, request):
         params = request.query_params
+        days_arr = ['monday', 'tuesday', 'wednesday',
+                    'thursday', 'friday', 'saturday', 'sunday']
 
         slice_id = int(params.get('slice_id'))
         day_index = int(params.get('day_id'))
         # get date from day index
-        date = self.get_date_from_day(day_index)
-        # get changes base on date
-        change = WeekDates.objects.filter(date=date).values()
-        # filter and delete slice
-        TimeSlices.objects.filter(
-            Q(changes__id=change[0]['id'])
-            & Q(id=slice_id)
-        ).delete()
+        b_week = datetime.today() - timedelta(days=datetime.today().weekday() %
+                                              7)  # begin of week
+        e_week = b_week + timedelta(days=6).date()  # end of week
+        # check if time slice not exists in appoitment
+        appointment = Appointments.objects.filter(date=datetime.now().date())
+        if appointment.count() == 0:
+            # filter and delete slice
+            ts = TimeSlices.objects.get(id=slice_id)
+            # create change
+            changes = Changes.objects.create(
+                date=e_week, action='delete,{}'.format(days_arr[day_index]))
+            changes.save()
+            changes.add(ts)
+            # delete time slice
+            TimeSlices.objects.filter(id=slice_id).delete()
 
-        return Response({'deleted': True})
+            return Response({'deleted': True, 'msg': 'Tijdslot verwijderd'})
+        else:
+            return Response({'deleted': False, 'msg': 'Tijdslot al geboekt'})
+
+    # @csrf_exempt
+    # @action(methods=['post'], detail=False)
+    # def slices_actions(self, request):
+    #     standard_slices = [
+    #         {'s': datetime.strptime('07:30:00', '%H:%M:%S').time(
+    #         ), 'e': datetime.strptime('09:30:00', '%H:%M:%S').time()},
+    #         {'s': datetime.strptime('10:00:00', '%H:%M:%S').time(
+    #         ), 'e': datetime.strptime('12:00:00', '%H:%M:%S').time()},
+    #         {'s': datetime.strptime('12:30:00', '%H:%M:%S').time(
+    #         ), 'e': datetime.strptime('14:30:00', '%H:%M:%S').time()},
+    #         {'s': datetime.strptime('15:00:00', '%H:%M:%S').time(
+    #         ), 'e': datetime.strptime('17:00:00', '%H:%M:%S').time()},
+    #         {'s': datetime.strptime('17:30:00', '%H:%M:%S').time(
+    #         ), 'e': datetime.strptime('19:30:00', '%H:%M:%S').time()},
+    #     ]
+    #     current_date = datetime.now().date()
+
+    #     changes = Changes.objects.filter(Q(date__lt=current_date) & Q(action__isnull=False))
+    #     for change in changes.values():
+    #         if change['action'] == 'add':
+    #             TimeSlices.objects.filter(changes__id=change['slice']).delete()
+    #         elif change['action'] == 'update':
+    #             pass
+    #         else:
+    #             pass
