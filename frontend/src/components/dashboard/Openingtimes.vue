@@ -128,11 +128,11 @@ export default {
       let self = this;
       await axios
         .get(`${self.$store.state.HOST}/api/dashboard/get_timeslices/`, {
-headers: {
+          headers: {
             Accept: "application/json",
             "Content-type": "application/json",
-            "X-CSRFToken": self.$session.get('token'),
-             Authorization: `Token ${self.$session.get('token')}`,
+            "X-CSRFToken": self.$session.get("token"),
+            Authorization: `Token ${self.$session.get("token")}`
           }
         })
         .then(slices => {
@@ -169,23 +169,28 @@ headers: {
       //http://django.yanickhost.ga:8085/api/dashboard/update_timeslices/
       //http://django.yanickhost.ga:8085/api/dashboard/add_time_slices/
       let body = {
-        day_id: this.day_id,
-        begin_time: this.start,
-        end_time: this.end,
-        slice_id: this.slice_id
+        body: {
+          day_id: this.day_id,
+          begin_time: this.start,
+          end_time: this.end,
+          slice_id: this.slice_id
+        }
       };
 
       let self = this;
       axios
-        .put(`${self.$store.state.HOST}/api/dashboard/update_timeslices/`, {
-          body: body,
-headers: {
-            Accept: "application/json",
-            "Content-type": "application/json",
-            "X-CSRFToken": self.$session.get('token'),
-             Authorization: `Token ${self.$session.get('token')}`,
+        .put(
+          `${self.$store.state.HOST}/api/dashboard/update_timeslices/`,
+          body,
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-type": "application/json",
+              "X-CSRFToken": self.$session.get("token"),
+              Authorization: `Token ${self.$session.get("token")}`
+            }
           }
-        })
+        )
         .then(res => {
           //Perform Success Action
           console.log(res.status);
@@ -206,18 +211,18 @@ headers: {
         });
     },
     deleteSlot(slice_id, day_id) {
-      let self = this
+      let self = this;
       axios
         .delete(`${self.$store.state.HOST}/api/dashboard/remove_timeslices/`, {
           params: {
             slice_id: slice_id,
             day_id: day_id
           },
-headers: {
+          headers: {
             Accept: "application/json",
             "Content-type": "application/json",
-            "X-CSRFToken": self.$session.get('token'),
-             Authorization: `Token ${self.$session.get('token')}`,
+            "X-CSRFToken": self.$session.get("token"),
+            Authorization: `Token ${self.$session.get("token")}`
           }
         })
         .then(res => {

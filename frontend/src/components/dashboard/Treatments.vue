@@ -116,13 +116,12 @@ headers: {
       let body = {
         body: {
           name: treatment,
-          price: price,
+          price: price
         }
       };
       axios
         .put(`${self.$store.state.HOST}/api/dashboard/update_treatments/`, body,{
-          
-          headers: {
+headers: {
             Accept: "application/json",
             "Content-type": "application/json",
             "X-CSRFToken": self.$session.get('token'),
