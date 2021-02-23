@@ -22,6 +22,7 @@ Vue.use(VueSession,{persist: true})
 Axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 Axios.defaults.xsrfCookieName = "XCSRF-TOKEN";
 Axios.defaults.withCredentials = true;
+Axios.defaults.baseURL = 'http://django.yanickhost.ga:8085/api/'
 
 Vue.prototype.$axios = Axios;
 

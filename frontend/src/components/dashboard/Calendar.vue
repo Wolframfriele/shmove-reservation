@@ -61,10 +61,10 @@
             :event-color="getEventColor"
             :type="type"
             :event-overlap-mode="mode"
-            @click:event="showEvent"
+            @click:event="showModal"
             @click:more="viewDay"
             @click:date="viewDay"
-            @change="getFreePlaces"
+            @change="updateRange"
             :weekdays="weekdays"
           >
             <!-- This piece of code adds the vacation button =) -->
@@ -93,121 +93,9 @@
         </v-sheet>
       </v-col>
     </v-row>
-    <v-dialog
-      v-model="planVacationModal"
-      width="500"
-      height="250"
-      hide-overlay
-      offset-x
-    >
-      <v-card color="grey lighten-4" min-width="350px" flat>
-        <v-toolbar color="indigo lighten-1" dark>
-          <v-toolbar-title>Plan een vakantie</v-toolbar-title>
-          <v-spacer></v-spacer>
-        </v-toolbar>
-        <form @submit.prevent="addVacation">
-          <div class="margin top15">
-            <v-text-field
-              :counter="150"
-              label="Vakantie naam"
-              dense
-              v-model="vacationTitle"
-              prepend-icon="mdi-form-textbox"
-            ></v-text-field>
-          </div>
-          <div class="margin">
-            <v-menu
-              ref="menuOne"
-              v-model="menuOne"
-              :close-on-content-click="false"
-              :return-value.sync="vacationStartDate"
-              transition="scale-transition"
-              offset-y
-              min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="vacationStartDate"
-                  label="Start dag"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="vacationStartDate"
-                no-title
-                scrollable
-                :min="vacationStartDate"
-                :max="vacationEndDate"
-              >
-                <v-spacer></v-spacer>
-                <v-btn text color="primary" @click="menuOne = false">
-                  Cancel
-                </v-btn>
-                <v-btn
-                  text
-                  color="primary"
-                  @click="$refs.menuOne.save(vacationStartDate)"
-                >
-                  OK
-                </v-btn>
-              </v-date-picker>
-            </v-menu>
-          </div>
-          <div class="margin">
-            <v-menu
-              ref="menuTwo"
-              v-model="menuTwo"
-              :close-on-content-click="false"
-              :return-value.sync="vacationEndDate"
-              transition="scale-transition"
-              offset-y
-              min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="vacationEndDate"
-                  label="Eind dag"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="vacationEndDate"
-                no-title
-                scrollable
-                :min="vacationStartDate"
-              >
-                <v-spacer></v-spacer>
-                <v-btn text color="primary" @click="menuTwo = false">
-                  Cancel
-                </v-btn>
-                <v-btn
-                  text
-                  color="primary"
-                  @click="$refs.menuTwo.save(vacationEndDate)"
-                >
-                  OK
-                </v-btn>
-              </v-date-picker>
-            </v-menu>
-          </div>
-          <v-card-actions>
-            <v-btn text color="secondary" @click="planVacationModal = false">
-              Terug
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-btn text color="orange lighten-2" type="submit">
-              Plannen
-            </v-btn>
-          </v-card-actions>
-        </form>
-      </v-card>
-    </v-dialog>
+
+    <!-- Modals -->
+    <!-- Toon Afspraak Modal-->
     <v-dialog
       v-model="showEventModal"
       width="500"
@@ -215,112 +103,12 @@
       hide-overlay
       offset-x
     >
-      <v-card
-        color="grey lighten-4"
-        min-width="350px"
-        flat
-        :id="appointmentInfos.length > 0 ? appointment.done : null"
-      >
-        <v-toolbar :color="selectedEvent.color" dark>
-          <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-btn v-if="showBewerkEventModal != true" @click="bewerkAfspraak">Bewerken</v-btn>
-        </v-toolbar>
-        <div v-if="showBewerkEventModal != true">
-          <v-card-text v-if="$store.state.dashboard.appointmentDataArr != 0">
-            <br />
-            <label for="cstartTime">Begintijd: </label>
-            <span id="cstartTime">{{ convertTime(selectedEvent.start) }}</span
-            ><br />
-            <label for="cendtime">Eindtijd: </label>
-            <span id="cendtime">{{ convertTime(selectedEvent.end) }}</span
-            ><br />
-            <br />
-            <div v-if="customer.first_name" class="appointmentInfo">
-              <div class="box1">
-                <label for="firstname">Voornaam: </label>
-              </div>
-              <div class="box2">
-                <span id="firstname">{{ customer.first_name }}</span>
-              </div>
-              <br />
-            </div>
-            <div v-if="customer.last_name" class="appointmentInfo">
-              <div class="box1">
-                <label for="lastname">Achternaam: </label>
-              </div>
-              <div class="box2">
-                <span id="lastname">{{ customer.last_name }}</span>
-              </div>
-              <br />
-            </div>
-            <div v-if="customer.email" class="appointmentInfo">
-              <div class="box1">
-                <label for="email">Email: </label>
-              </div>
-              <div class="box2">
-                <span id="email">{{ customer.email }}</span>
-              </div>
-              <br />
-            </div>
-            <div v-if="customer.phone_number" class="appointmentInfo">
-              <div class="box1">
-                <label for="phone">Telefoon: </label>
-              </div>
-              <div class="box2">
-                <span id="phone">{{ customer.phone_number }}</span>
-              </div>
-              <br />
-            </div>
-            <div v-if="treatments.treatment" class="appointmentInfo">
-              <div class="box1">
-                <label for="treatments">Behandelingen: </label>
-              </div>
-              <div class="box2">
-                <span id="treatments">{{ treatments.treatment }}</span>
-              </div>
-              <br />
-            </div>
-            <div v-if="appointment.reason" class="appointmentInfo">
-              <div class="box1">
-                <label for="comments">Opmerkingen: </label>
-              </div>
-              <div class="box2">
-                <span id="comments">{{ appointment.reason }} </span>
-              </div>
-              <br />
-            </div>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn text color="secondary" @click="showEventModal = false">
-              Terug
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-btn text color="red" @click="cancelAppointment(appointment.id)">
-              Annuleren
-            </v-btn>
-          </v-card-actions>
-        </div>
-        <div v-if="showBewerkEventModal == true">
-          <v-card-text>
-            <label>Kies behandeling(en)</label>
-            <v-select
-              id="picktreatments"
-              v-model="select"
-              :items="allTreatments"
-              outlined
-              dense
-              :menu-props="{ top: false, offsetY: true }"
-              ></v-select>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn text color="secondary" @click="showEventModal = false">Terug</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn @click="saveEvent">Opslaan</v-btn>
-          </v-card-actions>
-        </div>
-      </v-card>
+      <ExistingAppointmentModal 
+        v-bind:selectedEvent="selectedEvent"
+        @closeAppointmentModal="showEventModal = false"
+      />
     </v-dialog>
+    <!-- Maak Afspraak Modal -->
     <v-dialog
       v-model="createEventModal"
       width="500"
@@ -328,106 +116,37 @@
       hide-overlay
       offset-x
     >
-      <v-card>
-        <v-toolbar dark color="indigo lighten-1">
-          <v-card-title>
-            <span class="headline">Maak een afspraak</span>
-          </v-card-title>
-        </v-toolbar>
-        <v-card-text>
-          <br />
-          <form @submit.prevent="sendToBackEnd">
-            <div class="times">
-              <div class="timea">
-                <label for="startTime">Begintijd: </label>
-                <span id="startTime">{{
-                  convertTime(this.selectedEvent.start)
-                }}</span>
-              </div>
-              <div class="timeb">
-                <label for="endtime">Eindtijd: </label>
-                <span id="endtime">{{
-                  convertTime(this.selectedEvent.end)
-                }}</span>
-              </div>
-            </div>
-            <br />
-            <label>Kies behandeling(en)</label>
-<!--            <v-select-->
-<!--              id="picktreatments"-->
-<!--              v-model="select"-->
-<!--              :items="allTreatments"-->
-<!--              outlined-->
-<!--              dense-->
-<!--              :menu-props="{ top: false, offsetY: true }"-->
-<!--            >-->
-<!--            </v-select>-->
-            <v-radio-group
-            v-model="select"
-            row
-          >
-            <v-radio v-for="a in allTreatments" :key="a.id"
-              :label="a.treatment"
-              :value="a.treatment"
-            ></v-radio>
-          </v-radio-group>
-            <div class="container">
-              <v-col cols="12" md="12" class="nopadding">
-                <v-text-field
-                  label="Voornaam"
-                  required
-                  dense
-                  v-model="firstname"
-                ></v-text-field>
-              </v-col>
-
-              <v-col cols="12" md="12" class="nopadding">
-                <v-text-field
-                  label="Achternaam"
-                  dense
-                  v-model="lastname"
-                ></v-text-field>
-              </v-col>
-
-              <v-col cols="12" md="12" class="nopadding">
-                <v-text-field
-                  label="E-mail"
-                  dense
-                  v-model="email"
-                ></v-text-field>
-              </v-col>
-
-              <v-col cols="12" md="12" class="nopadding">
-                <v-text-field
-                  label="Telefoonnummer"
-                  dense
-                  v-model="phonenumber"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="12" class="nopadding">
-                <v-textarea
-                  v-model="reason"
-                  name="reden"
-                  label="Reden voor de behandeling"
-                  value="Beschrijf de situatie van de klant"
-                ></v-textarea>
-              </v-col>
-            </div>
-            <v-btn type="submit" color="accent" elevation="2" block
-              >Voeg afspraak toe
-            </v-btn>
-          </form>
-        </v-card-text>
-      </v-card>
+      <NewAppointmentModal 
+        v-bind:selectedEvent="selectedEvent"
+      />
+    </v-dialog>
+    <!-- Plan Vakantie Modal -->
+    <v-dialog
+      v-model="planVacationModal"
+      width="500"
+      height="250"
+      hide-overlay
+      offset-x
+    >
+      <PlanVacationModal 
+        v-bind:vacationStartDate="vacationStartDate"
+        @closeVacationModal="planVacationModal = false"
+      />
     </v-dialog>
   </div>
 </template>
+
 <script>
-import { mapGetters } from "vuex";
 import axios from "axios";
+import ExistingAppointmentModal from "../../components/dashboard/ExistingAppointmentModal";
+import NewAppointmentModal from "../../components/dashboard/NewAppointmentModal";
+import PlanVacationModal from "../../components/dashboard/PlanVacationModal";
+import repeatedFunctions from "../../mixins/repeatedFunctions";
 
 export default {
+  mixins: [repeatedFunctions],
   data: () => ({
+    // Calendar Data
     focus: "",
     type: "week",
     typeToLabel: {
@@ -442,327 +161,118 @@ export default {
     intervalcount: "13",
     locale: "nl",
     events: [],
-    select: "",
-    allTreatments: [],
-    eventColor: ["primary", "red lighten-1", "grey lighten-1"],
-    selectedEvent: {},
-    selectedElement: null,
-    selectedOpen: false,
+    // Open Modals
     createEventModal: false,
     showEventModal: false,
     showBewerkEventModal: false,
     planVacationModal: false,
-    vacationTitle: "",
+
     vacationStartDate: "",
-    vacationEndDate: "",
-    tms: "",
+    // Appointment Data 
+    select: "",    
+    eventColor: ["primary", "red lighten-1", "grey lighten-1"],
+    selectedEvent: {},
+    // Functions
     starttime: "",
     endtime: "",
     success: "",
-    firstname: "",
-    lastname: "",
-    email: "",
-    phonenumber: "",
-    reason: "",
-    error: "",
-    menuOne: "",
-    menuTwo: ""
   }),
-
-  computed: {
-    ...mapGetters({
-      appointmentInfos: "dashboard/getAppointments"
-    }),
-    customer: function() {
-      let customerData = null;
-      if (this.appointmentInfos.length > 0) {
-        customerData = JSON.parse(this.appointmentInfos[0].customer)[0].fields;
-      }
-      return customerData;
-    },
-    appointment: function() {
-      let appointmentData = null;
-      if (this.appointmentInfos.length > 0) {
-        appointmentData = JSON.parse(this.appointmentInfos[0].appointment)[0]
-          .fields;
-      }
-      return appointmentData;
-    },
-    timeSlice: function() {
-      let tsData = null;
-      if (this.appointmentInfos.length > 0) {
-        tsData = JSON.parse(this.appointmentInfos[0].time_slice)[0].fields;
-      }
-      return tsData;
-    },
-    treatments: function() {
-      let treatmentData = null;
-      if (this.appointmentInfos.length > 0) {
-        treatmentData = JSON.parse(this.appointmentInfos[0].treatment)[0]
-          .fields;
-      }
-      return treatmentData;
-    }
+  components: {
+    ExistingAppointmentModal,
+    NewAppointmentModal,
+    PlanVacationModal,    
   },
-
-  created() {
-    this.getData();
-  },
-
-  mounted() {
-    // this.$refs.calendar.checkChange();
-  },
-
-  methods: {
-    sendToBackEnd() {
-      const start = this.parseDate(this.selectedEvent.start);
-      const end = this.parseDate(this.selectedEvent.end);
-      let body = {
-        body: {
-          date_booked_start: start,
-          date_booked_end: end,
-          // treatment: this.treatment,
-          treatment: this.select,
-          reason: this.reason,
-          first_name: this.firstname,
-          last_name: this.lastname,
-          email: this.email,
-          phone_number: this.phonenumber
-        }
-      };
-      let self = this;
-      axios
-        .post(
-          `${self.$store.state.HOST}/api/dash_appointments/new_appointment/`, body ,
-          {
-            headers: {
-              Accept: "application/json",
-              "Content-type": "application/json",
-              "X-CSRFToken": self.$session.get("token"),
-              Authorization: `Token ${self.$session.get("token")}`
-            }
-          }
-        )
-        .then(res => {
-          //Perform Success Action
-          console.log(res.data);
-          this.createEventModal = false;
-          // this.getAllEvents();
-          window.location.reload();
-        })
-        .catch(error => {
-          console.log(error);
-        })
-        .finally(() => {
-          //Perform action in always
-        });
-    },
+  methods: {    
     viewDay({ date }) {
       this.focus = date;
-      this.type = "day";
     },
-    parseDate(date) {
-      return new Date(date).toLocaleString("en-GB");
-    },
-    setToday() {
-      this.focus = "";
-    },
-    prev() {
-      this.$refs.calendar.prev();
-    },
-    next() {
-      this.$refs.calendar.next();
-    },
-    getFreePlaces({ start, end }) {
+    updateRange({ start, end }) {
       this.getAllEvents(start.date, end.date);
     },
-    async getData() {
-      let self = this;
-      await axios
-        .get(`${self.$store.state.HOST}/api/dashboard/get_treatments/`, {
-          headers: {
-            Accept: "application/json",
-            "Content-type": "application/json",
-            "X-CSRFToken": self.$session.get("token"),
-            Authorization: `Token ${self.$session.get("token")}`
-          }
-        })
-        .then(res => {
-          res.data.forEach(element => {
-            self.allTreatments.push({
-              treatment: element.treatment
-            })
-          });
-        });
-    },
-    async getAllEvents(start, end) {
-      let self = this;
-      console.log(end);
-      await axios
-        .get(
-          `${self.$store.state.HOST}/api/dash_appointments/get_appointments/`,
-          {
-            params: {
-              beginweek: start,
-              endweek: end
-            },
-            headers: {
-              Accept: "application/json",
-              "Content-type": "application/json",
-              "X-CSRFToken": self.$session.get("token"),
-              Authorization: `Token ${self.$session.get("token")}`
-            }
-          }
-        )
-        .then(res => {
-          this.events = [];
-          // console.log(res.data);
-          res.data.forEach(times => {
-            if (times.available && !times.taken) {
-              self.events.push({
-                name: "Vrije afspraak",
-                start: times.start,
-                appointmentId: times.appointment_id,
-                end: times.end,
-                color: self.eventColor[0],
-                timed: true
-              });
-            } else if (!times.available && !times.taken) {
-              self.events.push({
-                name: "Niet beschikbaar",
-                start: times.start,
-                appointmentId: times.appointment_id,
-                end: times.end,
-                color: self.eventColor[2]
-                // timed: true,
-              });
-            } else {
-              self.events.push({
-                name: "Bezet",
-                start: times.start,
-                appointmentId: times.appointment_id,
-                end: times.end,
-                color: self.eventColor[1],
-                timed: true
-              });
-            }
-          });
-        })
-        .catch(e => {
-          console.log(e);
-        });
-    },
-    async getAppointmentInfo(appointmentID) {
-      let self = this;
-      await axios
-        .get(
-          `${self.$store.state.HOST}/api/dash_appointments/get_appointment_data/`,
-          {
-            params: {
-              appointment_id: appointmentID
-            },
-            headers: {
-              Accept: "application/json",
-              "Content-type": "application/json",
-              "X-CSRFToken": self.$session.get("token"),
-              Authorization: `Token ${self.$session.get("token")}`
-            }
-          }
-        )
-        .then(res => {
-          // console.log(res.data);
-
-          self.$store.getters["dashboard/setAppointments"](res.data);
-        })
-        .catch(e => {
-          console.log(e);
-        });
-    },
-    cancelAppointment(appointmentID) {
-      let self = this;
-      let body = {
-        body: {
-        appointmentID : appointmentID
-        }
-      }
-      axios.post(
-        `${self.$store.state.HOST}/api/dash_appointments/cancel_appointment/`, body,
+    getAllEvents(start, end) {
+    axios
+      .get(
+        'dash_appointments/get_appointments/',
         {
+          params: {
+            beginweek: start,
+            endweek: end
+          },
           headers: {
             Accept: "application/json",
             "Content-type": "application/json",
-            "X-CSRFToken": self.$session.get("token"),
-            Authorization: `Token ${self.$session.get("token")}`
+            "X-CSRFToken": this.$session.get("token"),
+            Authorization: `Token ${this.$session.get("token")}`
           }
         }
-      );
+      )
+      .then(res => {
+        this.events = [];
+        res.data.forEach(times => {
+          if (times.available && !times.taken) {
+            this.events.push({
+              name: "Vrije afspraak",
+              start: times.start,
+              appointment_id: times.appointment_id,
+              end: times.end,
+              color: this.eventColor[0],
+              timed: true
+            });
+          } else if (!times.available && !times.taken) {
+            this.events.push({
+              name: "Niet beschikbaar",
+              start: times.start,
+              appointment_id: times.appointment_id,
+              end: times.end,
+              color: this.eventColor[2]
+            });
+          } else {
+            this.events.push({
+              name: times.first_name + " " + times.last_name,
+              start: times.start,
+              appointment_id: times.appointment_id,
+              end: times.end,
+              color: this.eventColor[1],
+              timed: true,
+              treatment: times.treatment
+            });
+          }
+        });
+      })
+      .catch(e => {
+        console.log(e);
+      });
     },
     showVacationPlanner({ date }) {
-      this.vacationEndDate = "";
+      // Clear Dates
       this.vacationStartDate = "";
+      this.vacationEndDate = "";
+      // Set Dates
       this.vacationStartDate = date;
+      // console.log(this.vacationStartDate)
       this.planVacationModal = true;
-    },
-    addVacation() {
-      const start = this.vacationStartDate;
-      const end = this.vacationEndDate;
-      const title = this.vacationTitle;
-      let self = this;
-      let body = {
-        body: {
-          name: title,
-          start_date: start,
-          end_date: end
-        }
-      };
-      axios
-        .post(`${self.$store.state.HOST}/api/dash_appointments/set_vacation/`, body ,{
-          headers: {
-            Accept: "application/json",
-            "Content-type": "application/json",
-            "X-CSRFToken": self.$session.get("token"),
-            Authorization: `Token ${self.$session.get("token")}`
-          },
-        })
-        .then(res => {
-          //Perform Success Action
-          console.log(res.data);
-          // window.location.reload();
-          window.location.reload();
-        })
-        .catch(error => {
-          console.log(error);
-        })
-        .finally(() => {
-          //Perform action in always
-        });
-    },
-    bewerkAfspraak() {
-      this.showBewerkEventModal = !this.showBewerkEventModal
-    },
-    saveEvent() {
-      console.log(this.allTreatments)
-      this.showBewerkEventModal = !this.showBewerkEventModal
-    },
-    showEvent({ nativeEvent, event }) {
-      let self = this;
-      this.selectedEvent = event;
-      this.selectedElement = nativeEvent.target;
-      this.starttime = new Date(this.selectedEvent.start);
-      this.endtime = new Date(this.selectedEvent.end);
-      let startHours = this.starttime.getHours().toString();
-      let startMinutes = this.starttime.getMinutes().toString();
-      let endHours = this.endtime.getHours().toString();
-      let endMinutes = this.endtime.getMinutes().toString();
+    },    
+    showModal({ event }) {
+      // console.log(event)
+      this.selectedEvent = event
+      // console.log(event)
+      // this.selectedElement = nativeEvent.target;
+      // console.log(this.selectedElement)
+      // this.starttime = new Date(this.selectedEvent.start);
+      // this.endtime = new Date(this.selectedEvent.end);
 
-      this.starttime =
-        startHours.padStart(2, "0") + ":" + startMinutes.padStart(2, "0");
-      this.endtime =
-        endHours.padStart(2, "0") + ":" + endMinutes.padStart(2, "0");
+      // let startHours = this.starttime.getHours().toString();
+      // let startMinutes = this.starttime.getMinutes().toString();
+      // let endHours = this.endtime.getHours().toString();
+      // let endMinutes = this.endtime.getMinutes().toString();
 
-      if (this.selectedEvent.color == self.eventColor[1]) {
-        // console.log(event)
-        self.getAppointmentInfo(event.appointmentId);
+      // this.starttime =
+      //   startHours.padStart(2, "0") + ":" + startMinutes.padStart(2, "0");
+      // this.endtime =
+      //   endHours.padStart(2, "0") + ":" + endMinutes.padStart(2, "0");
+
+      if (event.color == this.eventColor[1]) {
+        // this.getAppointmentInfo(event.appointmentId);
         if (this.showEventModal == false) {
           setTimeout(() => {
             this.showEventModal = true;
@@ -770,101 +280,10 @@ export default {
         } else {
           this.showEventModal = false;
         }
-      } else if (this.selectedEvent.color == self.eventColor[0]) {
+      } else if (event.color == this.eventColor[0]) {
         this.createEventModal = true;
-      } else {
-        console.log("wow");
       }
     },
-    getEventColor(event) {
-      return event.color;
-    },
-    rnd(a, b) {
-      return Math.floor((b - a + 1) * Math.random()) + a;
-    },
-    // calculateDuration(endtime) {
-    //   this.endtime = endtime;
-    //   let sum = 0;
-    //   for (let i = 0; i < this.select.length; i++) {
-    //     sum += parseFloat(this.select[i]);
-    //   }
-    //   let [hours, minutes] = this.starttime.split(":");
-    //   hours = parseInt(hours);
-    //   minutes = parseInt(minutes);
-    //   minutes += sum;
-    //   this.endtime = hours * 60 + minutes; // Convert hours and minutes to time in minutes
-    //   let rounded = Math.round(this.endtime / 15) * 15;
-    //   let rHr = "" + Math.floor(rounded / 60);
-    //   let rMin = "" + (rounded % 60);
-    //   this.endtime = rHr.padStart(2, "0") + ":" + rMin.padStart(2, "0");
-    // },
-    convertTime(date) {
-      const days = [
-        "zondag",
-        "maandag",
-        "dinsdag",
-        "woensdag",
-        "donderdag",
-        "vrijdag",
-        "zaterdag"
-      ];
-      const months = [
-        "januari",
-        "februari",
-        "maart",
-        "april",
-        "mei",
-        "juni",
-        "juli",
-        "augustus",
-        "september",
-        "oktober",
-        "november",
-        "december"
-      ];
-      const reserverings_tijd = new Date(date);
-
-      const dayIndex = reserverings_tijd.getDay();
-      const day = days[dayIndex];
-      const monthIndex = reserverings_tijd.getMonth();
-      const number = reserverings_tijd.getDate();
-      const month = months[monthIndex];
-      const hours = reserverings_tijd.getHours().toString();
-      const minutes = reserverings_tijd.getMinutes().toString();
-
-      return `${day} ${number} ${month} om ${hours.padStart(
-        2,
-        "0"
-      )}:${minutes.padStart(2, "0")}`;
-    }
-    // createEvent(tms) {
-    //   if (this.createEventModal == false) {
-    //     this.tms = tms
-    //     //Starttime minutes
-    //     let [hours, minutes] = this.tms.time.split(':');
-    //     hours = parseInt(hours);
-    //     minutes = parseInt(minutes);
-    //     this.tms.time = (hours * 60) + minutes;     // Convert hours and minutes to time in minutes
-    //     let rounded = Math.round(this.tms.time / 15) * 15;
-    //     let rHr = '' + Math.floor(rounded / 60)
-    //     let rMin = '' + rounded % 60
-    //     this.starttime = rHr.padStart(2, '0') + ':' + rMin.padStart(2, '0')
-    //     this.endtime = this.starttime;
-    //     //Endtime minutes
-    //     let [endHours, endMinutes] = this.endtime.split(':');
-    //     endHours = parseInt(endHours);
-    //     endMinutes = parseInt(endMinutes);
-    //     endMinutes += 30;
-    //     this.endtime = (endHours * 60) + endMinutes;
-    //     let endRounded = Math.round(this.endtime / 15) * 15;
-    //     let endrHr = '' + Math.floor(endRounded / 60)
-    //     let endrMin = '' + endRounded % 60
-    //     this.endtime = endrHr.padStart(2, '0') + ':' + endrMin.padStart(2, '0')
-    //     this.createEventModal = true
-    //   } else {
-    //     this.createEventModal = false;
-    //   }
-    // },
   }
 };
 </script>
@@ -906,7 +325,7 @@ form .container .nopadding {
   justify-content: space-between;
 }
 
-/** Stuff for vacation planning **/
+/** Add Vacation Button Styling **/
 .vacationContainer {
   position: absolute;
   width: 100%;
@@ -925,15 +344,7 @@ form .container .nopadding {
   margin-bottom: 0px !important;
 }
 
-.appointmentInfo {
-  display: flex;
-  justify-content: space-between;
-}
 
-.box1,
-.box2 {
-  width: 50%;
-}
 
 /* Bewerk Afspraak */
 

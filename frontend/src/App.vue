@@ -14,9 +14,6 @@ export default {
   data: () => ({
     //
   }),
-  created() {
-    // this.generateWeekDates()
-  },
   methods: {
     scrollTopAnimation() {
       let scrollValue = document.documentElement.scrollTop;
@@ -24,25 +21,7 @@ export default {
         document.documentElement.scrollTop--;
       }
     },
-
-    async generateWeekDates() {
-      let self = this;
-      await axios
-        .post(
-          `${self.$store.state.HOST}/api/dashboard/generate_week_dates/`,
-          {
-headers: {
-            Accept: "application/json",
-            "Content-type": "application/json",
-            "X-CSRFToken": self.$session.get('token'),
-            Authorization: `Token ${self.$session.get('token')}`,
-          }
-          }
-        )
-        .then(res => {
-          console.log(res.data);
-        });
-    },
+    
   }
 };
 </script>
