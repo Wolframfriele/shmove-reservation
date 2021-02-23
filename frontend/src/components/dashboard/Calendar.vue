@@ -249,11 +249,9 @@ export default {
       this.vacationEndDate = "";
       // Set Dates
       this.vacationStartDate = date;
-      // console.log(this.vacationStartDate)
       this.planVacationModal = true;
     },    
     showModal({ event }) {
-      // console.log(event)
       this.selectedEvent = event
       // console.log(event)
       // this.selectedElement = nativeEvent.target;

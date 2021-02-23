@@ -138,7 +138,7 @@
       <v-card-actions>
         <v-btn text color="secondary" @click="closeModal">Terug</v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="red" @click="cancelAppointment">Verwijder Afspraak</v-btn>
+        <v-btn color="red" @click="cancelAppointment(selectedEvent.appointment_id)">Verwijder Afspraak</v-btn>
       </v-card-actions>
       
     </div>
@@ -230,29 +230,66 @@ export default {
       this.showBewerkEventModal = false
     },
     cancelAppointment(appointmentID) {
-      let self = this;
-      let body = {
-        body: {
-        appointmentID : appointmentID
-        }
-      }
       axios.post(
-        'dash_appointments/cancel_appointment/', body,
+        'dash_appointments/cancel_appointment/',
         {
+          body: {
+              appointment_id: appointmentID
+            },
           headers: {
             Accept: "application/json",
             "Content-type": "application/json",
-            "X-CSRFToken": self.$session.get("token"),
-            Authorization: `Token ${self.$session.get("token")}`
+            "X-CSRFToken": this.$session.get("token"),
+            Authorization: `Token ${this.$session.get("token")}`
           }
+        })
+      .then(res => {
+        if (res == 'Success') {
+          console.log("Delete Succesfull")
         }
-      );
+        this.$emit('closeAppointmentModal', true)
+        this.showBewerkEventModal = false   
+      })
+      .catch(e => {
+          console.log(e);
+      });
     },
     bewerkAfspraak() {
       this.showBewerkEventModal = !this.showBewerkEventModal
     },
     saveEvent() {
-      this.showBewerkEventModal = !this.showBewerkEventModal
+      axios.post(
+        'dash_appointments/change_appointment/',
+        {
+          body: {
+              appointment_id: this.selectedEvent.appointment_id,
+              date: this.appointmentDate,
+              begin_time: this.appointmentStart,
+              end_time: this.appointmentEnd,
+              treatment: this.treatment,
+              credentials: this.credentials,
+              first_name: this.firstName,
+              last_name: this.lastName,
+              email: this.email,
+              phone_number: this.phoneNumber,
+              reason: this.reason
+            },
+          headers: {
+            Accept: "application/json",
+            "Content-type": "application/json",
+            "X-CSRFToken": this.$session.get("token"),
+            Authorization: `Token ${this.$session.get("token")}`
+          }
+        })
+      .then(res => {
+        if (res == 'Success') {
+          console.log("Changed Succesfull")
+        }
+        this.showBewerkEventModal = !this.showBewerkEventModal
+      })
+      .catch(e => {
+          console.log(e);
+      });
     },
   }
 }
