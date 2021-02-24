@@ -39,9 +39,9 @@ export default {
         icon: "mdi-calendar",
         content: "Calendar" },
       {
-        title: "Behandelingen",
-        icon: "mdi-basket-plus",
-        content: "Treatments"
+        title: "Vakanties",
+        icon: "mdi-white-balance-sunny",
+        content: "Holidays"
       },
       {
         title: "Openingstijden",
@@ -49,10 +49,10 @@ export default {
         content: "OpeningTimes"
       },
       {
-        title: "Vakanties",
-        icon: "mdi-white-balance-sunny",
-        content: "Holidays"
-      },
+        title: "Behandelingen",
+        icon: "mdi-basket-plus",
+        content: "Treatments"
+      },      
       // {
       //   title: "Instellingen",
       //   icon: "mdi-cog-outline",
