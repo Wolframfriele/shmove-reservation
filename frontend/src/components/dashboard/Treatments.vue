@@ -48,7 +48,7 @@
         </form>
       </v-col>
     </v-row>
-    <v-btn class="mx-2 plus" fab dark color="indigo" @click="addTreatment">
+    <v-btn class="mx-2 plus" fab dark color="blue" @click="addTreatment">
       <v-icon dark>
         mdi-plus
       </v-icon>
@@ -88,17 +88,16 @@ export default {
       });
     },
     deleteTreatment(id) {
-      let self = this;
       axios
-        .delete(`${this.$store.state.HOST}/api/dashboard/delete_treatments/`, {
+        .delete('dashboard/delete_treatments/', {
           params: {
             id: id
           },
-headers: {
+          headers: {
             Accept: "application/json",
             "Content-type": "application/json",
-            "X-CSRFToken": self.$session.get('token'),
-             Authorization: `Token ${self.$session.get('token')}`,
+            "X-CSRFToken": this.$session.get('token'),
+             Authorization: `Token ${this.$session.get('token')}`,
           }
         })
         .then(res => {
@@ -112,7 +111,6 @@ headers: {
 
     },
     saveTreatment(treatment, price){
-      let self = this;
       let body = {
         body: {
           name: treatment,
@@ -120,12 +118,12 @@ headers: {
         }
       };
       axios
-        .put(`${self.$store.state.HOST}/api/dashboard/update_treatments/`, body,{
-headers: {
+        .put('dashboard/update_treatments/', body,{
+        headers: {
             Accept: "application/json",
             "Content-type": "application/json",
-            "X-CSRFToken": self.$session.get('token'),
-             Authorization: `Token ${self.$session.get('token')}`,
+            "X-CSRFToken": this.$session.get('token'),
+             Authorization: `Token ${this.$session.get('token')}`,
           }
         })
         .then(res => {

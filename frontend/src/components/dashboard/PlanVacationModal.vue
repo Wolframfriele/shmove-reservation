@@ -1,10 +1,11 @@
 <template>
   <v-card color="grey lighten-4" min-width="350px" flat>
-    <v-toolbar color="indigo lighten-1" dark>
+    <v-toolbar color="accent" dark>
       <v-toolbar-title>Plan een vakantie</v-toolbar-title>
       <v-spacer></v-spacer>
     </v-toolbar>
     <form @submit.prevent="addVacation">
+      <v-card-text>
       <div class="margin top15">
         <v-text-field
           :counter="150"
@@ -95,12 +96,13 @@
           </v-date-picker>
         </v-menu>
       </div>
+      </v-card-text>
       <v-card-actions>
-        <v-btn text color="secondary" @click="closeModal">
+        <v-btn text color="gray" @click="closeModal">
           Terug
         </v-btn>
         <v-spacer></v-spacer>
-        <v-btn text color="orange lighten-2" type="submit">
+        <v-btn color="primary" type="submit" elevation="2">
           Plannen
         </v-btn>
       </v-card-actions>

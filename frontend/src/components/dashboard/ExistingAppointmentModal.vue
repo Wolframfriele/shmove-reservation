@@ -79,7 +79,7 @@
         </div>
       </v-card-text>
       <v-card-actions>
-        <v-btn text color="secondary" @click="closeModal">
+        <v-btn text color="gray" @click="closeModal">
           Terug
         </v-btn>        
       </v-card-actions>
@@ -136,9 +136,9 @@
         </v-radio-group>
       </v-card-text>
       <v-card-actions>
-        <v-btn text color="secondary" @click="closeModal">Terug</v-btn>
+        <v-btn text color="gray" @click="closeModal">Terug</v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="red" @click="cancelAppointment(selectedEvent.appointment_id)">Verwijder Afspraak</v-btn>
+        <v-btn color="red" @click="cancelAppointment(selectedEvent.appointment_id)" class="white--text">Verwijder Afspraak</v-btn>
       </v-card-actions>
       
     </div>

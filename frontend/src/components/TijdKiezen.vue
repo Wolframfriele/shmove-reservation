@@ -1,5 +1,5 @@
 <template>
-  <v-row class="fill-height">
+  <v-row>
     <v-col>
       <v-sheet height="64">
         <!-- Calendar Toolbar -->
@@ -24,6 +24,13 @@
         </v-toolbar>
       </v-sheet>
       <v-sheet>
+        <v-overlay :absolute="absolute" v-if="loaded == false" opacity="0">
+          <v-progress-circular
+            :size="70"
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+        </v-overlay>
         <v-calendar
           ref="calendar"
           v-model="focus"
@@ -77,7 +84,9 @@ export default {
     locale: "nl",
     eventColor:  ['primary', 'red'],
     treatment: "",
-    events: []
+    events: [],
+    loaded: false,
+    absolute: true
   }),
   created() {
     // Receive Data from treatments
@@ -106,6 +115,7 @@ export default {
     },
     getFreePlaces(beginweek, endweek){
       this.events = []
+      this.loaded = false
       axios.get('appointments/get_appointments_customer/',
       {
       params: {
@@ -123,6 +133,7 @@ export default {
             timed: true
           })
         });
+        this.loaded = true
       }).catch(e => {
         console.log(e)
       })

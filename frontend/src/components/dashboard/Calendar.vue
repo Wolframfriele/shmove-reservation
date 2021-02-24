@@ -50,6 +50,13 @@
           </v-toolbar>
         </v-sheet>
         <v-sheet>
+          <v-overlay :absolute="absolute" v-if="loaded == false" opacity="0">
+            <v-progress-circular
+              indeterminate
+              :size="70"
+              color="primary"
+            ></v-progress-circular>
+          </v-overlay>
           <v-calendar
             ref="calendar"
             v-model="focus"
@@ -118,6 +125,7 @@
     >
       <NewAppointmentModal 
         v-bind:selectedEvent="selectedEvent"
+        @closeNewAppointmentModal="createEventModal = false"
       />
     </v-dialog>
     <!-- Plan Vakantie Modal -->
@@ -147,6 +155,8 @@ export default {
   mixins: [repeatedFunctions],
   data: () => ({
     // Calendar Data
+    loaded: false,
+    absolute: true,
     focus: "",
     type: "week",
     typeToLabel: {
@@ -157,8 +167,8 @@ export default {
     mode: "column",
     weekdays: [1, 2, 3, 4, 5, 6, 0],
     value: "",
-    firstinterval: "7",
-    intervalcount: "13",
+    firstinterval: "9",
+    intervalcount: "12",
     locale: "nl",
     events: [],
     // Open Modals
@@ -170,7 +180,7 @@ export default {
     vacationStartDate: "",
     // Appointment Data 
     select: "",    
-    eventColor: ["primary", "red lighten-1", "grey lighten-1"],
+    eventColor: ["primary", "blue", "grey lighten-1"],
     selectedEvent: {},
     // Functions
     starttime: "",
@@ -190,7 +200,8 @@ export default {
       this.getAllEvents(start.date, end.date);
     },
     getAllEvents(start, end) {
-    axios
+      this.loaded = false
+      axios
       .get(
         'dash_appointments/get_appointments/',
         {
@@ -238,6 +249,7 @@ export default {
             });
           }
         });
+        this.loaded = true
       })
       .catch(e => {
         console.log(e);
@@ -249,36 +261,27 @@ export default {
       this.vacationEndDate = "";
       // Set Dates
       this.vacationStartDate = date;
+      this.showEventModal = false
+      this.createEventModal = false
       this.planVacationModal = true;
     },    
     showModal({ event }) {
       this.selectedEvent = event
-      // console.log(event)
-      // this.selectedElement = nativeEvent.target;
-      // console.log(this.selectedElement)
-      // this.starttime = new Date(this.selectedEvent.start);
-      // this.endtime = new Date(this.selectedEvent.end);
-
-      // let startHours = this.starttime.getHours().toString();
-      // let startMinutes = this.starttime.getMinutes().toString();
-      // let endHours = this.endtime.getHours().toString();
-      // let endMinutes = this.endtime.getMinutes().toString();
-
-      // this.starttime =
-      //   startHours.padStart(2, "0") + ":" + startMinutes.padStart(2, "0");
-      // this.endtime =
-      //   endHours.padStart(2, "0") + ":" + endMinutes.padStart(2, "0");
-
       if (event.color == this.eventColor[1]) {
-        // this.getAppointmentInfo(event.appointmentId);
         if (this.showEventModal == false) {
           setTimeout(() => {
+            this.createEventModal = false
+            this.planVacationModal = false
             this.showEventModal = true;
           }, 10);
         } else {
+          this.planVacationModal = false
+          this.createEventModal = false
           this.showEventModal = false;
         }
       } else if (event.color == this.eventColor[0]) {
+        this.planVacationModal = false
+        this.showEventModal = false
         this.createEventModal = true;
       }
     },

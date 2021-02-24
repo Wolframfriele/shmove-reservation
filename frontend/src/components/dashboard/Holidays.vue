@@ -6,7 +6,7 @@
         <v-card>
           <v-card-toolbar>
             <v-card-title>
-              Helaas geen vakantie ingepland.
+              Helaas nog geen vakantie ingepland.
             </v-card-title>
           </v-card-toolbar>     
           <v-card-text>
@@ -41,7 +41,7 @@
           <v-btn
             class="ma-2"
             outlined
-            color="indigo lighten-2"
+            color="blue"
             @click="updateVacation(days.id, days.name, days.start_date, days.end_date)"
           >
             Aanpassen
