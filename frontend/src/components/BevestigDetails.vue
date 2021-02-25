@@ -3,9 +3,9 @@
     <p>
       Er is om {{ this.$route.params.time }} voor je gereserveerd! Je hebt ook een bevestigings mail ontvangen. Hier staat meer informatie over annuleren in.
     </p>
-    <v-btn color="secondary" elevation="2" large>Voeg toe aan agenda</v-btn>
+    <!-- <v-btn color="secondary" elevation="2" large>Voeg toe aan agenda</v-btn> -->
     <p>
-      Vanwege covid-19 zijn er nog een aantal dingen om rekening mee te houden.
+      IN-KI Shiatsu Delft werkt in Corona tijd volgens de richtlijnen van het RIVM.
     </p>
   </div>
 </template>

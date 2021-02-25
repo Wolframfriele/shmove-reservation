@@ -2,6 +2,19 @@
   <v-container class="holidayContainer">
     <h1>Geplande vakanties</h1>
     <v-container class="plannedHolidays">
+      <div v-if="planneddays.length == 0">
+        <v-card>
+          <v-card-toolbar>
+            <v-card-title>
+              Helaas nog geen vakantie ingepland.
+            </v-card-title>
+          </v-card-toolbar>     
+          <v-card-text>
+            <v-icon color="orange lighten-2">mdi-white-balance-sunny</v-icon>
+            Tijd om snel wat te plannen! Gebruik daarvoor de zonnentjes in de kalender.
+          </v-card-text>
+        </v-card>
+      </div>
       <div v-for="(days, i) in planneddays" :key="i">
         <div class="plannedHolidayContainer">
           <v-text-field
@@ -28,7 +41,7 @@
           <v-btn
             class="ma-2"
             outlined
-            color="indigo lighten-2"
+            color="blue"
             @click="updateVacation(days.id, days.name, days.start_date, days.end_date)"
           >
             Aanpassen
@@ -62,6 +75,7 @@ export default {
   }),
   created() {
     this.getVacations();
+    console.log(this.planneddays)
   },
   methods: {
     async getVacations() {

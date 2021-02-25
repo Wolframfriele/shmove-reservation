@@ -3,11 +3,6 @@
     <h1 class="display-1">Afspraak Maken:</h1>
     <TypeAfspraak class="type" />
     <TijdKiezen class="calendar" />
-    <!-- <div class="text-center">
-      <v-icon color="primary">mdi-circle</v-icon>
-      <v-icon color="grey">mdi-circle-slice-8</v-icon>
-      <v-icon color="grey">mdi-circle-slice-8</v-icon>
-    </div> -->
   </div>
 </template>
 

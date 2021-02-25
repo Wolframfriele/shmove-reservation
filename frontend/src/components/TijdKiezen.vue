@@ -1,5 +1,5 @@
 <template>
-  <v-row class="fill-height">
+  <v-row>
     <v-col>
       <v-sheet height="64">
         <!-- Calendar Toolbar -->
@@ -24,6 +24,13 @@
         </v-toolbar>
       </v-sheet>
       <v-sheet>
+        <v-overlay :absolute="absolute" v-if="loaded == false" opacity="0">
+          <v-progress-circular
+            :size="70"
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+        </v-overlay>
         <v-calendar
           ref="calendar"
           v-model="focus"
@@ -64,8 +71,10 @@
 <script>
 import { bus } from '../main'
 import axios from "axios";
+import repeatedFunctions from "../mixins/repeatedFunctions";
 
 export default {
+  mixins: [repeatedFunctions],
   data: () => ({
     focus: "",
     type: "week",
@@ -75,7 +84,9 @@ export default {
     locale: "nl",
     eventColor:  ['primary', 'red'],
     treatment: "",
-    events: []
+    events: [],
+    loaded: false,
+    absolute: true
   }),
   created() {
     // Receive Data from treatments
@@ -90,24 +101,6 @@ export default {
     returnID(id) {
       return `#${id}`;
     },
-    log(input) {
-      console.log(input)
-    },
-    setToday() {
-      this.focus = "";
-    },
-    prev() {
-      this.$refs.calendar.prev();
-    },
-    next() {
-      this.$refs.calendar.next();
-    },
-    getEventColor (event) {
-        return event.color
-    },
-    updateRange ({ start, end }) {
-      this.getFreePlaces(start.date, end.date)
-    },
     intervalFormat(interval) {
       return interval.time;
     },
@@ -117,9 +110,13 @@ export default {
       })
       this.$router.push({name: "AfspraakBevestigen", params: {start: event.start, end: event.end, treatment: this.treatment}});
     },
+    updateRange({ start, end }) {
+      this.getFreePlaces(start.date, end.date);
+    },
     getFreePlaces(beginweek, endweek){
       this.events = []
-      axios.get(`${this.$store.state.HOST}/api/appointments/get_appointments_customer/`,
+      this.loaded = false
+      axios.get('appointments/get_appointments_customer/',
       {
       params: {
         beginweek: beginweek,
@@ -136,43 +133,10 @@ export default {
             timed: true
           })
         });
+        this.loaded = true
       }).catch(e => {
         console.log(e)
       })
-    },
-    dateToString: function (input) {
-      const days = [
-        'zondag',
-        'maandag',
-        'dinsdag',
-        'woensdag',
-        'donderdag',
-        'vrijdag',
-        'zaterdag'
-      ];
-      const months = [
-        'januari',
-        'februari',
-        'maart',
-        'april',
-        'mei',
-        'juni',
-        'juli',
-        'augustus',
-        'september',
-        'oktober',
-        'november',
-        'december'
-      ];
-      const datum = new Date(input);
-
-      const dayIndex = datum.getDay();
-      const day = days[dayIndex];
-      const date = datum.getDate();
-      const monthIndex = datum.getMonth();
-      const month = months[monthIndex];
-
-      return `${ day } ${ date } ${ month }`;
     },
   }
 };

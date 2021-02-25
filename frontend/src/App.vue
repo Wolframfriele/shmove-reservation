@@ -14,14 +14,14 @@ export default {
   data: () => ({
     //
   }),
-  created() {},
   methods: {
     scrollTopAnimation() {
       let scrollValue = document.documentElement.scrollTop;
       while (scrollValue > 0) {
         document.documentElement.scrollTop--;
       }
-    }
+    },
+    
   }
 };
 </script>
@@ -30,9 +30,6 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap');
 html,
 body {
-  scroll-behavior: smooth;
-  overflow-x: hidden;
-  overflow-y: hidden;
   width: 100%;
   margin: 0px;
   padding: 0px;

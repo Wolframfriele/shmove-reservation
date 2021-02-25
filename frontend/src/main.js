@@ -12,8 +12,7 @@ import Axios from "axios";
 //Aos imports
 import AOS from "aos";
 import "aos/dist/aos.css";
-// vue session
-import VueSession from 'vue-session'
+import VueSession from "vue-session";
 
 Vue.config.productionTip = false;
 Vue.use(VAnimateCss);
@@ -23,6 +22,7 @@ Vue.use(VueSession,{persist: true})
 Axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 Axios.defaults.xsrfCookieName = "XCSRF-TOKEN";
 Axios.defaults.withCredentials = true;
+Axios.defaults.baseURL = 'http://django.yanickhost.ga:8085/api/'
 
 Vue.prototype.$axios = Axios;
 

@@ -55,7 +55,7 @@
           value="Omschrijf wat voor klachten u heeft, of wat voor andere reden."
         ></v-textarea>
         <p>
-          Uw selectie is <strong>{{ dateToString() }}</strong>. De afspraak duurt ongeveer 2 uur.
+          Uw selectie is <strong>{{ dateToString($route.params.start) }}</strong>. De afspraak duurt ongeveer 2 uur.
         </p>
         <p class="caption">
           Annuleren is kosteloos tot 48 uur van tevoren, daarna wordt de gereserveerde tijd in principe in rekening gebracht. 
@@ -88,6 +88,7 @@
 
 <script>
 import axios from "axios";
+import repeatedFunctions from "../mixins/repeatedFunctions";
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
 import {
   extend,
@@ -124,11 +125,13 @@ extend("email", {
 });
 
 export default {
+  mixins: [repeatedFunctions],
   components: {
     ValidationProvider,
     ValidationObserver
   },
   props: ["date"],
+
   data: () => ({
     firstname: "",
     lastname: "",
@@ -138,51 +141,15 @@ export default {
     reason: '',
     error: "",
   }),
+
+  created(){
+    
+  },
+
   methods: {
-    dateToString: function () {
-      const days = [
-        'zondag',
-        'maandag',
-        'dinsdag',
-        'woensdag',
-        'donderdag',
-        'vrijdag',
-        'zaterdag'
-      ];
-      const months = [
-        'januari',
-        'februari',
-        'maart',
-        'april',
-        'mei',
-        'juni',
-        'juli',
-        'augustus',
-        'september',
-        'oktober',
-        'november',
-        'december'
-      ];
-      const reserverings_tijd = new Date(this.$route.params.start);
-
-      const dayIndex = reserverings_tijd.getDay();
-      const day = days[dayIndex];
-      const date = reserverings_tijd.getDate();
-      const monthIndex = reserverings_tijd.getMonth();
-      const month = months[monthIndex];
-      const hours = reserverings_tijd.getHours();
-      const minutes = reserverings_tijd.getMinutes().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
-
-      return `${ day } ${ date } ${ month } om ${ hours }:${ minutes }`;
-    },
-    parseDate(date){
-      // parse date time to dd/mm/yyy, h:m:s
-      return new Date(date).toLocaleString('en-GB', { timeZone: 'CET' });
-    },
     submit() {
       this.$refs.observer.validate()
-      let self = this
-      axios.post(`${self.$store.state.HOST}/api/appointments/new_appointment/`,
+      axios.post('appointments/new_appointment/',
         {
           body: {
             date_booked_start: this.parseDate(this.$route.params.start),
@@ -198,7 +165,7 @@ export default {
       ).then(res => {
         const error = res.data.error
         if (error == "None") {
-          this.$router.push({name: "AfspraakGeboekt", params: { time: this.dateToString()}})
+          this.$router.push({name: "AfspraakGeboekt", params: { time: this.dateToString(this.$route.params.start)}})
         } else {
           document.getElementById("error-message").style.display = "inline-block"
         }
