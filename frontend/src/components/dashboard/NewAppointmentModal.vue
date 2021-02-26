@@ -1,6 +1,6 @@
 <template>
 <v-card>
-  <v-toolbar dark color="blue">
+  <v-toolbar dark color="teal">
     <v-card-title>
       <span class="headline">Maak een afspraak</span>
     </v-card-title>

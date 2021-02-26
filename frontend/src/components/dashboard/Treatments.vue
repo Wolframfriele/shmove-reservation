@@ -48,7 +48,7 @@
         </form>
       </v-col>
     </v-row>
-    <v-btn class="mx-2 plus" fab dark color="blue" @click="addTreatment">
+    <v-btn class="mx-2 plus" fab dark color="teal" @click="addTreatment">
       <v-icon dark>
         mdi-plus
       </v-icon>

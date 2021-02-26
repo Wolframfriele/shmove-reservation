@@ -16,7 +16,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from django.db.models import Q
 
-from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices, Treatments, Vacations
+from barber.models import Appointments, Credentials, StandardWeek, TimeSlices, Treatments, Vacations
 from barber.serializers import AppointmentSerializer
 
 import smtplib
@@ -261,84 +261,187 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
     @action(methods=['get'], detail=False)
     def get_appointments(self, request):
         # get variables
-        start_date = parse_date(getpost(request, 'beginweek'))
-        date_ = start_date
-        end_date = parse_date(getpost(request, 'endweek'))
-        delta = timedelta(days=1)
+        start_search_date = parse_date(getpost(request, 'beginweek'))
+        end_search_date = parse_date(getpost(request, 'endweek'))
+        search_duration = end_search_date - start_search_date
+        today = date.today()
+        # delta = timedelta(days=1)
+        search_array = []
 
-        date_timeslices = []
-        # get the day of the week
-        weekday = 1
-        today_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f').split()
-        # get today's date
-        today_date = parse_date(today_datetime[0])
-        current_time = parse_time(today_datetime[1])
-        while date_ <= end_date:
-            count = 0
-            # check for changes
-            try:
-                if_changes = Changes.objects.get(date=date_).slice_count
-                slice_count = int(if_changes)
-                slices = TimeSlices.objects.filter(
-                    changes__date=date_).values()
-            except:
-                # get the timeslices from the standardweek using the day value
-                slice_count = StandardWeek.objects.get(pk=weekday).slice_count
-                slices = TimeSlices.objects.filter(
-                    standardweek__pk=weekday).values()
-            # get the amount of appointments made for today to check if there is is still room left
-            for i in slices:
-                appointment_slices = Appointments.objects.filter(
-                    time_slice_id=i['id'], date=date_)
-                if appointment_slices:
-                    count += 1
-            for i in slices:
-                slice_data = TimeSlices.objects.filter(pk=i['id']).values()
-                # the check if there is still room left
-                if count < slice_count and date_ > today_date:
-                    available = 1
-                    # check to see if there is a vacation
-                    try:
-                        vacations = Vacations.objects.filter(
-                            start_date__lte=date_, end_date__gte=date_).values()
-                        if vacations[0]:
-                            available = 0
-                    except:
-                        pass
-                else:
-                    available = 0
-                first_name = ""
-                last_name = ""
-                treatment = ""
-                # get the appointment, if there is one, and get the name and treatment
+        # fill array with dates to be searched in
+        for i in range(search_duration.days + 1):
+            day = start_search_date + timedelta(days=i)
+            search_array.append(day)
+
+        events = []
+
+        # get the vacations
+
+        vacations = Vacations.objects.filter(
+                            start_date__lte=end_search_date, end_date__gte=start_search_date).values()
+
+        if len(vacations) > 0:
+
+            for vacation in vacations:
+                # add the vacations to event array
+                events.append({"type": "2",
+                               "start": "{} 9:30".format(vacation['start_date']),
+                               "end": "{} 20:00".format(vacation['end_date']),
+                               "name": "{}".format(vacation['name'])
+                               })
+                # remove vacations from search array
+                vacation_duration = vacation['end_date'] - vacation['start_date']
+
+                for i in range(vacation_duration.days + 1):
+                    day = vacation['start_date'] + timedelta(days=i)
+                    if day in search_array:
+                        search_array.remove(day)
+
+        # Check for appointments
+        for search_date in search_array:
+            if search_date <= today:
                 try:
-                    appointment_slices = Appointments.objects.get(time_slice_id=i['id'], date=date_)
-                    appointment_slices_id = appointment_slices.pk
-                    credentials = Credentials.objects.get(pk=appointment_slices.credentials.pk)
-                    first_name = credentials.first_name
-                    last_name = credentials.last_name
+                    appointments = Appointments.objects.filter(date=search_date)
+                    if len(appointments) > 0:
+                        for appointment in appointments:
+                            if not appointment.blocked:
+                                credentials = Credentials.objects.get(pk=appointment.credentials.pk)
+                                events.append({"type": "0",
+                                               "start": "{} {}".format(appointment.date, appointment.start_time),
+                                               "end": "{} {}".format(appointment.date, appointment.end_time),
+                                               "name": "{} {}".format(credentials.first_name, credentials.last_name),
+                                               "appointment_id": "{}".format(appointment.pk)
+                                               })
                 except:
-                    appointment_slices_id = 0
+                    pass
 
-                taken = appointment_id = 0
-                if appointment_slices_id > 0:
-                    taken = 1
-                    appointment_id = appointment_slices_id
-                    treatment = Treatments.objects.get(pk=appointment_slices.treatment.pk).treatment
-                    available = 0
-                date_timeslices.append({"start": "{} {}".format(date_, slice_data[0]["slice_start"]),
-                                        "end": "{} {}".format(date_, slice_data[0]["slice_end"]),
-                                        "taken": taken,
-                                        "available": available,
-                                        "appointment_id": appointment_id,
-                                        "first_name": first_name,
-                                        "last_name": last_name,
-                                        "treatment": treatment})
-            date_ += delta
-            weekday += 1
-            if weekday > 7:
-                weekday -= 7
-        return Response(date_timeslices)
+            else:
+                # Find the day's time slices
+                weekday = search_date.weekday() + 1
+                max_appointment = StandardWeek.objects.get(pk=weekday).slice_count
+                slices = TimeSlices.objects.filter(standardweek__pk=weekday)
+
+                appointments = Appointments.objects.filter(date=search_date)
+                if len(appointments) == 0:
+                    for slice in slices:
+                        events.append({"type": "1",
+                                       "start": "{} {}".format(search_date, slice.slice_start),
+                                       "end": "{} {}".format(search_date, slice.slice_end)
+                                       })
+                else:
+                    appointment_counter = 0
+                    for appointment in appointments:
+                        if appointment.blocked:
+                            events.append({"type": "3",
+                                           "start": "{} {}".format(appointment.date, appointment.start_time),
+                                           "end": "{} {}".format(appointment.date, appointment.end_time),
+                                           "appointment_id": "{}".format(appointment.pk)
+                                           })
+                            slices = slices.exclude(pk=appointment.time_slice.pk)
+                        else:
+                            credentials = Credentials.objects.get(pk=appointment.credentials.pk)
+                            events.append({"type": "0",
+                                           "start": "{} {}".format(appointment.date, appointment.start_time),
+                                           "end": "{} {}".format(appointment.date, appointment.end_time),
+                                           "name": "{} {}".format(credentials.first_name, credentials.last_name),
+                                           "appointment_id": "{}".format(appointment.pk)
+                                           })
+                            slices = slices.exclude(pk=appointment.time_slice.pk)
+                            print(slices)
+                            appointment_counter += 1
+
+                    if appointment_counter < max_appointment:
+                        for slice in slices:
+                            events.append({"type": "1",
+                                           "start": "{} {}".format(search_date, slice.slice_start),
+                                           "end": "{} {}".format(search_date, slice.slice_end)
+                                           })
+                    else:
+                        for slice in slices:
+                            events.append({"type": "4",
+                                           "start": "{} {}".format(search_date, slice.slice_start),
+                                           "end": "{} {}".format(search_date, slice.slice_end)
+                                           })
+        return Response(events)
+
+
+
+
+
+
+
+        # # get the day of the week
+        # weekday = 1
+        # today_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f').split()
+        # # get today's date
+        # today_date = parse_date(today_datetime[0])
+        # # current_time = parse_time(today_datetime[1])
+        # while date_ <= end_date:
+        #     count = 0
+        #     # check for changes
+        #     try:
+        #         # if_changes = Changes.objects.get(date=date_).slice_count
+        #         slice_count = iStandardWeek.objects.get(pk=weekday).slice_count
+        #         slices = TimeSlices.objects.filter(
+        #             standardweek__pk=weekday).values()
+        #     except:
+        #         # get the timeslices from the standardweek using the day value
+        #         slice_count = StandardWeek.objects.get(pk=weekday).slice_count
+        #         slices = TimeSlices.objects.filter(
+        #             standardweek__pk=weekday).values()
+        #     # get the amount of appointments made for today to check if there is is still room left
+        #     for i in slices:
+        #         appointment_slices = Appointments.objects.filter(
+        #             time_slice_id=i['id'], date=date_)
+        #         if appointment_slices:
+        #             count += 1
+        #     for i in slices:
+        #         slice_data = TimeSlices.objects.filter(pk=i['id']).values()
+        #         # the check if there is still room left
+        #         if count < slice_count and date_ > today_date:
+        #             available = 1
+        #             # check to see if there is a vacation
+        #             try:
+        #                 vacations = Vacations.objects.filter(
+        #                     start_date__lte=date_, end_date__gte=date_).values()
+        #                 if vacations[0]:
+        #                     available = 0
+        #             except:
+        #                 pass
+        #         else:
+        #             available = 0
+        #         first_name = ""
+        #         last_name = ""
+        #         treatment = ""
+        #         # get the appointment, if there is one, and get the name and treatment
+        #         try:
+        #             appointment_slices = Appointments.objects.get(time_slice_id=i['id'], date=date_)
+        #             appointment_slices_id = appointment_slices.pk
+        #             credentials = Credentials.objects.get(pk=appointment_slices.credentials.pk)
+        #             first_name = credentials.first_name
+        #             last_name = credentials.last_name
+        #         except:
+        #             appointment_slices_id = 0
+        #
+        #         taken = appointment_id = 0
+        #         if appointment_slices_id > 0:
+        #             taken = 1
+        #             appointment_id = appointment_slices_id
+        #             treatment = Treatments.objects.get(pk=appointment_slices.treatment.pk).treatment
+        #             available = 0
+        #         date_timeslices.append({"start": "{} {}".format(date_, slice_data[0]["slice_start"]),
+        #                                 "end": "{} {}".format(date_, slice_data[0]["slice_end"]),
+        #                                 "taken": taken,
+        #                                 "available": available,
+        #                                 "appointment_id": appointment_id,
+        #                                 "first_name": first_name,
+        #                                 "last_name": last_name,
+        #                                 "treatment": treatment})
+        #     date_ += delta
+        #     weekday += 1
+        #     if weekday > 7:
+        #         weekday -= 7
+
 
     @csrf_exempt
     @action(methods=['get'], detail=False)

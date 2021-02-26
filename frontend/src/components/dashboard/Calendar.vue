@@ -180,7 +180,7 @@ export default {
     vacationStartDate: "",
     // Appointment Data 
     select: "",    
-    eventColor: ["primary", "blue", "grey lighten-1"],
+    eventColor: ["teal", "primary", "orange lighten-2", "red darken-4", "grey"],
     selectedEvent: {},
     // Functions
     starttime: "",
@@ -219,33 +219,43 @@ export default {
       )
       .then(res => {
         this.events = [];
-        res.data.forEach(times => {
-          if (times.available && !times.taken) {
+        res.data.forEach(entry => {
+          if (entry.type == 0) {
             this.events.push({
-              name: "Vrije afspraak",
-              start: times.start,
-              appointment_id: times.appointment_id,
-              end: times.end,
+              name: entry.name,
+              start: entry.start,
+              end: entry.end,
+              appointment_id: entry.appointment_id,
               color: this.eventColor[0],
-              timed: true
             });
-          } else if (!times.available && !times.taken) {
+          } else if (entry.type == 1) {
             this.events.push({
-              name: "Niet beschikbaar",
-              start: times.start,
-              appointment_id: times.appointment_id,
-              end: times.end,
+              name: "Vrije Afspraak",
+              start: entry.start,
+              end: entry.end,
+              color: this.eventColor[1]
+            });
+          } else if (entry.type == 2) {
+            this.events.push({
+              name: entry.name,
+              start: entry.start,
+              end: entry.end,
               color: this.eventColor[2]
             });
-          } else {
+          } else if (entry.type == 3) {
             this.events.push({
-              name: times.first_name + " " + times.last_name,
-              start: times.start,
-              appointment_id: times.appointment_id,
-              end: times.end,
-              color: this.eventColor[1],
-              timed: true,
-              treatment: times.treatment
+              name: "Geblokkeerd",
+              start: entry.start,
+              end: entry.end,
+              appointment_id: entry.appointment_id,
+              color: this.eventColor[3]
+            });
+          } else if (entry.type == 4) {
+            this.events.push({
+              name: "Autoblocked",
+              start: entry.start,
+              end: entry.end,
+              color: this.eventColor[4]
             });
           }
         });
@@ -267,7 +277,7 @@ export default {
     },    
     showModal({ event }) {
       this.selectedEvent = event
-      if (event.color == this.eventColor[1]) {
+      if (event.color == this.eventColor[0]) {
         if (this.showEventModal == false) {
           setTimeout(() => {
             this.createEventModal = false
@@ -279,7 +289,7 @@ export default {
           this.createEventModal = false
           this.showEventModal = false;
         }
-      } else if (event.color == this.eventColor[0]) {
+      } else if (event.color == this.eventColor[1] || this.eventColor[4]) {
         this.planVacationModal = false
         this.showEventModal = false
         this.createEventModal = true;

@@ -63,7 +63,7 @@
             class="mx-2 plus"
             fab
             dark
-            color="blue"
+            color="teal"
             @click="addSlot(day.day_id)"
           >
             <v-icon dark>

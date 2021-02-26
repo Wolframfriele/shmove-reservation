@@ -25,20 +25,10 @@ class StandardWeek(models.Model):
         return str(self.day)
 
 
-class Changes(models.Model):
-    date = models.DateField(auto_now_add=False)
-    slice_count = models.IntegerField(default=3)
-    slices = models.ManyToManyField(TimeSlices)
-    # action = models.CharField(max_length=100, blank=True)
-
-    def __str__(self):
-        return str(self.date)
-
-
 class Credentials(models.Model):
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
-    email = models.CharField(max_length=200)
+    email = models.CharField(db_index=True, max_length=60)
     phone_number = models.CharField(max_length=10)
 
     def __str__(self):
@@ -54,11 +44,14 @@ class Treatments(models.Model):
 
 
 class Appointments(models.Model):
-    date = models.DateField(default=datetime.now().date())
+    date = models.DateField(db_index=True)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
     time_slice = models.ForeignKey(TimeSlices, on_delete=models.DO_NOTHING)
-    treatment = models.ForeignKey(Treatments, on_delete=models.DO_NOTHING)
+    treatment = models.CharField(max_length=200, null=True)
     reason = models.TextField(null=True)
-    done = models.BooleanField(default=False)
+    # done = models.BooleanField(default=False)
+    blocked = models.BooleanField(default=False)
     credentials = models.ForeignKey(Credentials, on_delete=models.DO_NOTHING)
     #
     # def __str__(self):
@@ -67,5 +60,5 @@ class Appointments(models.Model):
 
 class Vacations(models.Model):
     name = models.CharField(max_length=200)
-    start_date = models.DateField()
-    end_date = models.DateField()
+    start_date = models.DateField(db_index=True)
+    end_date = models.DateField(db_index=True)

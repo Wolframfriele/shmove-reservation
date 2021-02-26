@@ -41,7 +41,7 @@
           <v-btn
             class="ma-2"
             outlined
-            color="blue"
+            color="teal"
             @click="updateVacation(days.id, days.name, days.start_date, days.end_date)"
           >
             Aanpassen

@@ -23,7 +23,7 @@ from rest_framework.status import (
 )
 
 from dashboard.serializers import DashboardSerializer
-from barber.models import Appointments, Credentials, Changes, StandardWeek, TimeSlices, Treatments
+from barber.models import Appointments, Credentials, StandardWeek, TimeSlices, Treatments
 from barber.serializers import AppointmentSerializer
 
 # Create your views here.
