@@ -15,7 +15,7 @@
         <v-tab-item v-for="item in items" :key="item.title">
           <v-card flat>
             <v-card-text>
-              <component v-bind:is="item.content"></component>
+              <component v-bind:is="item.content" @changeToVakantie="changeToVakantie"></component>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -24,12 +24,10 @@
   </v-container>
 </template>
 <script>
-// import axios from 'axios';
 import Calendar from "../../components/dashboard/Calendar";
-import OpeningTimes from "@/components/dashboard/Openingtimes";
-import Treatments from "@/components/dashboard/Treatments";
 import Holidays from "@/components/dashboard/Holidays";
-// import Settings from "@/components/dashboard/Settings";
+import Klanten from "@/components/dashboard/Klanten";
+import Settings from "@/components/dashboard/Settings";
 // import Statistics from "@/components/dashboard/Statistics";
 export default {
   data: () => ({
@@ -44,20 +42,15 @@ export default {
         content: "Holidays"
       },
       {
-        title: "Openingstijden",
-        icon: "mdi-storefront",
-        content: "OpeningTimes"
-      },
-      {
-        title: "Behandelingen",
-        icon: "mdi-basket-plus",
-        content: "Treatments"
+        title: "Klanten",
+        icon: "mdi-account",
+        content: "Klanten"
       },      
-      // {
-      //   title: "Instellingen",
-      //   icon: "mdi-cog-outline",
-      //   content: "Settings"
-      // },
+      {
+        title: "Instellingen",
+        icon: "mdi-cog",
+        content: "Settings"
+      },
       // {
       //   title: "Statistieken",
       //   icon: "mdi-chart-bar",
@@ -67,10 +60,9 @@ export default {
   }),
   components: {
     Calendar,
-    OpeningTimes,
-    Treatments,
     Holidays,
-    // Settings,
+    Klanten,
+    Settings,
     // Statistics
   },
   // Session check
@@ -85,6 +77,9 @@ export default {
     logOut: function () {
       this.$session.destroy()
       this.$router.push({name: "Login"})
+    },
+    changeToVakantie () {
+      this.tab = 1
     }
   }
 };

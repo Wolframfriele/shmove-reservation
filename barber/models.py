@@ -27,7 +27,7 @@ class StandardWeek(models.Model):
 
 class Credentials(models.Model):
     first_name = models.CharField(max_length=200)
-    last_name = models.CharField(max_length=200)
+    last_name = models.CharField(db_index=True, max_length=200)
     email = models.CharField(db_index=True, max_length=60)
     phone_number = models.CharField(max_length=10)
 
@@ -50,9 +50,8 @@ class Appointments(models.Model):
     time_slice = models.ForeignKey(TimeSlices, on_delete=models.DO_NOTHING)
     treatment = models.CharField(max_length=200, null=True)
     reason = models.TextField(null=True)
-    # done = models.BooleanField(default=False)
     blocked = models.BooleanField(default=False)
-    credentials = models.ForeignKey(Credentials, on_delete=models.DO_NOTHING)
+    credentials = models.ForeignKey(Credentials, on_delete=models.DO_NOTHING, null=True)
     #
     # def __str__(self):
     #     return "Date: " + str(self.date) + ". Treatment: " + str(self.treatment)

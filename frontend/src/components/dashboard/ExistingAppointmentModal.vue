@@ -5,7 +5,7 @@
     flat
   >
     <v-toolbar :color="selectedEvent.color">
-      <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+      <v-toolbar-title v-html="selectedEvent.name" class="text--white"></v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn v-if="showBewerkEventModal != true" @click="bewerkAfspraak">Bewerken</v-btn>
       <v-btn v-if="showBewerkEventModal == true" @click="saveEvent">Opslaan</v-btn>
@@ -16,28 +16,22 @@
     <div v-if="showBewerkEventModal != true">
       <v-card-text>
         <br />
+        <label for="cstartTime">Datum: </label>
+        <span id="cstartTime">{{ parseDate(this.appointmentDate).slice(0, 10) }}</span>
+        <br>
         <label for="cstartTime">Begintijd: </label>
-        <span id="cstartTime">{{ dateToString(selectedEvent.start) }}</span
-        ><br />
+        <span id="cstartTime">{{ this.appointmentStart.slice(0,5) }}</span>
+        <br />
         <label for="cendtime">Eindtijd: </label>
-        <span id="cendtime">{{ dateToString(selectedEvent.end) }}</span
-        ><br />
+        <span id="cendtime">{{ this.appointmentEnd.slice(0,5) }}</span>
+        <br />
         <br />
         <div v-if="firstName" class="appointmentInfo">
           <div class="box1">
-            <label for="firstname">Voornaam: </label>
+            <label for="firstname">Naam: </label>
           </div>
           <div class="box2">
-            <span id="firstname">{{ firstName }}</span>
-          </div>
-          <br />
-        </div>
-        <div v-if="lastName" class="appointmentInfo">
-          <div class="box1">
-            <label for="lastname">Achternaam: </label>
-          </div>
-          <div class="box2">
-            <span id="lastname">{{ lastName }}</span>
+            <span id="firstname">{{ firstName}} {{ lastName }}</span>
           </div>
           <br />
         </div>
@@ -70,7 +64,7 @@
         </div>
         <div v-if="reason" class="appointmentInfo">
           <div class="box1">
-            <label for="comments">Opmerkingen: </label>
+            <label for="comments">Reden: </label>
           </div>
           <div class="box2">
             <span id="comments">{{ reason }} </span>
@@ -92,55 +86,53 @@
         <!-- Bewerk Tijd -->
         <v-text-field
           label="Begintijd"
-          v-model="this.appointmentStart"
+          v-model="appointmentStart"
         ></v-text-field>
 
         <v-text-field
           label="Eindtijd"
-          v-model="this.appointmentEnd"
+          v-model="appointmentEnd"
         ></v-text-field>
         <!-- Bewerk Reden -->
         <v-textarea
-            v-model="this.reason"
+            v-model="reason"
             name="reden"
             label="Reden voor de behandeling"
         ></v-textarea>
-        <!-- Bewerk Persoonsgegevens -->
-        <v-text-field
-          label="Voornaam"
-          v-model="this.firstName"
-        ></v-text-field>
-        <v-text-field
-          label="Achternaam"
-          v-model="this.lastName"
-        ></v-text-field>
-        <v-text-field
-          label="Email"
-          v-model="this.email"
-        ></v-text-field>
-        <v-text-field
-          label="Telefoon Nummer"
-          v-model="this.phoneNumber"
-        ></v-text-field>
         <!-- Bewerk behandeling -->
         <label>Kies behandeling</label>
         <v-radio-group
-          :v-model="this.treatment"
-          :value="this.treatment"
+          v-model="treatment"
+          :value="treatment"
           row
           >
-          <v-radio v-for="a in allTreatments" :key="a.id"
-            :label="a"
-            :value="a"
+          <v-radio v-for="singleTreatment in allTreatments" :key="singleTreatment.id"
+            :label="singleTreatment"
+            :value="singleTreatment"
           ></v-radio>
         </v-radio-group>
+        <!-- Bewerk Persoonsgegevens -->
+        <v-text-field
+          label="Klant Nummer"
+          v-model="credential_id"
+        ></v-text-field>
       </v-card-text>
       <v-card-actions>
         <v-btn text color="gray" @click="closeModal">Terug</v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="red" @click="cancelAppointment(selectedEvent.appointment_id)" class="white--text">Verwijder Afspraak</v-btn>
+        <v-btn color="red" @click="deleteCheck = true" class="white--text">Verwijder Afspraak</v-btn>
       </v-card-actions>
-      
+      <v-overlay v-model="deleteCheck">
+        <v-card min-width="600px">
+          <v-card-text>
+            <h2>Weet je zeker dat je de afspraak wilt verwijderen?</h2>
+          </v-card-text>
+          <v-card-text>
+            <v-btn text color="gray" @click="deleteCheck = false">Anuleren</v-btn>
+            <v-btn color="red" @click="cancelAppointment()" class="white--text">Verwijder Afspraak</v-btn>
+          </v-card-text>  
+        </v-card>  
+      </v-overlay>     
     </div>
   </v-card>
 </template>
@@ -160,53 +152,27 @@ export default {
     appointmentDate: "",
     appointmentStart: "",
     appointmentEnd: "",
-    CredentialsID: "",
+    credential_id: "",
     firstName: "",
     lastName: "",
     email: "",
     phoneNumber: "",
     treatment: "",
-    reason: ""
-
+    reason: "",
+    deleteCheck: false,
+    newModel: [],
+    select: "",
   }),
   created () {
-    this.getTreatments()
     this.getAppointmentInfo(this.selectedEvent.appointment_id)
+    this.getTreatments()
+  },
+  watch: {
+    selectedEvent: function () {
+      this.getAppointmentInfo(this.selectedEvent.appointment_id)
+    }
   },
   methods: {
-    getAppointmentInfo(appointmentID) {
-      axios
-        .get(
-          'dash_appointments/get_appointment_data/',
-          {
-            params: {
-              appointment_id: appointmentID
-            },
-            headers: {
-              Accept: "application/json",
-              "Content-type": "application/json",
-              "X-CSRFToken": this.$session.get("token"),
-              Authorization: `Token ${this.$session.get("token")}`
-            }
-          }
-        )
-        .then(res => {
-          // Needed Information
-          this.appointmentDate = JSON.parse(res.data[0].appointment)[0].fields.date
-          this.appointmentStart = JSON.parse(res.data[0].time_slice)[0].fields.slice_start
-          this.appointmentEnd = JSON.parse(res.data[0].time_slice)[0].fields.slice_end  
-          this.credentials = JSON.parse(res.data[0].appointment)[0].fields.credentials
-          this.firstName = JSON.parse(res.data[0].customer)[0].fields.first_name
-          this.lastName = JSON.parse(res.data[0].customer)[0].fields.last_name
-          this.email = JSON.parse(res.data[0].customer)[0].fields.email
-          this.phoneNumber = JSON.parse(res.data[0].customer)[0].fields.phone_number
-          this.treatment = JSON.parse(res.data[0].treatment)[0].fields.treatment
-          this.reason = JSON.parse(res.data[0].appointment)[0].fields.reason
-        })
-        .catch(e => {
-          console.log(e);
-        });
-    },
     getTreatments() {
       axios
         .get('dashboard/get_treatments/', {
@@ -225,17 +191,52 @@ export default {
           });
         });
     },
+    getAppointmentInfo(appointmentID) {
+      axios
+        .get(
+          'dash_appointments/get_appointment_data/',
+          {
+            params: {
+              appointment_id: appointmentID
+            },
+            headers: {
+              Accept: "application/json",
+              "Content-type": "application/json",
+              "X-CSRFToken": this.$session.get("token"),
+              Authorization: `Token ${this.$session.get("token")}`
+            }
+          }
+        )
+        .then(res => {
+          // Needed Information
+          this.appointmentDate = res.data[0].date
+          this.appointmentStart = res.data[0].start_time
+          this.appointmentEnd = res.data[0].end_time
+          this.credential_id = res.data[0].credential_id
+          this.firstName = res.data[0].first_name
+          this.lastName = res.data[0].last_name
+          this.email = res.data[0].email
+          this.phoneNumber = res.data[0].phone_number
+          this.treatment = res.data[0].treatment
+          this.reason = res.data[0].reason
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
     closeModal() {
       this.$emit('closeAppointmentModal', true)
       this.showBewerkEventModal = false
     },
-    cancelAppointment(appointmentID) {
+    cancelAppointment() {
+      let body = {
+        body: {
+          appointment_id: this.selectedEvent.appointment_id
+        }
+      };
       axios.post(
-        'dash_appointments/cancel_appointment/',
+        'dash_appointments/cancel_appointment/', body,
         {
-          body: {
-              appointment_id: appointmentID
-            },
           headers: {
             Accept: "application/json",
             "Content-type": "application/json",
@@ -244,11 +245,12 @@ export default {
           }
         })
       .then(res => {
-        if (res == 'Success') {
-          console.log("Delete Succesfull")
+        if (res.data == 'Success') {
+          this.$emit("reloadCalendar")
+          this.$emit('closeAppointmentModal', true)
+          this.showBewerkEventModal = false
+          this.deleteCheck = false
         }
-        this.$emit('closeAppointmentModal', true)
-        this.showBewerkEventModal = false   
       })
       .catch(e => {
           console.log(e);
@@ -258,22 +260,20 @@ export default {
       this.showBewerkEventModal = !this.showBewerkEventModal
     },
     saveEvent() {
-      axios.post(
-        'dash_appointments/change_appointment/',
-        {
-          body: {
+      let body = {
+        body: {
               appointment_id: this.selectedEvent.appointment_id,
               date: this.appointmentDate,
               begin_time: this.appointmentStart,
               end_time: this.appointmentEnd,
               treatment: this.treatment,
-              credentials: this.credentials,
-              first_name: this.firstName,
-              last_name: this.lastName,
-              email: this.email,
-              phone_number: this.phoneNumber,
+              customer_id: this.credential_id,
               reason: this.reason
-            },
+            }
+      }
+      axios.post(
+        'dash_appointments/change_appointment/', body,
+        {
           headers: {
             Accept: "application/json",
             "Content-type": "application/json",
@@ -282,10 +282,11 @@ export default {
           }
         })
       .then(res => {
-        if (res == 'Success') {
-          console.log("Changed Succesfull")
-        }
-        this.showBewerkEventModal = !this.showBewerkEventModal
+        if (res.data == 'SUCCESS') {
+          this.$emit("reloadCalendar")
+          this.$emit('closeAppointmentModal', true)
+          this.showBewerkEventModal = false
+        }  
       })
       .catch(e => {
           console.log(e);
@@ -301,8 +302,17 @@ export default {
   justify-content: space-between;
 }
 
-.box1,
+.box1 {
+  width: 35%;
+}
+
+
 .box2 {
-  width: 50%;
+  width: 65%;
+}
+
+.spacer {
+  margin: 1em;
+  padding: 1em;
 }
 </style>

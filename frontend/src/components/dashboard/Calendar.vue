@@ -113,7 +113,18 @@
       <ExistingAppointmentModal 
         v-bind:selectedEvent="selectedEvent"
         @closeAppointmentModal="showEventModal = false"
+        @reloadCalendar="getAllEvents(startWeek.date, endWeek.date)"
       />
+      <!-- v-bind:appointmentDate="appointmentDate"
+        v-bind:appointmentStart="appointmentStart"
+        v-bind:appointmentEnd="appointmentEnd"
+        v-bind:credential_id="credential_id"
+        v-bind:firstName="firstName"
+        v-bind:lastName="lastName"
+        v-bind:email="email"
+        v-bind:phoneNumber="phoneNumber"
+        v-bind:treatment="treatment"
+        v-bind:reason="reason" -->
     </v-dialog>
     <!-- Maak Afspraak Modal -->
     <v-dialog
@@ -124,8 +135,23 @@
       offset-x
     >
       <NewAppointmentModal 
-        v-bind:selectedEvent="selectedEvent"
+        v-bind:selectedOpenEvent="selectedOpenEvent"
         @closeNewAppointmentModal="createEventModal = false"
+        @reloadCalendar="getAllEvents(startWeek.date, endWeek.date)"
+      />
+    </v-dialog>
+    <!-- Geblokkeerde Afspraak Modal -->
+    <v-dialog
+      v-model="showBlockedModal"
+      width="500"
+      height="250"
+      hide-overlay
+      offset-x
+    >
+      <BlockedAppointmentModal 
+      v-bind:selectedEvent="selectedEvent"
+      @closeBlockedModal="showBlockedModal = false"
+      @reloadCalendar="getAllEvents(startWeek.date, endWeek.date)"
       />
     </v-dialog>
     <!-- Plan Vakantie Modal -->
@@ -139,15 +165,18 @@
       <PlanVacationModal 
         v-bind:vacationStartDate="vacationStartDate"
         @closeVacationModal="planVacationModal = false"
+        @reloadCalendar="getAllEvents(startWeek.date, endWeek.date)"
       />
     </v-dialog>
   </div>
 </template>
 
 <script>
+import { bus } from '../../main'
 import axios from "axios";
 import ExistingAppointmentModal from "../../components/dashboard/ExistingAppointmentModal";
 import NewAppointmentModal from "../../components/dashboard/NewAppointmentModal";
+import BlockedAppointmentModal from "../../components/dashboard/BlockedAppointmentModal";
 import PlanVacationModal from "../../components/dashboard/PlanVacationModal";
 import repeatedFunctions from "../../mixins/repeatedFunctions";
 
@@ -171,17 +200,30 @@ export default {
     intervalcount: "12",
     locale: "nl",
     events: [],
+    startWeek: "",
+    endWeek: "",
     // Open Modals
     createEventModal: false,
     showEventModal: false,
     showBewerkEventModal: false,
     planVacationModal: false,
-
+    showBlockedModal: false,
     vacationStartDate: "",
     // Appointment Data 
     select: "",    
-    eventColor: ["teal", "primary", "orange lighten-2", "red darken-4", "grey"],
+    eventColor: ["teal", "primary", "orange lighten-2", "deep-orange darken-4", "grey"],
     selectedEvent: {},
+    selectedOpenEvent: {},
+    // appointmentDate: "",
+    // appointmentStart: "",
+    // appointmentEnd: "",
+    // credential_id: "",
+    // firstName: "",
+    // lastName: "",
+    // email: "",
+    // phoneNumber: "",
+    // treatment: "",
+    // reason: "",
     // Functions
     starttime: "",
     endtime: "",
@@ -190,14 +232,22 @@ export default {
   components: {
     ExistingAppointmentModal,
     NewAppointmentModal,
-    PlanVacationModal,    
+    BlockedAppointmentModal,
+    PlanVacationModal,
+  },
+  created () {
+    bus.$on('updateCalendar', () => {
+        this.getAllEvents(this.startWeek.date, this.endWeek.date)
+      })
   },
   methods: {    
     viewDay({ date }) {
       this.focus = date;
     },
     updateRange({ start, end }) {
-      this.getAllEvents(start.date, end.date);
+      this.getAllEvents(start.date, end.date)
+      this.startWeek = start
+      this.endWeek = end
     },
     getAllEvents(start, end) {
       this.loaded = false
@@ -252,7 +302,7 @@ export default {
             });
           } else if (entry.type == 4) {
             this.events.push({
-              name: "Autoblocked",
+              name: "Automatisch Geblokkeerd",
               start: entry.start,
               end: entry.end,
               color: this.eventColor[4]
@@ -267,32 +317,47 @@ export default {
     },
     showVacationPlanner({ date }) {
       // Clear Dates
-      this.vacationStartDate = "";
-      this.vacationEndDate = "";
+      this.vacationStartDate = ""
+      this.vacationEndDate = ""
       // Set Dates
-      this.vacationStartDate = date;
+      this.vacationStartDate = date
       this.showEventModal = false
       this.createEventModal = false
-      this.planVacationModal = true;
+      this.showBlockedModal = false
+      this.planVacationModal = true
     },    
     showModal({ event }) {
-      this.selectedEvent = event
+      
       if (event.color == this.eventColor[0]) {
         if (this.showEventModal == false) {
+          this.selectedEvent = event
           setTimeout(() => {
             this.createEventModal = false
             this.planVacationModal = false
+            this.showBlockedModal = false
             this.showEventModal = true;
           }, 10);
         } else {
           this.planVacationModal = false
           this.createEventModal = false
-          this.showEventModal = false;
+          this.showEventModal = false
+          this.showBlockedModal = false
         }
-      } else if (event.color == this.eventColor[1] || this.eventColor[4]) {
+      } else if (event.color == this.eventColor[1] || event.color == this.eventColor[4]) {
+        this.selectedOpenEvent = event
         this.planVacationModal = false
         this.showEventModal = false
-        this.createEventModal = true;
+        this.showBlockedModal = false
+        this.createEventModal = true
+      } else if (event.color == this.eventColor[2]) {
+        this.selectedOpenEvent = event
+        this.$emit("changeToVakantie", "Vakanties")
+      } else if (event.color == this.eventColor[3]) {
+        this.selectedEvent = event
+        this.planVacationModal = false
+        this.showEventModal = false
+        this.createEventModal = false
+        this.showBlockedModal = true
       }
     },
   }

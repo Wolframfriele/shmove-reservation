@@ -4,11 +4,11 @@
     <v-container class="plannedHolidays">
       <div v-if="planneddays.length == 0">
         <v-card>
-          <v-card-toolbar>
+          <v-toolbar>
             <v-card-title>
               Helaas nog geen vakantie ingepland.
             </v-card-title>
-          </v-card-toolbar>     
+          </v-toolbar>   
           <v-card-text>
             <v-icon color="orange lighten-2">mdi-white-balance-sunny</v-icon>
             Tijd om snel wat te plannen! Gebruik daarvoor de zonnentjes in de kalender.
@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import { bus } from '../../main'
 import axios from "axios";
 
 export default {
@@ -75,18 +76,20 @@ export default {
   }),
   created() {
     this.getVacations();
-    console.log(this.planneddays)
+    bus.$on('updateHolidays', () => {
+        this.getVacations()
+      })
   },
   methods: {
     async getVacations() {
-      let self = this;
+      this.planneddays = []
       await axios
-        .get(`${self.$store.state.HOST}/api/dash_appointments/get_vacations/`, {
+        .get('dash_appointments/get_vacations/', {
           headers: {
             Accept: "application/json",
             "Content-type": "application/json",
-            "X-CSRFToken": self.$session.get("token"),
-            Authorization: `Token ${self.$session.get("token")}`
+            "X-CSRFToken": this.$session.get("token"),
+            Authorization: `Token ${this.$session.get("token")}`
           }
         })
         .then(res => {
@@ -120,8 +123,10 @@ export default {
         )
         .then(res => {
           //Perform Success Action
-          console.log(res.data);
-          window.location.reload();
+          if (res.data == "Success") {
+            this.getVacations()
+            bus.$emit('updateCalendar')
+          }
         })
         .catch(error => {
           console.log(error);
@@ -145,9 +150,11 @@ export default {
           }
         })
         .then(res => {
-          //Perform Success Action
-          console.log(res.data);
-          window.location.reload();
+          //Perform Success Action          
+          if (res.data == "Success") {
+            this.getVacations()
+            bus.$emit('updateCalendar')
+          }
         })
         .catch(error => {
           console.log(error);

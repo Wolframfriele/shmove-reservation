@@ -4,19 +4,22 @@
     <v-card-title>
       <span class="headline">Maak een afspraak</span>
     </v-card-title>
+    <v-spacer></v-spacer>
+    <v-btn @click="blockAfspraak">Blokkeer Afspraak</v-btn>
   </v-toolbar>
   <v-card-text>
+    <br>
     <div class="times">
       <div class="timea">
         <label for="startTime">Begintijd: </label>
         <span id="startTime">{{
-          dateToString(selectedEvent.start)
+          dateToString(selectedOpenEvent.start)
         }}</span>
       </div>
       <div class="timeb">
         <label for="endtime">Eindtijd: </label>
         <span id="endtime">{{
-          dateToString(selectedEvent.end)
+          dateToString(selectedOpenEvent.end)
         }}</span>
       </div>
     </div>
@@ -90,7 +93,7 @@ import axios from "axios";
 import repeatedFunctions from "../../mixins/repeatedFunctions";
 
 export default {
-  props: ['selectedEvent'],
+  props: ['selectedOpenEvent'],
   mixins: [repeatedFunctions],
   data: () => ({
     allTreatments: [],
@@ -124,8 +127,8 @@ export default {
         });
     },
     sendToBackEnd() {
-      const start = this.parseDate(this.selectedEvent.start);
-      const end = this.parseDate(this.selectedEvent.end);
+      const start = this.parseDate(this.selectedOpenEvent.start);
+      const end = this.parseDate(this.selectedOpenEvent.end);
       let body = {
         body: {
           date_booked_start: start,
@@ -148,14 +151,14 @@ export default {
               "X-CSRFToken": this.$session.get("token"),
               Authorization: `Token ${this.$session.get("token")}`
             }
-          }
-        )
+          })
         .then(res => {
           //Perform Success Action
-          console.log(res.data);
-          this.createEventModal = false;
-          // this.getAllEvents();
-          window.location.reload();
+          if (res.data.error == "None") {
+            this.createEventModal = false;
+            this.$emit("reloadCalendar")
+            this.$emit('closeNewAppointmentModal', true)
+          }
         })
         .catch(error => {
           console.log(error);
@@ -164,7 +167,38 @@ export default {
           //Perform action in always
         });
     },
-    closeModal() {
+    blockAfspraak () {     
+      let body = {
+        body: {
+          start: this.selectedOpenEvent.start,
+          end: this.selectedOpenEvent.end
+        }
+      };
+      axios
+        .post(
+          'dash_appointments/block_appointment/', body ,
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-type": "application/json",
+              "X-CSRFToken": this.$session.get("token"),
+              Authorization: `Token ${this.$session.get("token")}`
+            }
+          })
+        .then(res => {
+          //Perform Success Action
+          if (res.data == "blocked") {
+            this.createEventModal = false;
+            this.$emit("reloadCalendar")
+            this.$emit('closeNewAppointmentModal', true)
+          }
+          
+        })
+        .catch(error => {
+          console.log(error);
+        })
+    },
+    closeModal () {
       this.$emit('closeNewAppointmentModal', true)
     },
   }

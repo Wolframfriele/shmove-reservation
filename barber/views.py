@@ -55,8 +55,8 @@ def create_appointment(request):
 
     if treatment:
         valid += 1
-    if reason:
-        valid += 1
+    # if reason:
+    #     valid += 1
     if first_name:
         valid += 1
     if last_name:
@@ -66,12 +66,12 @@ def create_appointment(request):
     if phone_number:
         valid += 1
 
-    if valid == 6:
+    if valid == 5:
         if dbs_string:
             valid += 1
         if dbe_string:
             valid += 1
-        if valid == 8:
+        if valid == 7:
             get_slice = TimeSlices.objects.get(
                 slice_start=time_start, slice_end=time_end).pk
             find_appointment = Appointments.objects.filter(
@@ -81,33 +81,31 @@ def create_appointment(request):
             else:
                 try:
                     # credentials were found
-                    make_credentials = Credentials.objects.get(first_name=first_name, last_name=last_name,
-                                                               email=email, phone_number=phone_number)
+                    make_credentials = Credentials.objects.get(email=email)
                 except:
                     # credentials were not found
                     make_credentials = Credentials.objects.create(first_name=first_name, last_name=last_name,
                                                                   email=email, phone_number=phone_number)
-                treatment_ = Treatments.objects.get(treatment=treatment)
-                make_appointment = Appointments.objects.create(time_slice_id=get_slice, treatment=treatment_,
-                                                               reason=reason, credentials=make_credentials,
-                                                               date=date_)
+
+                Appointments.objects.create(date=date_, start_time=time_start, end_time= time_end,
+                                                               time_slice_id=get_slice, treatment=treatment,
+                                                               reason=reason, credentials=make_credentials)
                 try:
-                    test_credentials = Credentials.objects.get(first_name=first_name, last_name=last_name,
-                                                               email=email, phone_number=phone_number)
+                    test_credentials = Credentials.objects.get(email=email)
                     try:
-                        test_appointment = Appointments.objects.get(Q(treatment=treatment_) & Q(reason=reason) &
+                        Appointments.objects.get(Q(treatment=treatment) & Q(reason=reason) &
                                                                     Q(credentials=test_credentials) &
                                                                     Q(date=date_) & Q(time_slice_id=get_slice))
+
                         real_date = datetime.strptime(
                             dbs_string, '%d/%m/%Y, %H:%M:%S').strftime("%d %b, %Y")
                         # sending a confirmation mail
                         port = 465
                         password = config('MAIL_PWD')
                         smtp_server = 'smtp.gmail.com'
-                        sender_email = 'trojo.mailtesting@gmail.com'
+                        sender_email = 'wolframfriele@gmail.com'
                         receiver_email = email
-                        # AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA (change me)
-                        therapist_email = 'tijmen.simons@gmail.com'
+                        therapist_email = 'wolframfriele@gmail.com'
 
                         message = MIMEMultipart("alternative")
                         message["Subject"] = "Bevestiging Afspraak - IN-KI Shiatsu Delft"
@@ -117,8 +115,8 @@ def create_appointment(request):
                         message_t = MIMEMultipart("alternative")
                         message_t["Subject"] = "Nieuwe Afspraak - {} {}".format(
                             first_name, last_name)
-                        message_t["From"] = sender_email
-                        message_t["To"] = receiver_email
+                        message_t["From"] = therapist_email
+                        message_t["To"] = therapist_email
 
                         # Create the plain-text and HTML version of your message
                         text = """\
@@ -148,7 +146,7 @@ def create_appointment(request):
                         www.shiatsu-delft.nl\n
                         inge@shiatsu-delft.nl\n
                         06 4070 2497\n
-                        """.format(first_name, last_name, treatment_.treatment, real_date, time_start, reason)
+                        """.format(first_name, last_name, treatment, real_date, time_start, reason)
                         html = """
                         <html><body>
                             <p>Beste heer/mevrouw {} {}, </p>
@@ -176,25 +174,25 @@ def create_appointment(request):
                             Doelenstraat 16<br>
                             2611 NT Delft<br>
                             </p>
-
+                    
                             <a href="https://www.shiatsu-delft.nl">www.shiatsu-delft.nl</a><br>
                             <a href="mailto:inge@shiatsu-delft.nl">inge@shiatsu-delft.nl</a><br>
                             <a href="tel:0640702497">06 4070 2497</a><br>
                         </body></html>
-                        """.format(first_name, last_name, treatment_.treatment, real_date, time_start, reason)
+                        """.format(first_name, last_name, treatment, real_date, time_start, reason)
 
                         text_t = """\
                             {} {} heeft een afspraak gemaakt op {} om {}.
                             De gekozen behandeling is {} met de reden:
                             {}
-                        """.format(first_name, last_name, real_date, time_start, treatment_, reason)
+                        """.format(first_name, last_name, real_date, time_start, treatment, reason)
                         html_t = """\
                         <html><body>
                         <p><b>{} {}</b> heeft een afspraak gemaakt op <b>{}</b> om <b>{}</b>.</p>
                         <p>De gekozen behandeling is <b>{}</b> met de reden:<br>
                             {}
                         </p></body></html>
-                        """.format(first_name, last_name, real_date, time_start, treatment_, reason)
+                        """.format(first_name, last_name, real_date, time_start, treatment, reason)
 
                         # Turn these into plain/html MIMEText objects
                         part1 = MIMEText(text, "plain")
@@ -217,7 +215,7 @@ def create_appointment(request):
                             server.sendmail(
                                 sender_email, receiver_email, message.as_string())
                             server.sendmail(
-                                sender_email, therapist_email, message_t.as_string())
+                                therapist_email, therapist_email, message_t.as_string())
 
                         return Response({"error": "None",
                                          "first_name": first_name,
@@ -226,9 +224,10 @@ def create_appointment(request):
                                          "date": date_,
                                          "time_start": time_start,
                                          "time_end": time_end})
-                    except:
+
+                    except Appointments.DoesNotExist:
                         return Response({"error": "Appointment_Failed"})
-                except:
+                except Credentials.DoesNotExist:
                     return Response({"error": "Credentials_Failed"})
         else:
             return Response({"error": "Empty_Internal_Field"})
@@ -265,7 +264,6 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
         end_search_date = parse_date(getpost(request, 'endweek'))
         search_duration = end_search_date - start_search_date
         today = date.today()
-        # delta = timedelta(days=1)
         search_array = []
 
         # fill array with dates to be searched in
@@ -347,7 +345,6 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
                                            "appointment_id": "{}".format(appointment.pk)
                                            })
                             slices = slices.exclude(pk=appointment.time_slice.pk)
-                            print(slices)
                             appointment_counter += 1
 
                     if appointment_counter < max_appointment:
@@ -365,146 +362,27 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
         return Response(events)
 
 
-
-
-
-
-
-        # # get the day of the week
-        # weekday = 1
-        # today_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f').split()
-        # # get today's date
-        # today_date = parse_date(today_datetime[0])
-        # # current_time = parse_time(today_datetime[1])
-        # while date_ <= end_date:
-        #     count = 0
-        #     # check for changes
-        #     try:
-        #         # if_changes = Changes.objects.get(date=date_).slice_count
-        #         slice_count = iStandardWeek.objects.get(pk=weekday).slice_count
-        #         slices = TimeSlices.objects.filter(
-        #             standardweek__pk=weekday).values()
-        #     except:
-        #         # get the timeslices from the standardweek using the day value
-        #         slice_count = StandardWeek.objects.get(pk=weekday).slice_count
-        #         slices = TimeSlices.objects.filter(
-        #             standardweek__pk=weekday).values()
-        #     # get the amount of appointments made for today to check if there is is still room left
-        #     for i in slices:
-        #         appointment_slices = Appointments.objects.filter(
-        #             time_slice_id=i['id'], date=date_)
-        #         if appointment_slices:
-        #             count += 1
-        #     for i in slices:
-        #         slice_data = TimeSlices.objects.filter(pk=i['id']).values()
-        #         # the check if there is still room left
-        #         if count < slice_count and date_ > today_date:
-        #             available = 1
-        #             # check to see if there is a vacation
-        #             try:
-        #                 vacations = Vacations.objects.filter(
-        #                     start_date__lte=date_, end_date__gte=date_).values()
-        #                 if vacations[0]:
-        #                     available = 0
-        #             except:
-        #                 pass
-        #         else:
-        #             available = 0
-        #         first_name = ""
-        #         last_name = ""
-        #         treatment = ""
-        #         # get the appointment, if there is one, and get the name and treatment
-        #         try:
-        #             appointment_slices = Appointments.objects.get(time_slice_id=i['id'], date=date_)
-        #             appointment_slices_id = appointment_slices.pk
-        #             credentials = Credentials.objects.get(pk=appointment_slices.credentials.pk)
-        #             first_name = credentials.first_name
-        #             last_name = credentials.last_name
-        #         except:
-        #             appointment_slices_id = 0
-        #
-        #         taken = appointment_id = 0
-        #         if appointment_slices_id > 0:
-        #             taken = 1
-        #             appointment_id = appointment_slices_id
-        #             treatment = Treatments.objects.get(pk=appointment_slices.treatment.pk).treatment
-        #             available = 0
-        #         date_timeslices.append({"start": "{} {}".format(date_, slice_data[0]["slice_start"]),
-        #                                 "end": "{} {}".format(date_, slice_data[0]["slice_end"]),
-        #                                 "taken": taken,
-        #                                 "available": available,
-        #                                 "appointment_id": appointment_id,
-        #                                 "first_name": first_name,
-        #                                 "last_name": last_name,
-        #                                 "treatment": treatment})
-        #     date_ += delta
-        #     weekday += 1
-        #     if weekday > 7:
-        #         weekday -= 7
-
-
     @csrf_exempt
-    @action(methods=['get'], detail=False)
-    def make_time_change(self, request):
+    @action(methods=['post'], detail=False)
+    def change_appointment(self, request):
         # get variables
-        date_ = parse_date(getpost(request, 'date'))
-        old_start_time = parse_time(getpost(request, 'old_start_time'))
-        old_end_time = parse_time(getpost(request, 'old_end_time'))
-        new_start_time = parse_time(getpost(request, 'new_start_time'))
-        new_end_time = parse_time(getpost(request, 'new_end_time'))
+        appointment_id = getpost(request, 'appointment_id')
+        begin_time = getpost(request, 'begin_time')
+        end_time = getpost(request, 'end_time')
+        treatment = getpost(request, 'treatment')
+        customer_id = getpost(request, 'customer_id')
+        reason = getpost(request, 'reason')
 
-        # get the day of the week (+1 because of the ID's in the table)
-        weekday = datetime.strptime("{} {}".format(
-            date_, old_start_time), '%Y-%m-%d %H:%M:%S').weekday() + 1
-        standart_week = StandardWeek.objects.get(pk=weekday)
-        # see if there were changes made previously
-        try:
-            change = Changes.objects.get(date=date_)
-        except:
-            # if there were no changes, just make them
-            change = Changes.objects.create(
-                date=date_, slice_count=standart_week.slice_count)
-            slices = TimeSlices.objects.filter(standardweek__pk=weekday)
-            for i in slices:
-                change.slices.add(i)
-        # find the old timeslice which is going to be changed
-        try:
-            old_slice = TimeSlices.objects.get(slice_start=old_start_time, slice_end=old_end_time,
-                                               changes__pk=change.pk)
-            print(old_slice)
-        except:
-            return Response("ERROR: No old slice found!")
-        # find or make the new timeslice
-        try:
-            new_slice = TimeSlices.objects.get(
-                slice_start=new_start_time, slice_end=new_end_time)
-        except:
-            new_slice = TimeSlices.objects.create(
-                slice_start=new_start_time, slice_end=new_end_time)
-        # apply the changes
-        try:
-            change.slices.remove(old_slice)
-            change.slices.add(new_slice)
-        except:
-            return Response("ERROR: I don't really know what went wrong... Maybe try again or contact an admin ;-;")
+        appointment = Appointments.objects.get(pk=appointment_id)
+        appointment.start_time = begin_time
+        appointment.end_time = end_time
+        appointment.treatment = treatment
+        appointment.reason = reason
+        appointment.credentials_id = customer_id
+        appointment.save()
+
         return Response("SUCCESS")
 
-    @csrf_exempt
-    @action(methods=['get'], detail=False)
-    def make_day_change(self, request):
-        date_ = parse_date(getpost(request, 'date'))
-        slice_count = getpost(request, 'slice_count')
-        weekday = datetime.strptime("{} 01:00:00".format(date_), '%Y-%m-%d %H:%M:%S').weekday() + 1
-        try:
-            changes = Changes.objects.get(date=date_)
-            changes.slice_count = slice_count
-            changes.save()
-        except:
-            changes = Changes.objects.create(date=date_, slice_count=slice_count)
-            slices = TimeSlices.objects.filter(standardweek__pk=weekday)
-            for i in slices:
-                changes.slices.add(i)
-        return Response("Success")
 
     @csrf_exempt
     @action(methods=['get'], detail=False)
@@ -513,18 +391,44 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
         result = []
 
         appointment = Appointments.objects.get(id=appointment_id)
-        time_slice = TimeSlices.objects.get(id=appointment.time_slice_id)
-        treatment = Treatments.objects.get(id=appointment.treatment_id)
         credential = Credentials.objects.get(id=appointment.credentials_id)
 
         result.append({
-            'customer': serializers.serialize('json', [credential, ]),
-            'appointment': serializers.serialize('json', [appointment, ]),
-            'time_slice': serializers.serialize('json', [time_slice, ]),
-            'treatment': serializers.serialize('json', [treatment, ]),
+            "date": appointment.date,
+            "start_time": appointment.start_time,
+            "end_time": appointment.end_time,
+            "blocked": appointment.blocked,
+            "treatment": appointment.treatment,
+            "reason": appointment.reason,
+            "credential_id": appointment.credentials_id,
+            "first_name": credential.first_name,
+            "last_name": credential.last_name,
+            "email": credential.email,
+            "phone_number": credential.phone_number
         })
 
         return Response(result)
+
+
+    @csrf_exempt
+    @action(methods=['post'], detail=False)
+    def block_appointment(self, request):
+        dbs_string = getpost(request, 'start')
+        dbs_strings = dbs_string.split(' ')
+        date_ = datetime.strptime(dbs_strings[0], '%Y-%m-%d')
+        dbe_string = getpost(request, 'end')
+        dbe_strings = dbe_string.split(' ')
+        time_start = dbs_strings[1]
+        time_end = dbe_strings[1]
+
+        get_slice = TimeSlices.objects.get(
+            slice_start=time_start, slice_end=time_end).pk
+
+        Appointments.objects.create(date=date_, start_time=time_start, end_time=time_end,
+                                    time_slice_id=get_slice, blocked=True)
+        result = "blocked"
+        return Response(result)
+
 
     @csrf_exempt
     @action(methods=['post'], detail=False)
@@ -603,59 +507,77 @@ class AppointmentsView(viewsets.ModelViewSet):
     @csrf_exempt
     @action(methods=['get'], detail=False)
     def get_appointments_customer(self, request):
-        # get and set variables
-        date_ = parse_date(getpost(request, 'beginweek'))
-        endweek = parse_date(getpost(request, 'endweek'))
-        delta = timedelta(days=1)
-        date_timeslices = []
-        # get the day of the week
-        today_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f').split()
-        # get today's date
-        today_date = parse_date(today_datetime[0])
-        # check if the received date is earlier than today
-        if date_ <= today_date:
-            date_ = today_date + delta
-        # get the weekday (monday, tuesday, etc (+1 because of the ID's in the database))
-        weekday = datetime.strptime('{} 01:00:00'.format(
-            date_), '%Y-%m-%d %H:%M:%S').weekday() + 1
-        # loop through all days between the 2 received dates
-        while date_ <= endweek:
-            # check for a vacation
-            try:
-                vacations = Vacations.objects.filter(
-                    start_date__lte=date_, end_date__gte=date_).values()
-                if vacations[0]:
-                    pass
-            except:
-                # get the all the timeslices within the range of the date's
-                # check for changes
-                try:
-                    if_changes = Changes.objects.get(date=date_).slice_count
-                    slice_count = int(if_changes)
-                    slices = TimeSlices.objects.filter(
-                        changes__date=date_).values()
-                except:
-                    slices = TimeSlices.objects.filter(
-                        standardweek__pk=weekday).values()
-                    slice_count = StandardWeek.objects.get(
-                        pk=weekday).slice_count
-                count = 0
-                slice_array = []
-                # check per slice if there is an appointment connected to it
-                for i in slices:
-                    appointment_slices = Appointments.objects.filter(
-                        time_slice_id=i['id'], date=date_)
-                    if appointment_slices:
-                        count += 1
+        # get variables
+        start_search_date = parse_date(getpost(request, 'beginweek'))
+        end_search_date = parse_date(getpost(request, 'endweek'))
+        today = date.today()
+
+        events = []
+        search_array = []
+
+        # set search duration
+        # if the whole request duration is in the past return no events
+        if end_search_date < today:
+            return Response(events)
+
+        # if today is halfway through the request duration, only return events after today
+        elif start_search_date < today:
+            search_duration = end_search_date - today
+
+            # fill array with dates to be searched in
+            for i in range(search_duration.days):
+                day = (today + timedelta(days=1)) + timedelta(days=i)
+                search_array.append(day)
+
+        # if the entire request duration is in the future, return events for all days
+        else:
+            search_duration = end_search_date - start_search_date
+
+            # fill array with dates to be searched in
+            for i in range(search_duration.days + 1):
+                day = start_search_date + timedelta(days=i)
+                search_array.append(day)
+
+        # get the vacations
+
+        vacations = Vacations.objects.filter(
+                            start_date__lte=end_search_date, end_date__gte=start_search_date).values()
+
+        if len(vacations) > 0:
+            for vacation in vacations:
+                # remove vacations from search array
+                vacation_duration = vacation['end_date'] - vacation['start_date']
+
+                for i in range(vacation_duration.days + 1):
+                    day = vacation['start_date'] + timedelta(days=i)
+                    if day in search_array:
+                        search_array.remove(day)
+
+        # Check for appointments
+        for search_date in search_array:
+            # Find the day's time slices
+            weekday = search_date.weekday() + 1
+            max_appointment = StandardWeek.objects.get(pk=weekday).slice_count
+            slices = TimeSlices.objects.filter(standardweek__pk=weekday)
+
+            appointments = Appointments.objects.filter(date=search_date)
+            if len(appointments) == 0:
+                for slice in slices:
+                    events.append({"start": "{} {}".format(search_date, slice.slice_start),
+                                   "end": "{} {}".format(search_date, slice.slice_end)
+                                   })
+            else:
+                appointment_counter = 0
+                for appointment in appointments:
+                    if appointment.blocked:
+                        slices = slices.exclude(pk=appointment.time_slice.pk)
                     else:
-                        slice_array.append(i['id'])
-                # check of there is still space left for a new appointment
-                if count < slice_count:
-                    # add all results to the final array
-                    for i in slice_array:
-                        slice_data = TimeSlices.objects.get(pk=i)
-                        date_timeslices.append({"start": "{} {}".format(date_, slice_data.slice_start),
-                                                "end": "{} {}".format(date_, slice_data.slice_end)})
-            date_ += delta
-            weekday += 1
-        return Response(date_timeslices)
+                        slices = slices.exclude(pk=appointment.time_slice.pk)
+                        appointment_counter += 1
+
+                if appointment_counter < max_appointment:
+                    for slice in slices:
+                        events.append({"start": "{} {}".format(search_date, slice.slice_start),
+                                       "end": "{} {}".format(search_date, slice.slice_end)
+                                       })
+        return Response(events)

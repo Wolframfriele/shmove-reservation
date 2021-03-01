@@ -111,6 +111,7 @@
 </template>
 
 <script>
+import { bus } from '../../main'
 import axios from "axios";
 
 export default {
@@ -144,16 +145,17 @@ export default {
         })
         .then(res => {
           //Perform Success Action
-          console.log(res.data);
-          // window.location.reload();
-          window.location.reload();
+          if (res.data == "Success") {
+            this.$emit("reloadCalendar")
+            this.$emit('closeVacationModal', true)
+            bus.$emit('updateHolidays')
+            this.vacationTitle = ""
+            this.vacationEndDate = ""
+          }
         })
         .catch(error => {
           console.log(error);
         })
-        .finally(() => {
-          //Perform action in always
-        });
     },
     closeModal() {
       this.$emit('closeVacationModal', true)

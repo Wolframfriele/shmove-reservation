@@ -26,7 +26,11 @@ from dashboard.serializers import DashboardSerializer
 from barber.models import Appointments, Credentials, StandardWeek, TimeSlices, Treatments
 from barber.serializers import AppointmentSerializer
 
-# Create your views here.
+def getpost(request, x):
+    if request.method == 'POST' or request.method == 'PUT' or request.method == 'DELETE':
+        return request.data['body'][x]
+    else:
+        return request.query_params.get(x)
 
 
 @csrf_exempt
@@ -242,48 +246,6 @@ class DashboardView(viewsets.ModelViewSet):
         else:
             return Response({'msg': 'Er is iets mis gegaan'})
 
-    # get days name from date: day=date.strftime('%A')
-    # @csrf_exempt
-    # @action(methods=['post'], detail=False)
-    # def generate_week_dates(self, request):
-    #     """
-    #     take the begin, end current week dates and dates in between
-    #     and generate them in the StandardWeek and StandardWeek_slices many to many table
-
-    #     Args:
-    #         request ([request]): [request data]
-
-    #     Returns:
-    #         [Response]: [retrun confirmation]
-    #     """
-    #     week_dates = []
-    #     b_week = datetime.today() - timedelta(
-    #         days=datetime.today().weekday() % 7
-    #     )  # begin of week
-    #     e_week = b_week + timedelta(days=6)  # end of week
-    #     # get standard time slices
-    #     timeslices = TimeSlices.objects.all()
-    #     # generate current week dates
-    #     for i in range(7):
-    #         dates = b_week + timedelta(days=i)
-    #         week_dates.append(dates.date())
-    #     # check if Changes entity has already data in it
-    #     if WeekDates.objects.all().count() == 0:
-    #         for date in week_dates:
-    #             # create 7 date in Changes base on the current week
-    #             sd = WeekDates.objects.create(date=date)
-    #             # add the standart time slices to the changes
-    #             for ts in timeslices:
-    #                 sd.slices.add(ts)
-    #     else:
-    #         if WeekDates.objects.filter(date=b_week).count() == 0:
-    #             # delte all record in Changes table
-    #             WeekDates.objects.all().delete()
-    #             # delete all related many to many relationship record
-    #             # regenerate
-    #             self.generate_week_dates(request)
-
-    #     return Response('changes for {} to {} generated'.format(b_week, e_week))
 
     @csrf_exempt
     @action(methods=['post'], detail=False)
@@ -405,28 +367,55 @@ class DashboardView(viewsets.ModelViewSet):
         else:
             return Response({'deleted': False, 'msg': 'Tijdslot al geboekt'})
 
-    # @csrf_exempt
-    # @action(methods=['post'], detail=False)
-    # def slices_actions(self, request):
-    #     standard_slices = [
-    #         {'s': datetime.strptime('07:30:00', '%H:%M:%S').time(
-    #         ), 'e': datetime.strptime('09:30:00', '%H:%M:%S').time()},
-    #         {'s': datetime.strptime('10:00:00', '%H:%M:%S').time(
-    #         ), 'e': datetime.strptime('12:00:00', '%H:%M:%S').time()},
-    #         {'s': datetime.strptime('12:30:00', '%H:%M:%S').time(
-    #         ), 'e': datetime.strptime('14:30:00', '%H:%M:%S').time()},
-    #         {'s': datetime.strptime('15:00:00', '%H:%M:%S').time(
-    #         ), 'e': datetime.strptime('17:00:00', '%H:%M:%S').time()},
-    #         {'s': datetime.strptime('17:30:00', '%H:%M:%S').time(
-    #         ), 'e': datetime.strptime('19:30:00', '%H:%M:%S').time()},
-    #     ]
-    #     current_date = datetime.now().date()
+    @csrf_exempt
+    @action(methods=['get'], detail=False)
+    def get_clients(self, request):
+        clients = []
+        credentials = Credentials.objects.order_by('last_name')
+        for cred in credentials:
+            clients.append({
+                "customer_id": cred.id,
+                "first_name": cred.first_name,
+                "last_name": cred.last_name,
+                "email": cred.email,
+                "phone_number": cred.phone_number,
+            })
+        return Response(clients)
 
-    #     changes = Changes.objects.filter(Q(date__lt=current_date) & Q(action__isnull=False))
-    #     for change in changes.values():
-    #         if change['action'] == 'add':
-    #             TimeSlices.objects.filter(changes__id=change['slice']).delete()
-    #         elif change['action'] == 'update':
-    #             pass
-    #         else:
-    #             pass
+    @csrf_exempt
+    @action(methods=['put'], detail=False)
+    def change_client(self, request):
+        client_id = getpost(request, 'customer_id')
+        first_name = getpost(request, 'first_name')
+        last_name = getpost(request, 'last_name')
+        email = getpost(request, 'email')
+        phone_number = getpost(request, 'phone_number')
+
+        try:
+            client = Credentials.objects.get(id=client_id)
+            client.first_name = first_name
+            client.last_name = last_name
+            client.email = email
+            client.phone_number = phone_number
+            client.save()
+            status = 'Success'
+        except:
+            status = 'Fail'
+
+        return Response(status)
+
+    @csrf_exempt
+    @action(methods=['post'], detail=False)
+    def delete_client(self, request):
+        client_id = getpost(request, 'customer_id')
+        appointments = Appointments.objects.filter(credentials=client_id)
+        for appointment in appointments:
+            appointment.delete()
+        try:
+            Credentials.objects.get(id=client_id).delete()
+            status = 'Success'
+        except:
+            status = 'Fail'
+
+
+        return Response(status)
