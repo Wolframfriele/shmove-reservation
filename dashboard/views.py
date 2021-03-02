@@ -417,5 +417,4 @@ class DashboardView(viewsets.ModelViewSet):
         except:
             status = 'Fail'
 
-
         return Response(status)

@@ -52,7 +52,7 @@
           <!-- Modified Calendar Header -->
           <template v-slot:day-label-header="{date, day, present, past, weekday}">
             <v-avatar v-if="past" color="white">{{ day }}</v-avatar>
-            <v-avatar v-else-if="present" color="primary">{{ day }}</v-avatar>
+            <v-avatar v-else-if="present" color="primary" class="white--text">{{ day }}</v-avatar>
             <v-btn v-else fab depressed color="white" :aria-label="dateToString(date)" :href="returnID(weekday)">{{ day }} </v-btn>
           </template>
           <!-- Modified Calendar Events -->
@@ -63,6 +63,9 @@
             </p>
           </template>
         </v-calendar>
+        <v-alert v-if="noEvents" color="primary" class="no-events" width="615">
+          <p class="white--text">Er zijn helaas geen vrije plekkken meer voor deze periode.</p>
+        </v-alert>
       </v-sheet>
     </v-col>
   </v-row>
@@ -86,7 +89,8 @@ export default {
     treatment: "",
     events: [],
     loaded: false,
-    absolute: true
+    absolute: true,
+    noEvents: false,
   }),
   created() {
     // Receive Data from treatments
@@ -115,6 +119,7 @@ export default {
     },
     getFreePlaces(beginweek, endweek){
       this.events = []
+      this.noEvents = false
       this.loaded = false
       axios.get('appointments/get_appointments_customer/',
       {
@@ -133,6 +138,9 @@ export default {
             timed: true
           })
         });
+        if (this.events.length == 0) {
+          this.noEvents = true
+        }
         this.loaded = true
       }).catch(e => {
         console.log(e)
@@ -165,5 +173,13 @@ html::-webkit-scrollbar {
 .event-text {
   padding: 5px;
   margin-bottom: 0px !important;
+}
+
+.no-events {
+  position: absolute;
+  z-index: 2;
+  margin: auto;
+  top: -330px;
+  left: 25px;
 }
 </style>

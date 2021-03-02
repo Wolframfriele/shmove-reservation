@@ -72,7 +72,26 @@
             input-value="false"
             label="Ja, ik ga akkoord met de algemene voorwaarden."
             type="checkbox"
-          ></v-checkbox>
+          >
+            <template v-slot:label>
+              <div>
+                ja, ik ga akkoord met de 
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <a
+                      target="_blank"
+                      href="https://www.shiatsu-delft.nl/privacy-beleid/"
+                      @click.stop
+                      v-on="on"
+                    >
+                      algemene voorwaarden.
+                    </a>
+                  </template>
+                  Opent in nieuw venster
+                </v-tooltip>
+              </div>
+            </template>
+          </v-checkbox>
         </validation-provider>
         <span id="error-message">Er is iets mis gegaan met het bevestigen van de afspraak, probeert U het nog eens of neem contact op met de beheerder.</span>
         <v-btn @click="back">
