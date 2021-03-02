@@ -4,7 +4,7 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-import "./registerServiceWorker";
+// import "./registerServiceWorker";
 import vuetify from "./plugins/vuetify";
 import VAnimateCss from "v-animate-css";
 import Vuex from "vuex";

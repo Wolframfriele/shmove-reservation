@@ -102,8 +102,8 @@ export default {
           }
         })
       .then(res => {
-        if (res == 'Success') {
-          this.$emit('closeKlantmentModal', true)
+        if (res.data == 'Success') {
+          this.$emit('closeKlantModal', true)
           this.$emit('reloadKlanten')
         }
       })

@@ -179,7 +179,7 @@ html::-webkit-scrollbar {
   position: absolute;
   z-index: 2;
   margin: auto;
-  top: -330px;
-  left: 25px;
+  top: 510px;
+  left: 480px;
 }
 </style>
