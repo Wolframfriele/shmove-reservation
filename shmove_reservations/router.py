@@ -1,6 +1,10 @@
 from rest_framework import routers
-# from works.views import Works_view # example of rest api view import
+# example of rest api view import
+from barber.views import AppointmentsView, DashboardAppointmentView
+from dashboard.views import DashboardView
 
 
 router = routers.DefaultRouter()
-# router.register('works', Works_view) # example of how to register a function as api route
+router.register('appointments', AppointmentsView)
+router.register('dash_appointments', DashboardAppointmentView)
+router.register('dashboard', DashboardView)
