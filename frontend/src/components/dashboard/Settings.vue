@@ -2,19 +2,19 @@
   <v-container class="settingsContainer">
     <h1>Instellingen</h1>
     <Treatments />
-    <Openingtimes />
+    <!-- <Openingtimes /> -->
   </v-container>
 </template>
 
 <script>
 import Treatments from "../../components/dashboard/Treatments";
-import Openingtimes from "../../components/dashboard/Openingtimes";
+// import Openingtimes from "../../components/dashboard/Openingtimes";
 
 export default {
   data: () => ({}),
   components: {
     Treatments,
-    Openingtimes
+    // Openingtimes
   },
   methods: {}
 };
