@@ -39,6 +39,7 @@ urlpatterns = [
          name='afspraak-bevestigen/'),
     path('afspraak-geboekt/', views.afspraak_geboekt, name='afspraak-geboekt'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('login/', views.dashboard, name='dashboard'),
 
 ] + static(
     settings.STATIC_URL, document_root=settings.STATIC_ROOT,
