@@ -227,7 +227,7 @@ export default {
         "november",
         "december"
       ];
-      const reserverings_tijd = datum;
+      const reserverings_tijd = new Date(datum);
 
       const dayIndex = reserverings_tijd.getDay();
       const day = days[dayIndex];
@@ -235,9 +235,9 @@ export default {
       const monthIndex = reserverings_tijd.getMonth();
       const month = months[monthIndex];
       const hours = reserverings_tijd.getHours();
-      const minutes = String(reserverings_tijd.getMinutes()).padStart(2, '0');
+      // const minutes = String(reserverings_tijd.getMinutes()).padStart(2, '0');
 
-      return `${day} ${date} ${month} om ${hours}:${minutes}`;
+      return `${day} ${date} ${month} om ${hours}`;
     },
   }
 };
