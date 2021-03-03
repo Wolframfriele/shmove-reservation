@@ -1,7 +1,7 @@
 <template>
   <div>
     <p>
-      Er is om {{ this.$route.params.time }} voor je gereserveerd! Je hebt ook
+      Er is {{ this.$route.params.time }} voor je gereserveerd! Je hebt ook
       een bevestigings mail ontvangen. Hier staat meer informatie over annuleren
       in.
     </p>

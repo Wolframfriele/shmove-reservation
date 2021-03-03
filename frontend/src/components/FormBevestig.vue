@@ -55,7 +55,7 @@
         value="Omschrijf wat voor klachten u heeft, of wat voor andere reden."
       ></v-textarea>
       <p>
-        Uw selectie is <strong>{{ dateToString($route.params.start) }}</strong
+        Uw selectie is <strong>{{ $route.params.start }}</strong
         >.
       </p>
       <p class="caption">
