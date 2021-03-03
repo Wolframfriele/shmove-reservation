@@ -55,7 +55,7 @@
         value="Omschrijf wat voor klachten u heeft, of wat voor andere reden."
       ></v-textarea>
       <p>
-        Uw selectie is <strong>{{ $route.params.start }}</strong
+        Uw selectie is <strong>{{ dateToZin($route.params.start) }}</strong
         >.
       </p>
       <p class="caption">
@@ -202,7 +202,43 @@ export default {
     },
     back() {
       this.$router.push("afspraak-maken");
-    }
+    },
+    dateToZin(datum) {
+      const days = [
+        "zondag",
+        "maandag",
+        "dinsdag",
+        "woensdag",
+        "donderdag",
+        "vrijdag",
+        "zaterdag"
+      ];
+      const months = [
+        "januari",
+        "februari",
+        "maart",
+        "april",
+        "mei",
+        "juni",
+        "juli",
+        "augustus",
+        "september",
+        "oktober",
+        "november",
+        "december"
+      ];
+      const reserverings_tijd = new Date(datum);
+
+      const dayIndex = reserverings_tijd.getDay();
+      const day = days[dayIndex];
+      const date = reserverings_tijd.getDate();
+      const monthIndex = reserverings_tijd.getMonth();
+      const month = months[monthIndex];
+      const hours = reserverings_tijd.getHours();
+      const minutes = String(reserverings_tijd.getMinutes()).padStart(2, '0');
+
+      return `${day} ${date} ${month} om ${hours}:${minutes}`;
+    },
   }
 };
 </script>
