@@ -7,11 +7,9 @@
 <script>
 export default {
   data: () => ({
-    currency: "€",
+    currency: "€"
   }),
-  methods: {
-
-  }
+  methods: {}
 };
 </script>
 <style scoped>
@@ -21,5 +19,4 @@ h1 {
 .holidayContainer.container {
   margin-bottom: 80px;
 }
-
 </style>

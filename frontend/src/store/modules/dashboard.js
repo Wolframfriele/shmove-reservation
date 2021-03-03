@@ -3,21 +3,21 @@ import axios from "axios";
 export default {
   namespaced: true,
   state: {
-    appointmentDataArr: [], // array contains appointments data
+    appointmentDataArr: [] // array contains appointments data
   },
 
   getters: {
-    setAppointments: (state) => (data) => {
+    setAppointments: state => data => {
       if (state.appointmentDataArr.length > 0) {
         state.appointmentDataArr = [];
-      } 
-      data.forEach((item) => {
+      }
+      data.forEach(item => {
         state.appointmentDataArr.push(item);
       });
     },
-    getAppointments: (state) => {
+    getAppointments: state => {
       return state.appointmentDataArr;
-    },
+    }
   },
 
   mutations: {
@@ -29,17 +29,17 @@ export default {
             */
       axios
         .get(`${payload.host}/api/${payload.url}/`, {
-          params: payload.params,
+          params: payload.params
           // headers: {
           //     "X-CSRFToken": payload.csrftoken,
           //     Authorization: `token ${payload.auth}`,
           // },
         })
-        .then((response) => {
+        .then(response => {
           let res = response.data;
           payload.callback(res);
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
     },
@@ -52,20 +52,20 @@ export default {
        */
       axios
         .post(`${payload.host}/api/${payload.url}/`, {
-          body: payload.params,
+          body: payload.params
           // headers: {
           //     "X-CSRFToken": payload.csrftoken,
           //     Authorization: `token ${payload.auth}`,
           // },
         })
-        .then((response) => {
+        .then(response => {
           let res = response.data;
           payload.callback(res);
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
-    },
+    }
   },
 
   actions: {
@@ -77,5 +77,5 @@ export default {
     //     host: rootState.HOST,
     //   });
     // },
-  },
+  }
 };

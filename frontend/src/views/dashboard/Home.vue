@@ -7,7 +7,7 @@
         </v-tab>
         <v-container class="signout" @click="logOut">
           <div class="signoutbtn">
-          Uitloggen<v-icon class="icon"> mdi-exit-to-app </v-icon>
+            Uitloggen<v-icon class="icon"> mdi-exit-to-app </v-icon>
           </div>
         </v-container>
       </v-tabs>
@@ -15,7 +15,10 @@
         <v-tab-item v-for="item in items" :key="item.title">
           <v-card flat>
             <v-card-text>
-              <component v-bind:is="item.content" @changeToVakantie="changeToVakantie"></component>
+              <component
+                v-bind:is="item.content"
+                @changeToVakantie="changeToVakantie"
+              ></component>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -33,9 +36,7 @@ export default {
   data: () => ({
     tab: null,
     items: [
-      { title: "Agenda",
-        icon: "mdi-calendar",
-        content: "Calendar" },
+      { title: "Agenda", icon: "mdi-calendar", content: "Calendar" },
       {
         title: "Vakanties",
         icon: "mdi-white-balance-sunny",
@@ -45,12 +46,12 @@ export default {
         title: "Klanten",
         icon: "mdi-account",
         content: "Klanten"
-      },      
+      },
       {
         title: "Instellingen",
         icon: "mdi-cog",
         content: "Settings"
-      },
+      }
       // {
       //   title: "Statistieken",
       //   icon: "mdi-chart-bar",
@@ -62,24 +63,24 @@ export default {
     Calendar,
     Holidays,
     Klanten,
-    Settings,
+    Settings
     // Statistics
   },
   // Session check
-  beforeCreate: function () {
+  beforeCreate: function() {
     if (!this.$session.exists()) {
-      this.$router.push({name: "Login"})
+      this.$router.push({ name: "Login" });
     }
   },
   created() {},
   mounted() {},
   methods: {
-    logOut: function () {
-      this.$session.destroy()
-      this.$router.push({name: "Login"})
+    logOut: function() {
+      this.$session.destroy();
+      this.$router.push({ name: "Login" });
     },
-    changeToVakantie () {
-      this.tab = 1
+    changeToVakantie() {
+      this.tab = 1;
     }
   }
 };
@@ -95,7 +96,7 @@ export default {
   margin-right: 0;
 }
 
-.col{
+.col {
   padding: 0;
 }
 
@@ -105,7 +106,6 @@ html::-webkit-scrollbar {
 }
 </style>
 <style scoped>
-
 .container {
   padding: 0;
   margin: 0;
@@ -136,7 +136,7 @@ html::-webkit-scrollbar {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
 }
 .icon {
   margin-left: 8px;

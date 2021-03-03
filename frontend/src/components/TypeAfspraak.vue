@@ -1,5 +1,5 @@
 <template>
-  <v-container>    
+  <v-container>
     <v-radio-group v-model="treatment" mandatory>
       <v-radio
         v-for="single_treatment in treatment_options"
@@ -13,32 +13,31 @@
 </template>
 
 <script>
-import { bus } from '../main'
-import axios from "axios"
+import { bus } from "../main";
+import axios from "axios";
 
 export default {
   data() {
     return {
-      treatment_options:[],
+      treatment_options: [],
       treatment: ""
     };
   },
-  created () {
-    axios.get('get_treatments/')
-    .then(res=>{
-      this.treatment = res.data[0].treatment
+  created() {
+    axios.get("get_treatments/").then(res => {
+      this.treatment = res.data[0].treatment;
       res.data.forEach(element => {
-        this.treatment_options.push(element.treatment)
-      })
-      bus.$emit('treatmentArray', this.treatment)
-    })
+        this.treatment_options.push(element.treatment);
+      });
+      bus.$emit("treatmentArray", this.treatment);
+    });
   },
   methods: {
-    changeBehandeling () {
-      bus.$emit('treatmentArray', this.treatment);
+    changeBehandeling() {
+      bus.$emit("treatmentArray", this.treatment);
     },
-    returnAria (input_treatment) {
-      return `Selecteer Type Afspraak: ${input_treatment}`
+    returnAria(input_treatment) {
+      return `Selecteer Type Afspraak: ${input_treatment}`;
     }
   }
 };

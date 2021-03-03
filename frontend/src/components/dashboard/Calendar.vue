@@ -110,7 +110,7 @@
       hide-overlay
       offset-x
     >
-      <ExistingAppointmentModal 
+      <ExistingAppointmentModal
         v-bind:selectedEvent="selectedEvent"
         @closeAppointmentModal="showEventModal = false"
         @reloadCalendar="getAllEvents(startWeek.date, endWeek.date)"
@@ -134,7 +134,7 @@
       hide-overlay
       offset-x
     >
-      <NewAppointmentModal 
+      <NewAppointmentModal
         v-bind:selectedOpenEvent="selectedOpenEvent"
         @closeNewAppointmentModal="createEventModal = false"
         @reloadCalendar="getAllEvents(startWeek.date, endWeek.date)"
@@ -148,10 +148,10 @@
       hide-overlay
       offset-x
     >
-      <BlockedAppointmentModal 
-      v-bind:selectedEvent="selectedEvent"
-      @closeBlockedModal="showBlockedModal = false"
-      @reloadCalendar="getAllEvents(startWeek.date, endWeek.date)"
+      <BlockedAppointmentModal
+        v-bind:selectedEvent="selectedEvent"
+        @closeBlockedModal="showBlockedModal = false"
+        @reloadCalendar="getAllEvents(startWeek.date, endWeek.date)"
       />
     </v-dialog>
     <!-- Plan Vakantie Modal -->
@@ -162,7 +162,7 @@
       hide-overlay
       offset-x
     >
-      <PlanVacationModal 
+      <PlanVacationModal
         v-bind:vacationStartDate="vacationStartDate"
         @closeVacationModal="planVacationModal = false"
         @reloadCalendar="getAllEvents(startWeek.date, endWeek.date)"
@@ -172,7 +172,7 @@
 </template>
 
 <script>
-import { bus } from '../../main'
+import { bus } from "../../main";
 import axios from "axios";
 import ExistingAppointmentModal from "../../components/dashboard/ExistingAppointmentModal";
 import NewAppointmentModal from "../../components/dashboard/NewAppointmentModal";
@@ -209,9 +209,15 @@ export default {
     planVacationModal: false,
     showBlockedModal: false,
     vacationStartDate: "",
-    // Appointment Data 
-    select: "",    
-    eventColor: ["teal", "primary", "orange lighten-2", "deep-orange darken-4", "grey"],
+    // Appointment Data
+    select: "",
+    eventColor: [
+      "teal",
+      "primary",
+      "orange lighten-2",
+      "deep-orange darken-4",
+      "grey"
+    ],
     selectedEvent: {},
     selectedOpenEvent: {},
     // appointmentDate: "",
@@ -227,34 +233,32 @@ export default {
     // Functions
     starttime: "",
     endtime: "",
-    success: "",
+    success: ""
   }),
   components: {
     ExistingAppointmentModal,
     NewAppointmentModal,
     BlockedAppointmentModal,
-    PlanVacationModal,
+    PlanVacationModal
   },
-  created () {
-    bus.$on('updateCalendar', () => {
-        this.getAllEvents(this.startWeek.date, this.endWeek.date)
-      })
+  created() {
+    bus.$on("updateCalendar", () => {
+      this.getAllEvents(this.startWeek.date, this.endWeek.date);
+    });
   },
-  methods: {    
+  methods: {
     viewDay({ date }) {
       this.focus = date;
     },
     updateRange({ start, end }) {
-      this.getAllEvents(start.date, end.date)
-      this.startWeek = start
-      this.endWeek = end
+      this.getAllEvents(start.date, end.date);
+      this.startWeek = start;
+      this.endWeek = end;
     },
     getAllEvents(start, end) {
-      this.loaded = false
+      this.loaded = false;
       axios
-      .get(
-        'dash_appointments/get_appointments/',
-        {
+        .get("dash_appointments/get_appointments/", {
           params: {
             beginweek: start,
             endweek: end
@@ -265,101 +269,102 @@ export default {
             "X-CSRFToken": this.$session.get("token"),
             Authorization: `Token ${this.$session.get("token")}`
           }
-        }
-      )
-      .then(res => {
-        this.events = [];
-        res.data.forEach(entry => {
-          if (entry.type == 0) {
-            this.events.push({
-              name: entry.name,
-              start: entry.start,
-              end: entry.end,
-              appointment_id: entry.appointment_id,
-              color: this.eventColor[0],
-            });
-          } else if (entry.type == 1) {
-            this.events.push({
-              name: "Vrije Afspraak",
-              start: entry.start,
-              end: entry.end,
-              color: this.eventColor[1]
-            });
-          } else if (entry.type == 2) {
-            this.events.push({
-              name: entry.name,
-              start: entry.start,
-              end: entry.end,
-              color: this.eventColor[2]
-            });
-          } else if (entry.type == 3) {
-            this.events.push({
-              name: "Geblokkeerd",
-              start: entry.start,
-              end: entry.end,
-              appointment_id: entry.appointment_id,
-              color: this.eventColor[3]
-            });
-          } else if (entry.type == 4) {
-            this.events.push({
-              name: "Automatisch Geblokkeerd",
-              start: entry.start,
-              end: entry.end,
-              color: this.eventColor[4]
-            });
-          }
+        })
+        .then(res => {
+          this.events = [];
+          res.data.forEach(entry => {
+            if (entry.type == 0) {
+              this.events.push({
+                name: entry.name,
+                start: entry.start,
+                end: entry.end,
+                appointment_id: entry.appointment_id,
+                color: this.eventColor[0]
+              });
+            } else if (entry.type == 1) {
+              this.events.push({
+                name: "Vrije Afspraak",
+                start: entry.start,
+                end: entry.end,
+                color: this.eventColor[1]
+              });
+            } else if (entry.type == 2) {
+              this.events.push({
+                name: entry.name,
+                start: entry.start,
+                end: entry.end,
+                color: this.eventColor[2]
+              });
+            } else if (entry.type == 3) {
+              this.events.push({
+                name: "Geblokkeerd",
+                start: entry.start,
+                end: entry.end,
+                appointment_id: entry.appointment_id,
+                color: this.eventColor[3]
+              });
+            } else if (entry.type == 4) {
+              this.events.push({
+                name: "Automatisch Geblokkeerd",
+                start: entry.start,
+                end: entry.end,
+                color: this.eventColor[4]
+              });
+            }
+          });
+          this.loaded = true;
+        })
+        .catch(e => {
+          console.log(e);
         });
-        this.loaded = true
-      })
-      .catch(e => {
-        console.log(e);
-      });
     },
     showVacationPlanner({ date }) {
       // Clear Dates
-      this.vacationStartDate = ""
-      this.vacationEndDate = ""
+      this.vacationStartDate = "";
+      this.vacationEndDate = "";
       // Set Dates
-      this.vacationStartDate = date
-      this.showEventModal = false
-      this.createEventModal = false
-      this.showBlockedModal = false
-      this.planVacationModal = true
-    },    
+      this.vacationStartDate = date;
+      this.showEventModal = false;
+      this.createEventModal = false;
+      this.showBlockedModal = false;
+      this.planVacationModal = true;
+    },
     showModal({ event }) {
-      
       if (event.color == this.eventColor[0]) {
         if (this.showEventModal == false) {
-          this.selectedEvent = event
+          this.selectedEvent = event;
           setTimeout(() => {
-            this.createEventModal = false
-            this.planVacationModal = false
-            this.showBlockedModal = false
+            this.createEventModal = false;
+            this.planVacationModal = false;
+            this.showBlockedModal = false;
             this.showEventModal = true;
           }, 10);
         } else {
-          this.planVacationModal = false
-          this.createEventModal = false
-          this.showEventModal = false
-          this.showBlockedModal = false
+          this.planVacationModal = false;
+          this.createEventModal = false;
+          this.showEventModal = false;
+          this.showBlockedModal = false;
         }
-      } else if (event.color == this.eventColor[1] || event.color == this.eventColor[4]) {
-        this.selectedOpenEvent = event
-        this.planVacationModal = false
-        this.showEventModal = false
-        this.showBlockedModal = false
-        this.createEventModal = true
+      } else if (
+        event.color == this.eventColor[1] ||
+        event.color == this.eventColor[4]
+      ) {
+        this.selectedOpenEvent = event;
+        this.planVacationModal = false;
+        this.showEventModal = false;
+        this.showBlockedModal = false;
+        this.createEventModal = true;
       } else if (event.color == this.eventColor[2]) {
-        this.selectedOpenEvent = event
-        this.$emit("changeToVakantie", "Vakanties")
+        this.selectedOpenEvent = event;
+        this.$emit("changeToVakantie", "Vakanties");
       } else if (event.color == this.eventColor[3]) {
-        this.selectedEvent = event
-        this.planVacationModal = false
-        this.showEventModal = false
-        this.createEventModal = false
-        this.showBlockedModal = true
+        this.selectedEvent = event;
+        this.planVacationModal = false;
+        this.showEventModal = false;
+        this.createEventModal = false;
+        this.showBlockedModal = true;
       }
-    },
+    }
   }
 };
 </script>
@@ -419,8 +424,6 @@ form .container .nopadding {
   padding: 5px;
   margin-bottom: 0px !important;
 }
-
-
 
 /* Bewerk Afspraak */
 

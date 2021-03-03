@@ -1,42 +1,42 @@
 <template>
-    <validation-observer ref="observer" v-slot="{ }">
-      <form @submit.prevent="submit">
-        <validation-provider v-slot="{ errors }" name="Voornaam">
-          <v-text-field
-            v-model="firstname"
-            :error-messages="errors"
-            label="Voornaam"
-            outlined
-            required
-          ></v-text-field>
-        </validation-provider>
-        <validation-provider v-slot="{ errors }" name="Achternaam">
-          <v-text-field
-            v-model="lastname"
-            :error-messages="errors"
-            label="Achternaam"
-            outlined
-            required
-          ></v-text-field>
-        </validation-provider>
-        <validation-provider
-          v-slot="{ errors }"
-          name="email"
-          rules="required|email"
-        >
-          <v-text-field
-            v-model="email"
-            :error-messages="errors"
-            label="E-mail"
-            outlined
-            required
-          ></v-text-field>
-        </validation-provider>
-        <validation-provider
+  <validation-observer ref="observer" v-slot="{}">
+    <form @submit.prevent="submit">
+      <validation-provider v-slot="{ errors }" name="Voornaam">
+        <v-text-field
+          v-model="firstname"
+          :error-messages="errors"
+          label="Voornaam"
+          outlined
+          required
+        ></v-text-field>
+      </validation-provider>
+      <validation-provider v-slot="{ errors }" name="Achternaam">
+        <v-text-field
+          v-model="lastname"
+          :error-messages="errors"
+          label="Achternaam"
+          outlined
+          required
+        ></v-text-field>
+      </validation-provider>
+      <validation-provider
+        v-slot="{ errors }"
+        name="email"
+        rules="required|email"
+      >
+        <v-text-field
+          v-model="email"
+          :error-messages="errors"
+          label="E-mail"
+          outlined
+          required
+        ></v-text-field>
+      </validation-provider>
+      <validation-provider
         v-slot="{ errors }"
         name="Telefoon Nummer"
         :rules="{
-          required: true,
+          required: true
         }"
       >
         <v-text-field
@@ -48,61 +48,62 @@
         ></v-text-field>
       </validation-provider>
       <v-textarea
-          outlined
-          v-model="reason"
-          name="reden"
-          label="Reden voor de behandeling"
-          value="Omschrijf wat voor klachten u heeft, of wat voor andere reden."
-        ></v-textarea>
-        <p>
-          Uw selectie is <strong>{{ dateToString($route.params.start) }}</strong>. De afspraak duurt ongeveer 2 uur.
-        </p>
-        <p class="caption">
-          Annuleren is kosteloos tot 48 uur van tevoren, daarna wordt de gereserveerde tijd in principe in rekening gebracht. 
-        </p>
-        
-        <validation-provider
-          v-slot="{ errors }"
-          rules="required"
-          name="checkbox"
-        >
-          <v-checkbox
-            v-model="accepted"
-            :error-messages="errors"
-            input-value="false"
-            label="Ja, ik ga akkoord met de algemene voorwaarden."
-            type="checkbox"
-          >
-            <template v-slot:label>
-              <div>
-                ja, ik ga akkoord met de 
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <a
-                      target="_blank"
-                      href="https://www.shiatsu-delft.nl/privacy-beleid/"
-                      @click.stop
-                      v-on="on"
-                    >
-                      algemene voorwaarden.
-                    </a>
-                  </template>
-                  Opent in nieuw venster
-                </v-tooltip>
-              </div>
-            </template>
-          </v-checkbox>
-        </validation-provider>
-        <span id="error-message">Er is iets mis gegaan met het bevestigen van de afspraak, probeert U het nog eens of neem contact op met de beheerder.</span>
-        <v-btn @click="back">
-          Terug
-        </v-btn>
+        outlined
+        v-model="reason"
+        name="reden"
+        label="Reden voor de behandeling"
+        value="Omschrijf wat voor klachten u heeft, of wat voor andere reden."
+      ></v-textarea>
+      <p>
+        Uw selectie is <strong>{{ dateToString($route.params.start) }}</strong
+        >. De afspraak duurt ongeveer 2 uur.
+      </p>
+      <p class="caption">
+        Annuleren is kosteloos tot 48 uur van tevoren, daarna wordt de
+        gereserveerde tijd in principe in rekening gebracht.
+      </p>
 
-        <v-btn class="mr-4" color="primary" type="submit" :disabled="!accepted">
-          Bevestig
-        </v-btn>
-      </form>
-    </validation-observer>
+      <validation-provider v-slot="{ errors }" rules="required" name="checkbox">
+        <v-checkbox
+          v-model="accepted"
+          :error-messages="errors"
+          input-value="false"
+          label="Ja, ik ga akkoord met de algemene voorwaarden."
+          type="checkbox"
+        >
+          <template v-slot:label>
+            <div>
+              ja, ik ga akkoord met de
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <a
+                    target="_blank"
+                    href="https://www.shiatsu-delft.nl/privacy-beleid/"
+                    @click.stop
+                    v-on="on"
+                  >
+                    algemene voorwaarden.
+                  </a>
+                </template>
+                Opent in nieuw venster
+              </v-tooltip>
+            </div>
+          </template>
+        </v-checkbox>
+      </validation-provider>
+      <span id="error-message"
+        >Er is iets mis gegaan met het bevestigen van de afspraak, probeert U
+        het nog eens of neem contact op met de beheerder.</span
+      >
+      <v-btn @click="back">
+        Terug
+      </v-btn>
+
+      <v-btn class="mr-4" color="primary" type="submit" :disabled="!accepted">
+        Bevestig
+      </v-btn>
+    </form>
+  </validation-observer>
 </template>
 
 <script>
@@ -155,21 +156,19 @@ export default {
     firstname: "",
     lastname: "",
     email: "",
-    phonenumber: '',
+    phonenumber: "",
     accepted: false,
-    reason: '',
-    error: "",
+    reason: "",
+    error: ""
   }),
 
-  created(){
-    
-  },
+  created() {},
 
   methods: {
     submit() {
-      this.$refs.observer.validate()
-      axios.post('appointments/new_appointment/',
-        {
+      this.$refs.observer.validate();
+      axios
+        .post("appointments/new_appointment/", {
           body: {
             date_booked_start: this.parseDate(this.$route.params.start),
             date_booked_end: this.parseDate(this.$route.params.end),
@@ -178,25 +177,31 @@ export default {
             first_name: this.firstname,
             last_name: this.lastname,
             email: this.email,
-            phone_number: this.phonenumber,
+            phone_number: this.phonenumber
           }
-        }
-      ).then(res => {
-        const error = res.data.error
-        if (error == "None") {
-          this.$router.push({name: "AfspraakGeboekt", params: { time: this.dateToString(this.$route.params.start)}})
-        } else {
-          document.getElementById("error-message").style.display = "inline-block"
-        }
-    }).catch(e => {
-      console.log(e)
-      if (e != "") {
-        document.getElementById("error-message").style.display = "inline-block"
-      }
-    })      
+        })
+        .then(res => {
+          const error = res.data.error;
+          if (error == "None") {
+            this.$router.push({
+              name: "AfspraakGeboekt",
+              params: { time: this.dateToString(this.$route.params.start) }
+            });
+          } else {
+            document.getElementById("error-message").style.display =
+              "inline-block";
+          }
+        })
+        .catch(e => {
+          console.log(e);
+          if (e != "") {
+            document.getElementById("error-message").style.display =
+              "inline-block";
+          }
+        });
     },
     back() {
-      this.$router.push("afspraak-maken")
+      this.$router.push("afspraak-maken");
     }
   }
 };

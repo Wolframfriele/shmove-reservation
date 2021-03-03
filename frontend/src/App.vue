@@ -1,5 +1,5 @@
 <template>
-  <v-app >
+  <v-app>
     <v-main>
       <router-view class="animated fadeIn"></router-view>
     </v-main>
@@ -9,8 +9,7 @@
 <script>
 export default {
   name: "App",
-  components: {
-  },
+  components: {},
   data: () => ({
     //
   }),
@@ -20,20 +19,19 @@ export default {
       while (scrollValue > 0) {
         document.documentElement.scrollTop--;
       }
-    },
-    
+    }
   }
 };
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap");
 html,
 body {
   width: 100%;
   margin: 0px;
   padding: 0px;
-  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
 }
 
 ::-webkit-scrollbar {
@@ -41,7 +39,7 @@ body {
 }
 #app {
   /* scroll-behavior: smooth; */
-  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
   margin: 0px;
   padding: 0px;
   width: 100%;
@@ -60,9 +58,8 @@ body {
 }
 
 /* this will hide the scrollbar in webkit based browsers - safari, chrome, etc */
-.scroll-hide ::-webkit-scrollbar { 
+.scroll-hide ::-webkit-scrollbar {
   width: 0 !important;
-  display: none; 
+  display: none;
 }
-
 </style>

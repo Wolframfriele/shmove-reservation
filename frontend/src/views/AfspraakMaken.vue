@@ -39,7 +39,7 @@ body {
 h1 {
   margin: 0em 0em 0em 0em;
   color: #c49760;
-  font-size: .5em;
+  font-size: 0.5em;
   text-transform: uppercase;
   letter-spacing: 1px;
 }

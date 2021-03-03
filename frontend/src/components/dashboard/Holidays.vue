@@ -8,10 +8,11 @@
             <v-card-title>
               Helaas nog geen vakantie ingepland.
             </v-card-title>
-          </v-toolbar>   
+          </v-toolbar>
           <v-card-text>
             <v-icon color="orange lighten-2">mdi-white-balance-sunny</v-icon>
-            Tijd om snel wat te plannen! Gebruik daarvoor de zonnentjes in de kalender.
+            Tijd om snel wat te plannen! Gebruik daarvoor de zonnentjes in de
+            kalender.
           </v-card-text>
         </v-card>
       </div>
@@ -42,7 +43,9 @@
             class="ma-2"
             outlined
             color="teal"
-            @click="updateVacation(days.id, days.name, days.start_date, days.end_date)"
+            @click="
+              updateVacation(days.id, days.name, days.start_date, days.end_date)
+            "
           >
             Aanpassen
           </v-btn>
@@ -61,7 +64,7 @@
 </template>
 
 <script>
-import { bus } from '../../main'
+import { bus } from "../../main";
 import axios from "axios";
 
 export default {
@@ -76,15 +79,15 @@ export default {
   }),
   created() {
     this.getVacations();
-    bus.$on('updateHolidays', () => {
-        this.getVacations()
-      })
+    bus.$on("updateHolidays", () => {
+      this.getVacations();
+    });
   },
   methods: {
     async getVacations() {
-      this.planneddays = []
+      this.planneddays = [];
       await axios
-        .get('dash_appointments/get_vacations/', {
+        .get("dash_appointments/get_vacations/", {
           headers: {
             Accept: "application/json",
             "Content-type": "application/json",
@@ -124,8 +127,8 @@ export default {
         .then(res => {
           //Perform Success Action
           if (res.data == "Success") {
-            this.getVacations()
-            bus.$emit('updateCalendar')
+            this.getVacations();
+            bus.$emit("updateCalendar");
           }
         })
         .catch(error => {
@@ -139,21 +142,25 @@ export default {
         body: {
           id: id
         }
-      }
+      };
       axios
-        .post(`${this.$store.state.HOST}/api/dash_appointments/delete_vacation/`, body, {
-          headers: {
-            Accept: "application/json",
-            "Content-type": "application/json",
-            "X-CSRFToken": self.$session.get("token"),
-            Authorization: `Token ${self.$session.get("token")}`
+        .post(
+          `${this.$store.state.HOST}/api/dash_appointments/delete_vacation/`,
+          body,
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-type": "application/json",
+              "X-CSRFToken": self.$session.get("token"),
+              Authorization: `Token ${self.$session.get("token")}`
+            }
           }
-        })
+        )
         .then(res => {
-          //Perform Success Action          
+          //Perform Success Action
           if (res.data == "Success") {
-            this.getVacations()
-            bus.$emit('updateCalendar')
+            this.getVacations();
+            bus.$emit("updateCalendar");
           }
         })
         .catch(error => {

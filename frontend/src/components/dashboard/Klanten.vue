@@ -3,42 +3,39 @@
     <h1>Klanten</h1>
     <v-container class="plannedHolidays">
       <div v-if="klanten.length == 0">
-        <v-card>   
+        <v-card>
           <v-toolbar>
             <v-card-title>
               Er zijn nog geen bestaande klanten
             </v-card-title>
-          </v-toolbar>     
+          </v-toolbar>
           <v-card-text>
-            Als klanten worden toegevoegd kunnen deze hier worden terug gevonden.
+            Als klanten worden toegevoegd kunnen deze hier worden terug
+            gevonden.
           </v-card-text>
         </v-card>
       </div>
       <v-card
         min-width="350px"
-        v-for="(klant, i) in klanten" :key="i"
+        v-for="(klant, i) in klanten"
+        :key="i"
         @click="openKlantModal(klant)"
-        class="customer-card">
-        
+        class="customer-card"
+      >
         <v-toolbar color="teal">
           <v-card-title class="text--white">
             {{ klant.firstName }} {{ klant.lastName }}
           </v-card-title>
         </v-toolbar>
-          <v-card-text>
-            <p>Email: {{ klant.email }}</p>
-            <p>Telefoonnummer: {{ klant.phoneNumber }}</p>
-            <p>Klantnummer: {{ klant.customer_id }}</p>
-          </v-card-text>        
+        <v-card-text>
+          <p>Email: {{ klant.email }}</p>
+          <p>Telefoonnummer: {{ klant.phoneNumber }}</p>
+          <p>Klantnummer: {{ klant.customer_id }}</p>
+        </v-card-text>
       </v-card>
     </v-container>
-    <v-dialog
-      v-model="showKlantModal"
-      hide-overlay
-      offset-x
-      width="500"
-    >
-      <EditKlantenModal 
+    <v-dialog v-model="showKlantModal" hide-overlay offset-x width="500">
+      <EditKlantenModal
         v-bind:selectedKlant="selectedKlant"
         @closeKlantModal="showKlantModal = false"
         @reloadKlanten="getClients"
@@ -71,9 +68,9 @@ export default {
   },
   methods: {
     getClients() {
-      this.klanten = []
+      this.klanten = [];
       axios
-        .get('dashboard/get_clients/', {
+        .get("dashboard/get_clients/", {
           headers: {
             Accept: "application/json",
             "Content-type": "application/json",
@@ -93,9 +90,9 @@ export default {
           });
         });
     },
-    openKlantModal (klant) {
-      this.selectedKlant = klant
-      this.showKlantModal = true
+    openKlantModal(klant) {
+      this.selectedKlant = klant;
+      this.showKlantModal = true;
     }
   }
 };

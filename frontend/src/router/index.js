@@ -15,7 +15,7 @@ const routes = [
     path: "/login",
     name: "Login",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/dashboard/Login.vue"),
+      import(/* webpackChunkName: "about" */ "../views/dashboard/Login.vue")
   },
   {
     path: "/afspraak-maken",
@@ -49,11 +49,11 @@ const routes = [
   },
 
   // dashboard/therapeut routes
-    {
+  {
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard
-  },
+  }
 ];
 
 const router = new VueRouter({

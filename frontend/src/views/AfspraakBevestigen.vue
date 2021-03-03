@@ -24,7 +24,7 @@ h1 {
   text-align: center;
   margin: 0em 1em 1em 0;
   color: #c49760;
-  font-size: .5em;
+  font-size: 0.5em;
   text-transform: uppercase;
   letter-spacing: 1px;
 }

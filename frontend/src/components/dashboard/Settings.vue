@@ -11,19 +11,12 @@ import Treatments from "../../components/dashboard/Treatments";
 import Openingtimes from "../../components/dashboard/Openingtimes";
 
 export default {
-  data: () => ({
-    
-  }),
+  data: () => ({}),
   components: {
     Treatments,
     Openingtimes
   },
-  methods: {
-
-  }
+  methods: {}
 };
 </script>
-<style scoped>
-
-
-</style>
+<style scoped></style>

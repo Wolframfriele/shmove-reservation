@@ -4,15 +4,35 @@
       <v-sheet height="64">
         <!-- Calendar Toolbar -->
         <v-toolbar flat>
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday" aria-label="Navigeer naar vandaag">
+          <v-btn
+            outlined
+            class="mr-4"
+            color="grey darken-2"
+            @click="setToday"
+            aria-label="Navigeer naar vandaag"
+          >
             Today
           </v-btn>
-          <v-btn fab text small color="grey darken-2" @click="prev" aria-label="Vorige week">
+          <v-btn
+            fab
+            text
+            small
+            color="grey darken-2"
+            @click="prev"
+            aria-label="Vorige week"
+          >
             <v-icon small>
               mdi-chevron-left
             </v-icon>
           </v-btn>
-          <v-btn fab text small color="grey darken-2" @click="next" aria-label="Volgende week">
+          <v-btn
+            fab
+            text
+            small
+            color="grey darken-2"
+            @click="next"
+            aria-label="Volgende week"
+          >
             <v-icon small>
               mdi-chevron-right
             </v-icon>
@@ -44,27 +64,46 @@
           :interval-format="intervalFormat"
           :locale="locale"
           @click:event="bevestigAfspraak"
-
           @change="updateRange"
         >
           <!-- Usabillity Modifications -->
 
           <!-- Modified Calendar Header -->
-          <template v-slot:day-label-header="{date, day, present, past, weekday}">
+          <template
+            v-slot:day-label-header="{ date, day, present, past, weekday }"
+          >
             <v-avatar v-if="past" color="white">{{ day }}</v-avatar>
-            <v-avatar v-else-if="present" color="primary" class="white--text">{{ day }}</v-avatar>
-            <v-btn v-else fab depressed color="white" :aria-label="dateToString(date)" :href="returnID(weekday)">{{ day }} </v-btn>
+            <v-avatar v-else-if="present" color="primary" class="white--text">{{
+              day
+            }}</v-avatar>
+            <v-btn
+              v-else
+              fab
+              depressed
+              color="white"
+              :aria-label="dateToString(date)"
+              :href="returnID(weekday)"
+              >{{ day }}
+            </v-btn>
           </template>
           <!-- Modified Calendar Events -->
-          <template v-slot:event="{event, eventParsed}">
-            <p class="event-text">Vrij</p>  
-            <p class="event-text" :id="eventParsed.start.weekday" tabindex="0" role="button" @keydown.enter="bevestigAfspraak({event})">
+          <template v-slot:event="{ event, eventParsed }">
+            <p class="event-text">Vrij</p>
+            <p
+              class="event-text"
+              :id="eventParsed.start.weekday"
+              tabindex="0"
+              role="button"
+              @keydown.enter="bevestigAfspraak({ event })"
+            >
               {{ eventParsed.start.time }} tot {{ eventParsed.end.time }}
             </p>
           </template>
         </v-calendar>
         <v-alert v-if="noEvents" color="primary" class="no-events" width="615">
-          <p class="white--text">Er zijn helaas geen vrije plekkken meer voor deze periode.</p>
+          <p class="white--text">
+            Er zijn helaas geen vrije plekkken meer voor deze periode.
+          </p>
         </v-alert>
       </v-sheet>
     </v-col>
@@ -72,7 +111,7 @@
 </template>
 
 <script>
-import { bus } from '../main'
+import { bus } from "../main";
 import axios from "axios";
 import repeatedFunctions from "../mixins/repeatedFunctions";
 
@@ -85,18 +124,18 @@ export default {
     firstinterval: "9",
     intervalcount: "11",
     locale: "nl",
-    eventColor:  ['primary', 'red'],
+    eventColor: ["primary", "red"],
     treatment: "",
     events: [],
     loaded: false,
     absolute: true,
-    noEvents: false,
+    noEvents: false
   }),
   created() {
     // Receive Data from treatments
-    bus.$on('treatmentArray', (data) => {
+    bus.$on("treatmentArray", data => {
       this.treatment = data;
-    })
+    });
   },
   mounted() {
     this.$refs.calendar.checkChange();
@@ -109,43 +148,52 @@ export default {
       return interval.time;
     },
     bevestigAfspraak({ event }) {
-      bus.$on('treatmentArray', (data) => {
-      this.treatment = data;
-      })
-      this.$router.push({name: "AfspraakBevestigen", params: {start: event.start, end: event.end, treatment: this.treatment}});
+      bus.$on("treatmentArray", data => {
+        this.treatment = data;
+      });
+      this.$router.push({
+        name: "AfspraakBevestigen",
+        params: {
+          start: event.start,
+          end: event.end,
+          treatment: this.treatment
+        }
+      });
     },
     updateRange({ start, end }) {
       this.getFreePlaces(start.date, end.date);
     },
-    getFreePlaces(beginweek, endweek){
-      this.events = []
-      this.noEvents = false
-      this.loaded = false
-      axios.get('appointments/get_appointments_customer/',
-      {
-      params: {
-        beginweek: beginweek,
-        endweek: endweek
-      }}
-      ).then(res => {
-        this.events = []
-        res.data.forEach(times => {
+    getFreePlaces(beginweek, endweek) {
+      this.events = [];
+      this.noEvents = false;
+      this.loaded = false;
+      axios
+        .get("appointments/get_appointments_customer/", {
+          params: {
+            beginweek: beginweek,
+            endweek: endweek
+          }
+        })
+        .then(res => {
+          this.events = [];
+          res.data.forEach(times => {
             this.events.push({
-            name: times.taken ? "Bezet" : "Vrij",
-            start: times.start,
-            end: times.end,
-            color: times.taken ? this.eventColor[1] : this.eventColor[0],
-            timed: true
-          })
+              name: times.taken ? "Bezet" : "Vrij",
+              start: times.start,
+              end: times.end,
+              color: times.taken ? this.eventColor[1] : this.eventColor[0],
+              timed: true
+            });
+          });
+          if (this.events.length == 0) {
+            this.noEvents = true;
+          }
+          this.loaded = true;
+        })
+        .catch(e => {
+          console.log(e);
         });
-        if (this.events.length == 0) {
-          this.noEvents = true
-        }
-        this.loaded = true
-      }).catch(e => {
-        console.log(e)
-      })
-    },
+    }
   }
 };
 </script>
@@ -161,7 +209,7 @@ export default {
   margin-right: 0;
 }
 
-.col{
+.col {
   padding: 0;
 }
 

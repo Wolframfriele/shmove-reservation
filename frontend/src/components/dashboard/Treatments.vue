@@ -12,39 +12,60 @@
       </v-col>
       <v-col cols="10" class="textfieldContainer">
         <form @submit.prevent="saveTreatment">
-        <v-text-field
-          class="textfield"
-          label="Naam"
-          :value="treatment.treatment"
-          v-model="treatment.treatment"
-        ></v-text-field>
-        <v-text-field
-          class="textfield price"
-          label="Prijs"
-          :value="treatment.price"
-          v-model="treatment.price"
-          :prefix="currency"
-          type="number"
-        ></v-text-field>
-        <div v-if="treatment.treatment">
-          <v-btn class="mx-2 minus" fab dark x-small color="red lighten-2" @click="deleteTreatment(treatment.id)">
-            <v-icon dark>
-              mdi-minus
-            </v-icon>
-          </v-btn>
-          <v-btn class="mx-2 save" fab dark x-small color="green lighten-2" @click="saveTreatment(treatment.treatment, treatment.price)" >
-            <v-icon dark>
-              mdi-check
-            </v-icon>
-          </v-btn>
-        </div>
-        <div v-else>
-          <v-btn class="mx-2 minus" fab dark x-small color="green lighten-2" @click="saveTreatment(treatment.treatment, treatment.price)">
-            <v-icon dark>
-              mdi-check
-            </v-icon>
-          </v-btn>
-        </div>
+          <v-text-field
+            class="textfield"
+            label="Naam"
+            :value="treatment.treatment"
+            v-model="treatment.treatment"
+          ></v-text-field>
+          <v-text-field
+            class="textfield price"
+            label="Prijs"
+            :value="treatment.price"
+            v-model="treatment.price"
+            :prefix="currency"
+            type="number"
+          ></v-text-field>
+          <div v-if="treatment.treatment">
+            <v-btn
+              class="mx-2 minus"
+              fab
+              dark
+              x-small
+              color="red lighten-2"
+              @click="deleteTreatment(treatment.id)"
+            >
+              <v-icon dark>
+                mdi-minus
+              </v-icon>
+            </v-btn>
+            <v-btn
+              class="mx-2 save"
+              fab
+              dark
+              x-small
+              color="green lighten-2"
+              @click="saveTreatment(treatment.treatment, treatment.price)"
+            >
+              <v-icon dark>
+                mdi-check
+              </v-icon>
+            </v-btn>
+          </div>
+          <div v-else>
+            <v-btn
+              class="mx-2 minus"
+              fab
+              dark
+              x-small
+              color="green lighten-2"
+              @click="saveTreatment(treatment.treatment, treatment.price)"
+            >
+              <v-icon dark>
+                mdi-check
+              </v-icon>
+            </v-btn>
+          </div>
         </form>
       </v-col>
     </v-row>
@@ -67,18 +88,20 @@ export default {
   }),
   created() {
     let self = this;
-    axios.get(`${this.$store.state.HOST}/api/dashboard/get_treatments/`, {
-    headers: {
-            Accept: "application/json",
-            "Content-type": "application/json",
-            "X-CSRFToken": self.$session.get('token'),
-             Authorization: `Token ${self.$session.get('token')}`,
-    }})
-    .then(res=>{
-      res.data.forEach(element => {
-        this.treatments.push(element)
+    axios
+      .get(`${this.$store.state.HOST}/api/dashboard/get_treatments/`, {
+        headers: {
+          Accept: "application/json",
+          "Content-type": "application/json",
+          "X-CSRFToken": self.$session.get("token"),
+          Authorization: `Token ${self.$session.get("token")}`
+        }
       })
-    })
+      .then(res => {
+        res.data.forEach(element => {
+          this.treatments.push(element);
+        });
+      });
   },
   methods: {
     addTreatment() {
@@ -89,15 +112,15 @@ export default {
     },
     deleteTreatment(id) {
       axios
-        .delete('dashboard/delete_treatments/', {
+        .delete("dashboard/delete_treatments/", {
           params: {
             id: id
           },
           headers: {
             Accept: "application/json",
             "Content-type": "application/json",
-            "X-CSRFToken": this.$session.get('token'),
-             Authorization: `Token ${this.$session.get('token')}`,
+            "X-CSRFToken": this.$session.get("token"),
+            Authorization: `Token ${this.$session.get("token")}`
           }
         })
         .then(res => {
@@ -108,9 +131,8 @@ export default {
         .catch(error => {
           console.log(error);
         });
-
     },
-    saveTreatment(treatment, price){
+    saveTreatment(treatment, price) {
       let body = {
         body: {
           name: treatment,
@@ -118,12 +140,12 @@ export default {
         }
       };
       axios
-        .put('dashboard/update_treatments/', body,{
-        headers: {
+        .put("dashboard/update_treatments/", body, {
+          headers: {
             Accept: "application/json",
             "Content-type": "application/json",
-            "X-CSRFToken": this.$session.get('token'),
-             Authorization: `Token ${this.$session.get('token')}`,
+            "X-CSRFToken": this.$session.get("token"),
+            Authorization: `Token ${this.$session.get("token")}`
           }
         })
         .then(res => {
@@ -133,9 +155,9 @@ export default {
         })
         .catch(error => {
           console.log(error);
-        })
-    },
+        });
     }
+  }
 };
 </script>
 <style scoped>
