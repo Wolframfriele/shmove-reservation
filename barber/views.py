@@ -561,7 +561,10 @@ class AppointmentsView(viewsets.ModelViewSet):
         for search_date in search_array:
             # Find the day's time slices
             weekday = search_date.weekday() + 1
-            max_appointment = StandardWeek.objects.get(pk=weekday).slice_count
+            try:
+                max_appointment = StandardWeek.objects.get(pk=weekday).slice_count
+            except:
+                max_appointment = 0
             slices = TimeSlices.objects.filter(standardweek__pk=weekday)
 
             appointments = Appointments.objects.filter(date=search_date)
