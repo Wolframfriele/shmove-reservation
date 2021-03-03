@@ -19,7 +19,7 @@ class TimeSlices(models.Model):
 class StandardWeek(models.Model):
     day = models.CharField(max_length=10)
     slice_count = models.IntegerField(default=3)
-    slices = models.ManyToManyField(TimeSlices)
+    slices = models.ManyToManyField(TimeSlices, null=True)
 
     def __str__(self):
         return str(self.day)
