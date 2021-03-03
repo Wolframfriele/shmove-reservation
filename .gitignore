@@ -2,9 +2,9 @@
 *.log
 *.pot
 *.pyc
-__pycache__/
-/barber/__pycache__/
-/barber/migrations/__pycache__/
+__pycache__/*
+/barber/__pycache__/*
+/barber/migrations/__pycache__/*
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -279,3 +279,6 @@ yarn-error.log
 /.vscode
 /barber/migrations/__pycache__
 /frontend/vue.config.js
+barber/__pycache__/
+
+shmove_reservations/__pycache__/

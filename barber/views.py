@@ -1,14 +1,12 @@
-# Create your views here.
 from datetime import datetime, timedelta, date
 import time
-from decouple import config
+import os
 
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.dateparse import parse_date, parse_time
 from django.core.mail import send_mail
-# from django.contrib.auth.hashers import make_password
 ################################## DRF IMPORTS #######################################
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -23,8 +21,6 @@ import smtplib
 import ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-
-# Create your views here.
 
 
 def getpost(request, x):
@@ -101,7 +97,7 @@ def create_appointment(request):
                             dbs_string, '%d/%m/%Y, %H:%M:%S').strftime("%d %b, %Y")
                         # sending a confirmation mail
                         port = 465
-                        password = config('MAIL_PWD')
+                        password = os.getenv('MAIL_PWD')
                         smtp_server = 'smtp.gmail.com'
                         sender_email = 'wolframfriele@gmail.com'
                         receiver_email = email
