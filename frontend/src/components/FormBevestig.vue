@@ -56,7 +56,7 @@
       ></v-textarea>
       <p>
         Uw selectie is <strong>{{ dateToString($route.params.start) }}</strong
-        >. De afspraak duurt ongeveer 2 uur.
+        >.
       </p>
       <p class="caption">
         Annuleren is kosteloos tot 48 uur van tevoren, daarna wordt de

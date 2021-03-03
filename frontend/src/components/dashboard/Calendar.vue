@@ -115,16 +115,6 @@
         @closeAppointmentModal="showEventModal = false"
         @reloadCalendar="getAllEvents(startWeek.date, endWeek.date)"
       />
-      <!-- v-bind:appointmentDate="appointmentDate"
-        v-bind:appointmentStart="appointmentStart"
-        v-bind:appointmentEnd="appointmentEnd"
-        v-bind:credential_id="credential_id"
-        v-bind:firstName="firstName"
-        v-bind:lastName="lastName"
-        v-bind:email="email"
-        v-bind:phoneNumber="phoneNumber"
-        v-bind:treatment="treatment"
-        v-bind:reason="reason" -->
     </v-dialog>
     <!-- Maak Afspraak Modal -->
     <v-dialog
@@ -220,17 +210,6 @@ export default {
     ],
     selectedEvent: {},
     selectedOpenEvent: {},
-    // appointmentDate: "",
-    // appointmentStart: "",
-    // appointmentEnd: "",
-    // credential_id: "",
-    // firstName: "",
-    // lastName: "",
-    // email: "",
-    // phoneNumber: "",
-    // treatment: "",
-    // reason: "",
-    // Functions
     starttime: "",
     endtime: "",
     success: ""

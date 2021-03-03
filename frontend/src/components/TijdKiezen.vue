@@ -11,7 +11,7 @@
             @click="setToday"
             aria-label="Navigeer naar vandaag"
           >
-            Today
+            Vandaag
           </v-btn>
           <v-btn
             fab

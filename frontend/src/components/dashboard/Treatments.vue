@@ -87,14 +87,13 @@ export default {
     behandeling: ""
   }),
   created() {
-    let self = this;
     axios
-      .get(`${this.$store.state.HOST}/api/dashboard/get_treatments/`, {
+      .get('dashboard/get_treatments/', {
         headers: {
           Accept: "application/json",
           "Content-type": "application/json",
-          "X-CSRFToken": self.$session.get("token"),
-          Authorization: `Token ${self.$session.get("token")}`
+          "X-CSRFToken": this.$session.get("token"),
+          Authorization: `Token ${this.$session.get("token")}`
         }
       })
       .then(res => {

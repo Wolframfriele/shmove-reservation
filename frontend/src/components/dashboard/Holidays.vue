@@ -102,7 +102,6 @@ export default {
         });
     },
     updateVacation(id, name, startdate, enddate) {
-      let self = this;
       let body = {
         body: {
           id: id,
@@ -113,14 +112,14 @@ export default {
       };
       axios
         .post(
-          `${self.$store.state.HOST}/api/dash_appointments/change_vacation/`,
+          'dash_appointments/change_vacation/',
           body,
           {
             headers: {
               Accept: "application/json",
               "Content-type": "application/json",
-              "X-CSRFToken": self.$session.get("token"),
-              Authorization: `Token ${self.$session.get("token")}`
+              "X-CSRFToken": this.$session.get("token"),
+              Authorization: `Token ${this.$session.get("token")}`
             }
           }
         )
@@ -136,8 +135,6 @@ export default {
         });
     },
     deleteVacation(id) {
-      //Not yet pushed to Yanickhost it seems :(
-      let self = this;
       let body = {
         body: {
           id: id
@@ -145,14 +142,14 @@ export default {
       };
       axios
         .post(
-          `${this.$store.state.HOST}/api/dash_appointments/delete_vacation/`,
+          'dash_appointments/delete_vacation/',
           body,
           {
             headers: {
               Accept: "application/json",
               "Content-type": "application/json",
-              "X-CSRFToken": self.$session.get("token"),
-              Authorization: `Token ${self.$session.get("token")}`
+              "X-CSRFToken": this.$session.get("token"),
+              Authorization: `Token ${this.$session.get("token")}`
             }
           }
         )

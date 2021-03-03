@@ -125,21 +125,19 @@ export default {
   computed: {},
   methods: {
     async getSlices() {
-      let self = this;
       await axios
-        .get(`${self.$store.state.HOST}/api/dashboard/get_timeslices/`, {
+        .get('dashboard/get_timeslices/', {
           headers: {
             Accept: "application/json",
             "Content-type": "application/json",
-            "X-CSRFToken": self.$session.get("token"),
-            Authorization: `Token ${self.$session.get("token")}`
+            "X-CSRFToken": this.$session.get("token"),
+            Authorization: `Token ${this.$session.get("token")}`
           }
         })
         .then(slices => {
           this.events = [];
-          // console.log(res.data);
           slices.data.forEach(slice => {
-            self.timeslots.push({
+            this.timeslots.push({
               start: slice.start,
               end: slice.end,
               day_id: slice.day_id,
@@ -166,8 +164,6 @@ export default {
       });
     },
     saveSlot() {
-      //http://django.yanickhost.ga:8085/api/dashboard/update_timeslices/
-      //http://django.yanickhost.ga:8085/api/dashboard/add_time_slices/
       let body = {
         body: {
           day_id: this.day_id,
@@ -176,18 +172,16 @@ export default {
           slice_id: this.slice_id
         }
       };
-
-      let self = this;
       axios
         .put(
-          `${self.$store.state.HOST}/api/dashboard/update_timeslices/`,
+          'dashboard/update_timeslices/',
           body,
           {
             headers: {
               Accept: "application/json",
               "Content-type": "application/json",
-              "X-CSRFToken": self.$session.get("token"),
-              Authorization: `Token ${self.$session.get("token")}`
+              "X-CSRFToken": this.$session.get("token"),
+              Authorization: `Token ${this.$session.get("token")}`
             }
           }
         )
@@ -211,9 +205,8 @@ export default {
         });
     },
     deleteSlot(slice_id, day_id) {
-      let self = this;
       axios
-        .delete(`${self.$store.state.HOST}/api/dashboard/remove_timeslices/`, {
+        .delete('dashboard/remove_timeslices/', {
           params: {
             slice_id: slice_id,
             day_id: day_id
@@ -221,8 +214,8 @@ export default {
           headers: {
             Accept: "application/json",
             "Content-type": "application/json",
-            "X-CSRFToken": self.$session.get("token"),
-            Authorization: `Token ${self.$session.get("token")}`
+            "X-CSRFToken": this.$session.get("token"),
+            Authorization: `Token ${this.$session.get("token")}`
           }
         })
         .then(res => {
@@ -233,8 +226,6 @@ export default {
         .catch(error => {
           console.log(error);
         });
-      //http://django.yanickhost.ga:8085/api/dashboard/remove_timeslices/
-      //this.timeslots.splice(slice_id, day_id);
     }
   }
 };
