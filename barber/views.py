@@ -316,8 +316,12 @@ class DashboardAppointmentView(viewsets.ModelViewSet):
             else:
                 # Find the day's time slices
                 weekday = search_date.weekday() + 1
-                max_appointment = StandardWeek.objects.get(pk=weekday).slice_count
                 slices = TimeSlices.objects.filter(standardweek__pk=weekday)
+                try:
+                    max_appointment = StandardWeek.objects.get(pk=weekday).slice_count
+                    
+                except:
+                    max_appointment = 0
 
                 appointments = Appointments.objects.filter(date=search_date)
                 if len(appointments) == 0:
