@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,7 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "False")
+DEBUG = os.getenv("DEBUG", False)
 
 ALLOWED_HOSTS = [
     'shiatsudelft.pythonanywhere.com', '127.0.0.1', 'localhost'
@@ -187,8 +189,8 @@ CORS_EXPOSE_HEADERS = (
 
 CORS_ORIGIN_WHITELIST = (
     # 'localhost:8080',
-    # '192.168.56.1:8080/',
-    'https://www.shiatsu-delft.nl/'
+    # '127.0.0.1',
+    # 'https://www.shiatsu-delft.nl/'
 )
 # email settings
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
