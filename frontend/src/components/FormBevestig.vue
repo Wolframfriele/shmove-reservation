@@ -227,7 +227,7 @@ export default {
         "november",
         "december"
       ];
-      const reserverings_tijd = new Date(datum);
+      const reserverings_tijd = datum;
 
       const dayIndex = reserverings_tijd.getDay();
       const day = days[dayIndex];
