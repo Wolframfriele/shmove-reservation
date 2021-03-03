@@ -88,7 +88,7 @@ export default {
   }),
   created() {
     axios
-      .get('dashboard/get_treatments/', {
+      .get("dashboard/get_treatments/", {
         headers: {
           Accept: "application/json",
           "Content-type": "application/json",

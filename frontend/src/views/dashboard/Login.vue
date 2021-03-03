@@ -88,7 +88,7 @@ export default {
   methods: {
     submit() {
       axios
-        .post('signin/', {
+        .post("signin/", {
           body: {
             email: this.email,
             password: this.password

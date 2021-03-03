@@ -126,7 +126,7 @@ export default {
   methods: {
     async getSlices() {
       await axios
-        .get('dashboard/get_timeslices/', {
+        .get("dashboard/get_timeslices/", {
           headers: {
             Accept: "application/json",
             "Content-type": "application/json",
@@ -173,18 +173,14 @@ export default {
         }
       };
       axios
-        .put(
-          'dashboard/update_timeslices/',
-          body,
-          {
-            headers: {
-              Accept: "application/json",
-              "Content-type": "application/json",
-              "X-CSRFToken": this.$session.get("token"),
-              Authorization: `Token ${this.$session.get("token")}`
-            }
+        .put("dashboard/update_timeslices/", body, {
+          headers: {
+            Accept: "application/json",
+            "Content-type": "application/json",
+            "X-CSRFToken": this.$session.get("token"),
+            Authorization: `Token ${this.$session.get("token")}`
           }
-        )
+        })
         .then(res => {
           //Perform Success Action
           console.log(res.status);
@@ -206,7 +202,7 @@ export default {
     },
     deleteSlot(slice_id, day_id) {
       axios
-        .delete('dashboard/remove_timeslices/', {
+        .delete("dashboard/remove_timeslices/", {
           params: {
             slice_id: slice_id,
             day_id: day_id

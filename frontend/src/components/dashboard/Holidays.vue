@@ -111,18 +111,14 @@ export default {
         }
       };
       axios
-        .post(
-          'dash_appointments/change_vacation/',
-          body,
-          {
-            headers: {
-              Accept: "application/json",
-              "Content-type": "application/json",
-              "X-CSRFToken": this.$session.get("token"),
-              Authorization: `Token ${this.$session.get("token")}`
-            }
+        .post("dash_appointments/change_vacation/", body, {
+          headers: {
+            Accept: "application/json",
+            "Content-type": "application/json",
+            "X-CSRFToken": this.$session.get("token"),
+            Authorization: `Token ${this.$session.get("token")}`
           }
-        )
+        })
         .then(res => {
           //Perform Success Action
           if (res.data == "Success") {
@@ -141,18 +137,14 @@ export default {
         }
       };
       axios
-        .post(
-          'dash_appointments/delete_vacation/',
-          body,
-          {
-            headers: {
-              Accept: "application/json",
-              "Content-type": "application/json",
-              "X-CSRFToken": this.$session.get("token"),
-              Authorization: `Token ${this.$session.get("token")}`
-            }
+        .post("dash_appointments/delete_vacation/", body, {
+          headers: {
+            Accept: "application/json",
+            "Content-type": "application/json",
+            "X-CSRFToken": this.$session.get("token"),
+            Authorization: `Token ${this.$session.get("token")}`
           }
-        )
+        })
         .then(res => {
           //Perform Success Action
           if (res.data == "Success") {
