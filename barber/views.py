@@ -68,8 +68,11 @@ def create_appointment(request):
         if dbe_string:
             valid += 1
         if valid == 7:
+            print(time_start)
+            print(time_end)
             get_slice = TimeSlices.objects.get(
                 slice_start=time_start, slice_end=time_end).pk
+            print(get_slice)
             find_appointment = Appointments.objects.filter(
                 date=date_, time_slice_id=get_slice).values()
             if find_appointment:

@@ -1,4 +1,5 @@
 <template>
+<v-container id="wrap-modal">
   <v-card color="grey lighten-4" flat>
     <v-toolbar color="teal">
       <v-spacer></v-spacer>
@@ -21,25 +22,26 @@
         >Verwijder Klant</v-btn
       >
     </v-card-actions>
-    <v-overlay v-model="deleteCheck">
-      <v-card min-width="600px">
-        <v-card-text>
-          <h2>Weet je zeker dat je de klant wilt verwijderen?</h2>
-          <br />
-          <p>
-            Pas op! Het verwijderen van een klant verwijdert ook alle
-            bijbehorende afspraken. Dit kan niet ongedaan gemaakt worden.
-          </p>
-        </v-card-text>
-        <v-card-text>
-          <v-btn text color="gray" @click="deleteCheck = false">Anuleren</v-btn>
-          <v-btn color="red" @click="deleteCustomer" class="white--text"
-            >Verwijder Afspraak</v-btn
-          >
-        </v-card-text>
-      </v-card>
-    </v-overlay>
   </v-card>
+  <v-overlay v-model="deleteCheck">
+    <v-card min-width="600px">
+      <v-card-text>
+        <h2>Weet je zeker dat je de klant wilt verwijderen?</h2>
+        <br />
+        <p>
+          Pas op! Het verwijderen van een klant verwijdert ook alle
+          bijbehorende afspraken. Dit kan niet ongedaan gemaakt worden.
+        </p>
+      </v-card-text>
+      <v-card-text>
+        <v-btn text color="gray" @click="deleteCheck = false">Anuleren</v-btn>
+        <v-btn color="red" @click="deleteCustomer" class="white--text"
+          >Verwijder Afspraak</v-btn
+        >
+      </v-card-text>
+    </v-card>
+  </v-overlay>
+</v-container>
 </template>
 
 <script>
@@ -136,4 +138,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+#wrap-modal {
+  padding: 0px;
+  margin: 0px;
+}
+
+</style>

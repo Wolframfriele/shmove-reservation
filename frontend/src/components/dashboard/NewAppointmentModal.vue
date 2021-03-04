@@ -24,10 +24,10 @@
       <label>Kies behandeling</label>
       <v-radio-group v-model="select" row>
         <v-radio
-          v-for="a in allTreatments"
-          :key="a.id"
-          :label="a"
-          :value="a"
+          v-for="singleTreatment in allTreatments"
+          :key="singleTreatment.id"
+          :label="singleTreatment"
+          :value="singleTreatment"
         ></v-radio>
       </v-radio-group>
       <div class="container">
