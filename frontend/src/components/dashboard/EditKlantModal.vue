@@ -24,7 +24,7 @@
     </v-card-actions>
   </v-card>
   <v-overlay v-model="deleteCheck">
-    <v-card min-width="600px">
+    <v-card width="400px">
       <v-card-text>
         <h2>Weet je zeker dat je de klant wilt verwijderen?</h2>
         <br />
@@ -33,7 +33,7 @@
           bijbehorende afspraken. Dit kan niet ongedaan gemaakt worden.
         </p>
       </v-card-text>
-      <v-card-text>
+      <v-card-text class="center">
         <v-btn text color="gray" @click="deleteCheck = false">Anuleren</v-btn>
         <v-btn color="red" @click="deleteCustomer" class="white--text"
           >Verwijder Afspraak</v-btn
@@ -144,4 +144,11 @@ export default {
   margin: 0px;
 }
 
+.center {
+  margin: auto;
+}
+
+#delete-box {
+  width: 400px;
+}
 </style>

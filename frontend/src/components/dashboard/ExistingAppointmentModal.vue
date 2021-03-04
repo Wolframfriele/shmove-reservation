@@ -128,7 +128,7 @@
     </div>
   </v-card>
   <v-overlay v-model="deleteCheck">
-    <v-card min-width="600px">
+    <v-card width="400px">
       <v-card-text>
         <h2>Weet je zeker dat je de afspraak wilt verwijderen?</h2>
       </v-card-text>
