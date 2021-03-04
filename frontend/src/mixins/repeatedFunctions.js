@@ -26,42 +26,34 @@ export default {
         "december"
       ];
       
-      if (typeof datum == Date) {
-        const reserverings_tijd = datum
+      const dateString = datum.split(" ")[0]
+      
+      const year_int = parseInt(dateString.split("-")[0])
+      const month_int = parseInt(dateString.split("-")[1])
+      const day_int = parseInt(dateString.split("-")[2])
 
-        const dayIndex = reserverings_tijd.getDay();
-        const day = days[dayIndex];
-        const date = reserverings_tijd.getDate();
-        const monthIndex = reserverings_tijd.getMonth();
-        const month = months[monthIndex];
-        const hours = reserverings_tijd.getHours();
-        const minutes = String(reserverings_tijd.getMinutes()).padStart(2, '0');
+      let reserverings_tijd = new Date(year_int, month_int, day_int)
 
-        return `${day} ${date} ${month} om ${hours}:${minutes}`;
-      }
-      if (typeof datum == String) {
-        const dateString = datum.split(' ')[0]
-        const timeString = datum.split(' ')[1]
+      const dayIndex = reserverings_tijd.getDay();
+      const day = days[dayIndex];
+      const date = reserverings_tijd.getDate();
+      const monthIndex = reserverings_tijd.getMonth();
+      const month = months[monthIndex];
 
-        const year_int = parseInt(dateString.split('-')[0])
-        const month_int = parseInt(dateString.split('-')[1])
-        const day_int = parseInt(dateString.split('-')[2])
+      if (datum.split(" ").length == 2) {
+        const timeString = datum.split(" ")[1]
 
         const hour_int = parseInt(timeString.split(':')[0])
         const minutes_int = parseInt(timeString.split(':')[1])
 
-        const reserverings_tijd = new Date(year_int, month_int, day_int, hour_int, minutes_int)
-
-        const dayIndex = reserverings_tijd.getDay();
-        const day = days[dayIndex];
-        const date = reserverings_tijd.getDate();
-        const monthIndex = reserverings_tijd.getMonth();
-        const month = months[monthIndex];
+        reserverings_tijd = new Date(year_int, month_int, day_int, hour_int, minutes_int)
         const hours = reserverings_tijd.getHours();
         const minutes = String(reserverings_tijd.getMinutes()).padStart(2, '0');
 
-        return `${day} ${date} ${month} om ${hours}:${minutes}`;
-      }  
+        return `${day} ${date} ${month} om ${hours}:${minutes}`; 
+      } else {
+        return `${day} ${date} ${month}`; 
+      }      
     },
     parseDate(inputString) {
       // parse date time to dd/mm/yyy, h:m:s
